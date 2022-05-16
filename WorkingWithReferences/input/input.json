@@ -1,0 +1,20 @@
+{
+  "header": "null reff test",
+  "objects": {
+    "a": {
+      "child": "boy"
+    },
+    "b": "b",
+    "c": {
+      "child": {
+    	  "grandchild": "girl"
+      }
+    },
+    "d":{
+      "child": "girl"
+    },
+    "e": {
+      "child": "boy"
+    }
+  }
+}
