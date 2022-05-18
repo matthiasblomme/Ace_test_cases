@@ -20,6 +20,9 @@ test projects away and I ended up making some of these again, so why not just sa
 A very basic and dumb flow that keeps throwing exceptions and keeps performing a backout
 of the input message to test the backout count and backout threshold. 
 
+### Create Json Array
+A couple of ways of creating a json array
+
 ### Create XML Fields
 A flow to find out how to create a self closing xml tag `<lastfield2 />` and not just create an empty xml tag
 ` <lastfield2></ lastfield2>`
