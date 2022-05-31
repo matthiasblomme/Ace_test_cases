@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "test",
+  "description": "Auto generated JSON schema based on the 'test' file",
+  "type": "object",
+  "properties": {
+  
+    "field1": {
+      "type": "string"
+    },
+    
+    "field2": {
+      "type": "boolean"
+    },
+    
+    "field3": {
+      "type": "number"
+    },
+    
+    "group1": {
+      "type": "object",
+      "properties": {
+        "field5": {
+          "type": "number"
+        },
+        "field4": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  
+  "required": ["field1", "field2", "field3", "group1"],
+  "additionalProperties": false
+}
