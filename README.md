@@ -20,6 +20,12 @@ test projects away and I ended up making some of these again, so why not just sa
 A very basic and dumb flow that keeps throwing exceptions and keeps performing a backout
 of the input message to test the backout count and backout threshold. 
 
+### BusinessTransactionMonitoring
+...
+
+### Create Json Array
+A couple of ways of creating a json array
+
 ### Create XML Fields
 A flow to find out how to create a self closing xml tag `<lastfield2 />` and not just create an empty xml tag
 ` <lastfield2></ lastfield2>`
@@ -30,6 +36,13 @@ recreating the entire array.
 
 ### Json To Xml
 A very basic and dumb flow to demonstrate how to convert between json and xml with a single line of code.
+
+### Json Validation
+Validating JSON messages on the http input node and with a validate node. 
+Supplied an invalid json schema (with https for the schema definition) since I ran into that paticular issue.
+
+### Single and Double Quotes
+An esql test to remove single and/or double quotes
 
 ### Timer and File
 A flow to check and test that 2 input nodes start 2 input threads.
