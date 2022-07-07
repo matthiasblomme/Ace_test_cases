@@ -28,13 +28,13 @@ CREATE COMPUTE MODULE TestArrayDelete_Compute
 		-- Test 1
 		---------
 		SET rTest1.array1 = null;
-		
+		SET rTest1.description = 'set array to null';		
 		
 		-- Test 2
 		---------
 		DELETE FIELD rTest2.array1;	
 		CREATE FIELD rTest2.array1 VALUE '';
-		
+		SET rTest2.description = 'set array to empty string';
 		
 		-- Test 3
 		-- Try to avoid using CARDINALITY, if you can. HUGE performance issues if there are large arrays
@@ -45,6 +45,7 @@ CREATE COMPUTE MODULE TestArrayDelete_Compute
 			DELETE LASTCHILD OF rTest3.array1;
 			SET i = i+1;
 		END WHILE;
+		SET rTest3.description = 'delete array childs with cardinality';
 		
 		
 		-- Test 4
@@ -52,13 +53,13 @@ CREATE COMPUTE MODULE TestArrayDelete_Compute
 		WHILE EXISTS(rTest4.array1.Item[]) DO
 			DELETE FIELD rTest4.array1.Item[<];
 		END WHILE;
-			
+		SET rTest4.description = 'delete array childs with exists';	
 			
 		-- Test 5
 		---------
 		SET rTest5.array1 = null;
 		CREATE FIELD rTest5.array1 IDENTITY(JSON.Array) array1;
-		
+		SET rTest5.description = 'set array to null and redefine it as empty array';
 		
 
 		CREATE LASTCHILD OF OutputRoot DOMAIN 'JSON';		
