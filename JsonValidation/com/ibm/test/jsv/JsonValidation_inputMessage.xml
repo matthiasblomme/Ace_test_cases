@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MessagePool xmlns="http://wwww.ibm.com/iib/test/1.0.0">
+    <InputMessage timestamp="1653978626466" nodeId="FCMComposite_1_1" name="Invalid message 1" id="1653978626466-6">
+        <plainText>%7B%0D%0A++%22field1%22%3A+%22value1%22%2C%0D%0A++%22field2%22%3A+true%2C%0D%0A++%22field3%22%3A+1%2C%0D%0A++%22group1%22%3A+%7B%0D%0A++++%22field4%22%3A+%22value2%22%2C%0D%0A++++%22field5%22%3A+%22value3%22%0D%0A++%7D%0D%0A%7D</plainText>
+    </InputMessage>
+    <InputMessage timestamp="1653978650916" nodeId="FCMComposite_1_1" name="Invalid message 2" id="1653978650916-30">
+        <plainText>%7B%0D%0A++%22field1%22%3A+%22value1%22%2C%0D%0A++%22field2%22%3A+true%2C%0D%0A++%22group1%22%3A+%7B%0D%0A++++%22field4%22%3A+%22value2%22%2C%0D%0A++++%22field5%22%3A+-1%0D%0A++%7D%0D%0A%7D</plainText>
+    </InputMessage>
+    <InputMessage timestamp="1653978665430" nodeId="FCMComposite_1_1" name="Valid message 1" id="1653978665430-58">
+        <plainText>%7B%0D%0A++%22field1%22%3A+%22value1%22%2C%0D%0A++%22field2%22%3A+true%2C%0D%0A++%22field3%22%3A+1%2C%0D%0A++%22group1%22%3A+%7B%0D%0A++++%22field4%22%3A+%22value2%22%2C%0D%0A++++%22field5%22%3A+-1%0D%0A++%7D%0D%0A%7D</plainText>
+    </InputMessage>
+    <InputMessage timestamp="1653978738619" nodeId="FCMComposite_1_1" name="Empty message" id="1653978738619-135">
+        <plainText>%7B%7D</plainText>
+    </InputMessage>
+</MessagePool>
