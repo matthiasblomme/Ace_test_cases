@@ -25,10 +25,10 @@
       <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output" location="500,18">
         <translation xmi:type="utility:TranslatableString" key="OutTerminal.RetriesExhausted" bundleName="com/id/reprocess/timeout/ReprocessWithTimeoutSeperateTransaction" pluginId="ReprocessWithTimeout"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="731,187" computeExpression="esql://routine/com.id.reprocess.timeout#TimeoutSeperateTransaction_Continue.Main" computeMode="all">
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="721,192" computeExpression="esql://routine/com.id.reprocess.timeout#TimeoutSeperateTransaction_Continue.Main" computeMode="all">
         <translation xmi:type="utility:ConstantString" string="Continue"/>
       </nodes>
-      <nodes xmi:type="ComIbmMQGet.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="494,174" queueName="WAITQUEUE" messageDomainProperty="BLOB" getWithMessageID="true" browse="true" browseFirst="true">
+      <nodes xmi:type="ComIbmMQGet.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="484,179" queueName="WAITQUEUE" messageDomainProperty="BLOB" getWithMessageID="true" browse="true" browseFirst="true">
         <translation xmi:type="utility:ConstantString" string="MQ Get"/>
       </nodes>
       <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="235,94" computeExpression="esql://routine/com.id.reprocess.timeout#TimeoutSeperateTransaction_Retry.Main" computeMode="destinationAndMessage">
@@ -37,26 +37,38 @@
       <nodes xmi:type="ComIbmMQOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4" location="493,95" queueName="WAITQUEUE" transactionMode="no">
         <translation xmi:type="utility:ConstantString" string="MQ Output"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5" location="731,99" computeExpression="esql://routine/com.id.reprocess.timeout#TimeoutSeperateTransaction_StoreMsgId.Main" computeMode="destinationAndMessage">
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5" location="731,99" computeExpression="esql://routine/com.id.reprocess.timeout#TimeoutSeperateTransaction_StoreMsgId.Main">
         <translation xmi:type="utility:ConstantString" string="StoreMsgId"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_8" location="235,173" computeExpression="esql://routine/com.id.reprocess.timeout#TimeoutSeperateTransaction_CheckRetry.Main">
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_8" location="225,178" computeExpression="esql://routine/com.id.reprocess.timeout#TimeoutSeperateTransaction_CheckRetry.Main">
         <translation xmi:type="utility:ConstantString" string="CheckRetry"/>
       </nodes>
-      <nodes xmi:type="ComIbmTimeoutControl.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_9" location="736,257" uniqueIdentifier="retryTimeout" requestLocation="InputLocalEnvironment.TimeoutRequest">
+      <nodes xmi:type="ComIbmTimeoutControl.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_9" location="726,262" uniqueIdentifier="retryTimeout" requestLocation="InputLocalEnvironment.TimeoutRequest">
         <translation xmi:type="utility:ConstantString" string="Timeout Control"/>
       </nodes>
-      <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_7" location="250,253" labelName="TimeoutControl">
+      <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_7" location="240,258" labelName="TimeoutControl">
         <translation xmi:type="utility:ConstantString" string="TimeoutControl"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_10" location="963,148" computeExpression="esql://routine/com.id.reprocess.timeout#TimeoutSeperateTransaction_Dummy.Main">
-        <translation xmi:type="utility:ConstantString" string="Compute"/>
-      </nodes>
-      <nodes xmi:type="ComIbmTimeoutNotification.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_11" location="26,174" uniqueIdentifier="retryTimeout" transactionMode="no" operationMode="controlled">
+      <nodes xmi:type="ComIbmTimeoutNotification.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_11" location="18,178" uniqueIdentifier="retryTimeout" transactionMode="no" operationMode="controlled">
         <translation xmi:type="utility:ConstantString" string="Timeout Notification"/>
       </nodes>
-      <nodes xmi:type="ComIbmMQHeader.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_12" location="495,252" mqmdAAAOptions="Add header" mqmdCodedCharSetId="MQCCSI_Q_MGR" mqmdFormat="MQFMT_NONE" mqmdVersion="MQMD_VERSION_1" mqmdMsgType="MQMT_DATAGRAM" mqmdExpiry="MQEI_UNLIMITED" mqmdFeedback="MQFB_NONE" mqmdPriority="MQPRI_PRIORITY_AS_Q_DEF" mqmdPersistence="MQPER_PERSISTENCE_AS_Q_DEF" mqmdMsgId="MQMI_NONE" mqmdCorrelId="MQCI_NONE">
+      <nodes xmi:type="ComIbmMQHeader.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_12" location="485,257" mqmdAAAOptions="Add header" mqmdCodedCharSetId="MQCCSI_Q_MGR" mqmdFormat="MQFMT_NONE" mqmdVersion="MQMD_VERSION_1" mqmdMsgType="MQMT_DATAGRAM" mqmdExpiry="MQEI_UNLIMITED" mqmdFeedback="MQFB_NONE" mqmdPriority="MQPRI_PRIORITY_AS_Q_DEF" mqmdPersistence="MQPER_PERSISTENCE_AS_Q_DEF" mqmdMsgId="MQMI_NONE" mqmdCorrelId="MQCI_NONE">
         <translation xmi:type="utility:ConstantString" string="MQ Header"/>
+      </nodes>
+      <nodes xmi:type="ComIbmMQOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_13" location="484,336" queueName="ORIGINALMESSAGE">
+        <translation xmi:type="utility:ConstantString" string="MQ Output1"/>
+      </nodes>
+      <nodes xmi:type="ComIbmMQGet.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_14" location="486,410" queueName="ORIGINALMESSAGE" getWithCorrelID="true">
+        <translation xmi:type="utility:ConstantString" string="MQ Get1"/>
+      </nodes>
+      <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_16" location="244,337" labelName="StoreOriginalMessage">
+        <translation xmi:type="utility:ConstantString" string="StoreOriginalMessage"/>
+      </nodes>
+      <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_17" location="246,410" labelName="GetOriginalMessage">
+        <translation xmi:type="utility:ConstantString" string="GetOriginalMessage"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_18" location="731,405" computeExpression="esql://routine/com.id.reprocess.timeout#TimeoutSeperateTransaction_CopyOriginalMessage.Main">
+        <translation xmi:type="utility:ConstantString" string="CopyOriginalMessage"/>
       </nodes>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.out1" targetTerminalName="InTerminal.in"/>
@@ -69,8 +81,9 @@
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_13" targetNode="FCMComposite_1_8" sourceNode="FCMComposite_1_11" sourceTerminalName="OutTerminal.catch" targetTerminalName="InTerminal.in"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_15" targetNode="FCMComposite_1_12" sourceNode="FCMComposite_1_7" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_16" targetNode="FCMComposite_1_9" sourceNode="FCMComposite_1_12" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
-      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_17" targetNode="FCMComposite_1_10" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
-      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_18" targetNode="FCMComposite_1_10" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.warning" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_19" targetNode="FCMComposite_1_13" sourceNode="FCMComposite_1_16" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_20" targetNode="FCMComposite_1_14" sourceNode="FCMComposite_1_17" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_21" targetNode="FCMComposite_1_18" sourceNode="FCMComposite_1_14" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
     </composition>
     <propertyOrganizer>
       <propertyDescriptor groupName="Group.Reprocess" configurable="true" userDefined="true" describedAttribute="Property.MaxAttempts">
@@ -86,6 +99,10 @@
         </propertyDescriptor>
       </propertyDescriptor>
     </propertyOrganizer>
-    <stickyBoard/>
+    <stickyBoard>
+      <stickyNote location="1280,291" association="FCMComposite_1_1">
+        <body xmi:type="utility:ConstantString" string="Message needs to be restored here&#xA;Another mqput and mqget with correlid could work&#xA;Storing the message somewhere doesn't seem to work "/>
+      </stickyNote>
+    </stickyBoard>
   </eClassifiers>
 </ecore:EPackage>
