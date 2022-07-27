@@ -34,6 +34,13 @@ A couple of ways of creating a json array
 A flow to find out how to create a self closing xml tag `<lastfield2 />` and not just create an empty xml tag
 ` <lastfield2></ lastfield2>`
 
+### Custom Timout
+A library that contains 2 timeout processing flows. Let's say you want some retry logic in your code but you want to wait 
+for a certain amount of time between tries without breaking transactions or loosing some info from your environment.
+There are 2 subflows here
+ - ReprocessWithTimeoutSingleTransaction.subflow: this one uses mq message expiry and mqget to wait 
+ - ReprocessWithTimeoutSeperateTransaction.subflow: this one uses timeout notification in combination with mq message expiry
+
 ### Delete Array Contents
 A flow to see what the best way is to delete the contents from an array in the message tree without deleting and
 recreating the entire array.
