@@ -1,0 +1,86 @@
+BROKER SCHEMA com.id.reprocess.timeout
+
+DECLARE msgid SHARED BLOB;
+DECLARE attempt SHARED INTEGER 0;
+DECLARE originalMessage SHARED CHARACTER;
+
+CREATE COMPUTE MODULE TimeoutSeperateTransaction_CheckRetry
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET OutputRoot.MQMD.MsgId = msgid;
+		RETURN TRUE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE TimeoutSeperateTransaction_Retry
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		IF (attempt = 0) THEN
+			SET originalMessage = InputRoot;
+		END IF;
+		
+		SET attempt = attempt + 1;
+		
+		IF (attempt > MaxAttempts) THEN
+			SET msgid = '';
+			SET attempt = 0;
+			SET originalMessage = '';
+			return true;
+		END IF;
+		
+		-- Send timeout message
+		SET OutputRoot.MQMD.Expiry = TimeOut; -- 30s
+		SET OutputRoot.JSON.Data.Message = 'wait';
+		PROPAGATE TO TERMINAL 'out1';
+		
+		-- Send timeout control
+		SET OutputLocalEnvironment.TimeoutRequest.Action = 'SET';
+		SET OutputLocalEnvironment.TimeoutRequest.Identifier = 'retryTimeout';
+		SET OutputLocalEnvironment.TimeoutRequest.Count = TimeOut / 10;
+		SET OutputLocalEnvironment.TimeoutRequest.Interval = 1;
+		PROPAGATE TO LABEL 'TimeoutControl';
+		
+		RETURN FALSE;
+	END;
+	
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+	
+END MODULE;
+
+CREATE COMPUTE MODULE TimeoutSeperateTransaction_Continue
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- Cancel timeout control
+		SET OutputLocalEnvironment.TimeoutRequest.Action = 'CANCEL';
+		SET OutputLocalEnvironment.TimeoutRequest.Identifier = 'retryTimeout';
+		PROPAGATE TO LABEL 'TimeoutControl';
+		
+		-- restore original message and retry
+		SET OutputRoot = originalMessage;
+		PROPAGATE TO LABEL RetryLabel;
+		RETURN FALSE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE TimeoutSeperateTransaction_StoreMsgId
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET msgid = InputLocalEnvironment.WrittenDestination.MQ.DestinationData.msgId;
+		RETURN FALSE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE TimeoutSeperateTransaction_Dummy
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		RETURN TRUE;
+	END;
+END MODULE;
