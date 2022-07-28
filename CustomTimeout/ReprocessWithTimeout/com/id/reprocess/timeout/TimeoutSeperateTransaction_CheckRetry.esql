@@ -42,7 +42,7 @@ CREATE COMPUTE MODULE TimeoutSeperateTransaction_Retry
 		-- Send timeout control
 		SET OutputLocalEnvironment.TimeoutRequest.Action = 'SET';
 		SET OutputLocalEnvironment.TimeoutRequest.Identifier = 'retryTimeout';
-		SET OutputLocalEnvironment.TimeoutRequest.Count = TimeOut / 10;
+		SET OutputLocalEnvironment.TimeoutRequest.Count = -1;
 		SET OutputLocalEnvironment.TimeoutRequest.Interval = 1;
 		SET OutputLocalEnvironment.OriginalMessage = Environment.variables.originalMessage;
 		PROPAGATE TO LABEL 'TimeoutControl';
