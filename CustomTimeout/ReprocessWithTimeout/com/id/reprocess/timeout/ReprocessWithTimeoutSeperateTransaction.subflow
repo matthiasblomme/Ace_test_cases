@@ -99,10 +99,6 @@
         </propertyDescriptor>
       </propertyDescriptor>
     </propertyOrganizer>
-    <stickyBoard>
-      <stickyNote location="1280,291" association="FCMComposite_1_1">
-        <body xmi:type="utility:ConstantString" string="Message needs to be restored here&#xA;Another mqput and mqget with correlid could work&#xA;Storing the message somewhere doesn't seem to work "/>
-      </stickyNote>
-    </stickyBoard>
+    <stickyBoard/>
   </eClassifiers>
 </ecore:EPackage>
