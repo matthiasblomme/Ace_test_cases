@@ -13,8 +13,11 @@ CREATE COMPUTE MODULE createFieldCompute
 		-- creates the following <lastfield2></ lastfield2>
 		SET OutputRoot.XMLNSC.root.lastField2 = '';
 		
-		-- creates the following <lastfield2 />
+		-- creates the following <lastfield3 />
 		CREATE LASTCHILD of OutputRoot.XMLNSC.root NAME 'lastField3';
+		
+		--creates the following empty tags <lastfield4 />
+		SET OutputRoot.XMLNSC.root.lastField4.(XML.Content) = NULL;
 		
 		RETURN TRUE;
 	END;
