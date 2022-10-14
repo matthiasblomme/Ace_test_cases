@@ -52,6 +52,9 @@ A very basic and dumb flow to demonstrate how to convert between json and xml wi
 Validating JSON messages on the http input node and with a validate node. 
 Supplied an invalid json schema (with https for the schema definition) since I ran into that paticular issue.
 
+### Sharepoint File Upload
+Uploading a file to sharepoint including authentication via an app
+
 ### Single and Double Quotes
 An esql test to remove single and/or double quotes
 
