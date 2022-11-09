@@ -1,0 +1,51 @@
+BROKER SCHEMA sharepoint.upload
+
+CREATE COMPUTE MODULE InputError
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.error.source = 'file input';
+		SET Environment.error.log = 'Input error from fileInput';
+		PROPAGATE TO LABEL 'LOG';
+		RETURN FALSE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE TokenError
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.error.source = 'token request';
+		SET Environment.error.log = CAST(InputRoot.BLOB.BLOB AS CHARACTER CCSID 1208);
+		PROPAGATE TO LABEL 'LOG';
+		RETURN FALSE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE RequestError
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.error.source = 'upload request';
+		SET Environment.error.log = CAST(InputRoot.BLOB.BLOB AS CHARACTER CCSID 1208);
+		PROPAGATE TO LABEL 'LOG';
+		RETURN FALSE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE RequestDownloadError
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.error.source = 'download request';
+		SET Environment.error.log = CAST(InputRoot.BLOB.BLOB AS CHARACTER CCSID 1208);
+		PROPAGATE TO LABEL 'LOG';
+		RETURN FALSE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE RequestDeleteError
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.error.source = 'delete request';
+		SET Environment.error.log = CAST(InputRoot.BLOB.BLOB AS CHARACTER CCSID 1208);
+		PROPAGATE TO LABEL 'LOG';
+		RETURN FALSE;
+	END;
+END MODULE;
