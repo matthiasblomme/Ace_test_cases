@@ -15,7 +15,7 @@
     <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.client_id" name="client_id" lowerBound="1" defaultValueLiteral="...">
       <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eStructuralFeatures>
-    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.client_secret" name="client_secret" lowerBound="1" defaultValueLiteral="..">
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.client_secret" name="client_secret" lowerBound="1" defaultValueLiteral="...">
       <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eStructuralFeatures>
     <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.tenant_id" name="tenant_id" lowerBound="1" defaultValueLiteral="...">
@@ -25,29 +25,32 @@
     <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/SharepointFileUpload/icons/full/obj16/uploadFile.gif"/>
     <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/SharepointFileUpload/icons/full/obj30/uploadFile.gif"/>
     <composition>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4" location="350,149" computeExpression="esql://routine/sharepoint.upload#HandleTokenReply.Main" computeMode="destinationAndMessage">
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4" location="502,150" computeExpression="esql://routine/sharepoint.upload#HandleTokenReply.Main" computeMode="destinationAndMessage">
         <translation xmi:type="utility:ConstantString" string="HandleTokenReply"/>
       </nodes>
       <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_6" location="208,241" computeExpression="esql://routine/sharepoint.upload#InputError.Main">
         <translation xmi:type="utility:ConstantString" string="InputError"/>
       </nodes>
-      <nodes xmi:type="ComIbmWSRequest.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_8" location="512,149" URLSpecifier="http://localhost:8080" httpMethod="PUT" httpVersion="1.1" protocol="TLS">
+      <nodes xmi:type="ComIbmWSRequest.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_8" location="664,150" URLSpecifier="http://localhost:8080" httpMethod="PUT" httpVersion="1.1" protocol="TLS" messageDomainProperty="JSON">
         <translation xmi:type="utility:ConstantString" string="RequestUpload"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_9" location="690,149" computeExpression="esql://routine/sharepoint.upload#HandleUploadReply.Main">
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_9" location="842,150" computeExpression="esql://routine/sharepoint.upload#HandleUploadReply.Main">
         <translation xmi:type="utility:ConstantString" string="HandleReply"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_15" location="692,50" computeExpression="esql://routine/sharepoint.upload#RequestError.Main">
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_15" location="844,51" computeExpression="esql://routine/sharepoint.upload#RequestError.Main">
         <translation xmi:type="utility:ConstantString" string="RequestError"/>
       </nodes>
       <nodes xmi:type="ComIbmFileInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_10" location="67,157" inputDirectory="C:\Matthias\GIT\sharepointFileUpload\data" processedFileAction="moveToArchive" replaceDuplicateArchives="true" messageDomainProperty="BLOB">
         <translation xmi:type="utility:ConstantString" string="File Input"/>
       </nodes>
-      <nodes xmi:type="sharepoint_requestToken.subflow:FCMComposite_1" xmi:id="FCMComposite_1_1" location="205,154">
+      <nodes xmi:type="sharepoint_requestToken.subflow:FCMComposite_1" xmi:id="FCMComposite_1_1" location="357,155">
         <translation xmi:type="utility:ConstantString" string="requestToken"/>
       </nodes>
       <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="214,344" labelName="LOG">
         <translation xmi:type="utility:ConstantString" string="LOG"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="226,155" computeExpression="esql://routine/sharepoint#uploadFile_Compute.Main">
+        <translation xmi:type="utility:ConstantString" string="StoreFile"/>
       </nodes>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_14" targetNode="FCMComposite_1_8" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_16" targetNode="FCMComposite_1_9" sourceNode="FCMComposite_1_8" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
@@ -55,8 +58,9 @@
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_26" targetNode="FCMComposite_1_15" sourceNode="FCMComposite_1_8" sourceTerminalName="OutTerminal.error" targetTerminalName="InTerminal.in"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.catch" targetTerminalName="InTerminal.in"/>
-      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_1" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_1" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
     </composition>
     <propertyOrganizer>
       <propertyDescriptor groupName="Group.Upload" configurable="true" userDefined="true" describedAttribute="Property.site_id">
