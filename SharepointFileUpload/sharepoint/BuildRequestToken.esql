@@ -1,0 +1,27 @@
+BROKER SCHEMA sharepoint
+
+
+DECLARE client_id EXTERNAL CHAR;
+DECLARE client_secret EXTERNAL CHAR;
+DECLARE tenant_id EXTERNAL CHARACTER;
+
+CREATE COMPUTE MODULE BuildRequestToken
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.Uuid = UUIDASCHAR;
+		
+		-- get params from policy and security identifier
+		DECLARE payload CHARACTER;
+		SET payload = 'grant_type=client_credentials';
+		SET payload = payload || '&client_id= ' || client_id;
+		SET payload = payload || '&client_secret=' || client_secret;
+		SET payload = payload || '&scope=https://graph.microsoft.com/.default';
+		
+		SET OutputRoot.HTTPRequestHeader."Content-Type" = 'application/x-www-form-urlencoded';
+		SET InputLocalEnvironment.Destination.HTTP.RequestURL = 'https://login.microsoftonline.com/' || tenant_id || '/oauth2/v2.0/token';
+		SET OutputRoot.BLOB.BLOB = CAST(payload AS BLOB CCSID 1208);
+		
+		RETURN TRUE;
+	END;
+END MODULE;
+
