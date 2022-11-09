@@ -19,11 +19,6 @@ CREATE COMPUTE MODULE HandleTokenReply
 		SET OutputRoot.HTTPRequestHeader."Connection" = 'keep-alive';
 		SET OutputRoot.HTTPRequestHeader."authorization" = 'Bearer ' || Environment.token.Bearer;
 
-		-- https://graph.microsoft.com/v1.0/sites/globalpsaemea.sharepoint.com,e24a96c5-7239-451f-9e8e-85642de28de2,f04a12b9-5fb6-4469-abdc-8f38f02a9d76
-		-- /drives/b!xZZK4jlyH0WejoVkLeKN4rkSSvC2X2lEq9yPOPAqnXYky4hdlDSEQIb0IVCCQoAJ
-		-- /items/01LYTIZUYEMF6NOJX2XRHKLFZHQW6FAR34
-		-- :/uploadtest.txt
-		-- :/content
 		SET OutputLocalEnvironment.Destination.HTTP.RequestURL = 'https://graph.microsoft.com/v1.0/sites/' || site_id 
 																|| '/drives/' || drive_id 
 																|| '/items/' || parent_id
