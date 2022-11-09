@@ -1,13 +1,16 @@
-BROKER SCHEMA sharepoint.upload
+BROKER SCHEMA sharepoint.download
 
 
-CREATE COMPUTE MODULE test_HandleUploadReply
+
+CREATE COMPUTE MODULE HandleRequestDownloadReply
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
-		SET Environment.Reply = CAST(InputRoot.BLOB.BLOB AS CHAR CCSID 1208);
-		
+		SET OutputLocalEnvironment.Destination.File.Name = Environment.Download.FileName;
+		SET OutputRoot.BLOB.BLOB = InputRoot.BLOB.BLOB;
 		-- CALL CopyMessageHeaders();
 		-- CALL CopyEntireMessage();
+		
+		-- delete file from SP
 		RETURN TRUE;
 	END;
 
