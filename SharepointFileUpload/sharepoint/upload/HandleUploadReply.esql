@@ -1,9 +1,11 @@
 BROKER SCHEMA sharepoint.upload
 
 
-CREATE COMPUTE MODULE test_Error
+CREATE COMPUTE MODULE HandleUploadReply
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
+		-- handle reply ok
+
 		-- CALL CopyMessageHeaders();
 		-- CALL CopyEntireMessage();
 		RETURN TRUE;
