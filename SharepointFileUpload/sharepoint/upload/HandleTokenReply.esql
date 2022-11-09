@@ -19,11 +19,6 @@ CREATE COMPUTE MODULE HandleTokenReply
 		SET OutputRoot.HTTPRequestHeader."Connection" = 'keep-alive';
 		SET OutputRoot.HTTPRequestHeader."authorization" = 'Bearer ' || Environment.token.Bearer;
 
-		-- https://graph.microsoft.com/v1.0/sites/***REMOVED***
-		-- /drives/***REMOVED***
-		-- /items/***REMOVED***
-		-- :/uploadtest.txt
-		-- :/content
 		SET OutputLocalEnvironment.Destination.HTTP.RequestURL = 'https://graph.microsoft.com/v1.0/sites/' || site_id 
 																|| '/drives/' || drive_id 
 																|| '/items/' || parent_id
