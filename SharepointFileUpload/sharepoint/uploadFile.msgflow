@@ -3,13 +3,13 @@
     nsURI="sharepoint/uploadFile.msgflow" nsPrefix="sharepoint_uploadFile.msgflow">
   <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" nodeLayoutStyle="SQUARE">
     <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
-    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.site_id" name="site_id" lowerBound="1" defaultValueLiteral="globalpsaemea.sharepoint.com,e24a96c5-7239-451f-9e8e-85642de28de2,f04a12b9-5fb6-4469-abdc-8f38f02a9d76">
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.site_id" name="site_id" lowerBound="1" defaultValueLiteral="...">
       <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eStructuralFeatures>
-    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.drive_id" name="drive_id" lowerBound="1" defaultValueLiteral="b!xZZK4jlyH0WejoVkLeKN4rkSSvC2X2lEq9yPOPAqnXYky4hdlDSEQIb0IVCCQoAJ">
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.drive_id" name="drive_id" lowerBound="1" defaultValueLiteral="...">
       <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eStructuralFeatures>
-    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.parent_id" name="parent_id" lowerBound="1" defaultValueLiteral="01LYTIZUYEMF6NOJX2XRHKLFZHQW6FAR34">
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.parent_id" name="parent_id" lowerBound="1" defaultValueLiteral="...">
       <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eStructuralFeatures>
     <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.client_id" name="client_id" lowerBound="1" defaultValueLiteral="...">
