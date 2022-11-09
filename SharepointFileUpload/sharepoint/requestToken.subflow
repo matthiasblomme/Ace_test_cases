@@ -18,7 +18,7 @@
       <nodes xmi:type="eflow:FCMSource" xmi:id="InTerminal.Input" location="20,20">
         <translation xmi:type="utility:TranslatableString" key="InTerminal.Input" bundleName="sharepoint/requestToken" pluginId="SharepointFileUpload"/>
       </nodes>
-      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output" location="478,23">
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output" location="595,22">
         <translation xmi:type="utility:TranslatableString" key="OutTerminal.Output" bundleName="sharepoint/requestToken" pluginId="SharepointFileUpload"/>
       </nodes>
       <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="131,22" computeExpression="esql://routine/sharepoint#BuildRequestToken.Main">
