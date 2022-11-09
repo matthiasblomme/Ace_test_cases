@@ -8,16 +8,14 @@ CREATE COMPUTE MODULE HandleTokenReply
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
 		-- handle token reply ok
-		SET Environment.token.Bearer = InputRoot.JSON.Data.access_token;
-		SET Environment.request.file = InputLocalEnvironment.File.Name;
+		SET Environment.request.Bearer = InputRoot.JSON.Data.access_token;
 		
 		-- build upload request
 		SET OutputRoot.HTTPRequestHeader."Content-Type" = 'text/plain';
-		SET OutputRoot.HTTPRequestHeader."Content-Length" = LENGTH(Environment.input.filebody);
+		SET OutputRoot.HTTPRequestHeader."Content-Length" = LENGTH(Environment.request.filebody);
 		SET OutputRoot.HTTPRequestHeader."Accept" = '*/*';
-		--SET OutputRoot.HTTPRequestHeader."Accept-Encoding" = 'gzip, deflate, br';
 		SET OutputRoot.HTTPRequestHeader."Connection" = 'keep-alive';
-		SET OutputRoot.HTTPRequestHeader."authorization" = 'Bearer ' || Environment.token.Bearer;
+		SET OutputRoot.HTTPRequestHeader."authorization" = 'Bearer ' || Environment.request.Bearer;
 
 		SET OutputLocalEnvironment.Destination.HTTP.RequestURL = 'https://graph.microsoft.com/v1.0/sites/' || site_id 
 																|| '/drives/' || drive_id 
