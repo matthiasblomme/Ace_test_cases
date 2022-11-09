@@ -19,18 +19,11 @@ CREATE COMPUTE MODULE HandleTokenReply
 		SET OutputRoot.HTTPRequestHeader."Connection" = 'keep-alive';
 		SET OutputRoot.HTTPRequestHeader."authorization" = 'Bearer ' || Environment.token.Bearer;
 
-		-- https://graph.microsoft.com/v1.0/sites/example.sharepoint.com,00000000-0000-0000-0000-000000000001,00000000-0000-0000-0000-000000000002
-		-- /drives/b!xZZK4jlyH0WejoVkLeKN4rkSSvC2X2lEq9yPOPAqnXYky4hdlDSEQIb0IVCCQoAJ
-		-- /items/01LYTIZUYEMF6NOJX2XRHKLFZHQW6FAR34
-		-- :/uploadtest.txt
-		-- :/content
 		SET OutputLocalEnvironment.Destination.HTTP.RequestURL = 'https://graph.microsoft.com/v1.0/sites/' || site_id 
 																|| '/drives/' || drive_id 
 																|| '/items/' || parent_id
 																|| '/children';										
-		
-		-- todo parse json response to get download link
-		
+
 		
 		RETURN TRUE;
 	END;
