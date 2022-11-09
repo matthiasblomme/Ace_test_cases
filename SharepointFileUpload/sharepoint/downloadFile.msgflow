@@ -12,13 +12,13 @@
     <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.parent_id" name="parent_id" lowerBound="1" defaultValueLiteral="...">
       <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eStructuralFeatures>
-    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.client_id" name="client_id" lowerBound="1" defaultValueLiteral="***REMOVED***">
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.client_id" name="client_id" lowerBound="1" defaultValueLiteral="...">
       <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eStructuralFeatures>
-    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.client_secret" name="client_secret" lowerBound="1" defaultValueLiteral="***REMOVED***">
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.client_secret" name="client_secret" lowerBound="1" defaultValueLiteral="...">
       <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eStructuralFeatures>
-    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.tenant_id" name="tenant_id" lowerBound="1" defaultValueLiteral="***REMOVED***">
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.tenant_id" name="tenant_id" lowerBound="1" defaultValueLiteral="...">
       <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eStructuralFeatures>
     <translation xmi:type="utility:TranslatableString" key="downloadFile" bundleName="sharepoint/downloadFile" pluginId="SharepointFileUpload"/>
