@@ -1,0 +1,52 @@
+BROKER SCHEMA sharepoint.upload
+
+DECLARE site_id EXTERNAL CHARACTER;
+DECLARE drive_id EXTERNAL CHARACTER;
+DECLARE parent_id EXTERNAL CHARACTER;
+
+CREATE COMPUTE MODULE HandleTokenReply
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- handle token reply ok
+		SET Environment.token.Bearer = InputRoot.JSON.Data.access_token;
+		SET Environment.request.file = InputLocalEnvironment.File.Name;
+		
+		-- build upload request
+		SET OutputRoot.HTTPRequestHeader."Content-Type" = 'text/plain';
+		SET OutputRoot.HTTPRequestHeader."Content-Length" = LENGTH(Environment.input.filebody);
+		SET OutputRoot.HTTPRequestHeader."Accept" = '*/*';
+		--SET OutputRoot.HTTPRequestHeader."Accept-Encoding" = 'gzip, deflate, br';
+		SET OutputRoot.HTTPRequestHeader."Connection" = 'keep-alive';
+		SET OutputRoot.HTTPRequestHeader."authorization" = 'Bearer ' || Environment.token.Bearer;
+
+		-- https://graph.microsoft.com/v1.0/sites/globalpsaemea.sharepoint.com,e24a96c5-7239-451f-9e8e-85642de28de2,f04a12b9-5fb6-4469-abdc-8f38f02a9d76
+		-- /drives/b!xZZK4jlyH0WejoVkLeKN4rkSSvC2X2lEq9yPOPAqnXYky4hdlDSEQIb0IVCCQoAJ
+		-- /items/01LYTIZUYEMF6NOJX2XRHKLFZHQW6FAR34
+		-- :/uploadtest.txt
+		-- :/content
+		SET OutputLocalEnvironment.Destination.HTTP.RequestURL = 'https://graph.microsoft.com/v1.0/sites/' || site_id 
+																|| '/drives/' || drive_id 
+																|| '/items/' || parent_id
+																|| ':/' || Environment.request.file
+																|| ':/content';										
+		
+		SET OutputRoot.BLOB.BLOB = Environment.request.filebody;
+		
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
+
