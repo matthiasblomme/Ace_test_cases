@@ -1,0 +1,61 @@
+BROKER SCHEMA sharepointlibrary.upload
+
+DECLARE site_id EXTERNAL CHAR 'replace';
+DECLARE drive_id EXTERNAL CHAR 'replace';
+DECLARE parent_id EXTERNAL CHAR 'replace';
+DECLARE base_url EXTERNAL CHAR 'https://graph.microsoft.com/v1.0/sites';
+
+CREATE COMPUTE MODULE BuildUploadRequest
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- Copy http header 
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'HTTPRequestHeader';
+		SET OutputRoot.HTTPRequestHeader = InputRoot.HTTPRequestHeader;
+		
+		-- check variables, prefer outputlocalenv over env over udp
+		IF (NOT EXISTS(InputLocalEnvironment.Destination.HTTP.RequestURL[])) THEN
+			SET OutputLocalEnvironment.Destination.HTTP.RequestURL = base_url;
+		ELSE 
+			SET OutputLocalEnvironment.Destination.HTTP.RequestURL = InputLocalEnvironment.Destination.HTTP.RequestURL;
+		END IF;	
+		
+		IF (NOT EXISTS(InputLocalEnvironment.Destination.HTTP.RequestLine.RequestURI[])) THEN
+			SET Environment.Variables.site_id = COALESCE(Environment.Variables.site_id, site_id);
+			SET Environment.Variables.drive_id = COALESCE(Environment.Variables.drive_id, drive_id);
+			SET Environment.Variables.parent_id = COALESCE(Environment.Variables.parent_id, parent_id);
+			SET OutputLocalEnvironment.Destination.HTTP.RequestURL = InputLocalEnvironment.Destination.HTTP.RequestURL 
+																|| '/' || Environment.Variables.site_id 
+																|| '/drives/' || Environment.Variables.drive_id 
+																|| '/items/' || Environment.Variables.parent_id
+																|| ':/' || Environment.Variables.request.file
+																|| ':/content';		
+		ELSE
+			SET OutputLocalEnvironment.Destination.HTTP.RequestURL = InputLocalEnvironment.Destination.HTTP.RequestURL || InputLocalEnvironment.Destination.HTTP.RequestLine.RequestURI;													
+		END IF;
+		
+		-- build upload request
+		SET OutputRoot.HTTPRequestHeader."Content-Type" = 'text/plain';
+		SET OutputRoot.HTTPRequestHeader."Content-Length" = LENGTH(Environment.Variables.request.filebody);
+		SET OutputRoot.HTTPRequestHeader."Accept" = '*/*';
+		SET OutputRoot.HTTPRequestHeader."Connection" = 'keep-alive';
+		
+		-- log upload request
+		SET Environment.Variables.Log.Entry.type = 'INFO';
+		SET Environment.Variables.Log.Entry.status = 'upload-request';
+		SET Environment.Variables.Log.Entry.guid = Environment.Variables.ActivityId;
+		SET Environment.Variables.Log.Entry.uploadFile = Environment.Variables.fileName;
+		SET Environment.Variables.Log.Entry.aceApplication = ApplicationLabel;
+		SET Environment.Variables.Log.Entry.messageFlow = MessageFlowLabel;
+		SET Environment.Variables.Log.Entry.requestURL = OutputLocalEnvironment.Destination.HTTP.RequestURL;
+		PROPAGATE TO LABEL 'UPLOADLOG' DELETE NONE;
+		
+		-- set body and send request, prefer input over env	
+		IF EXISTS(InputRoot.BLOB.*[]) THEN
+			SET OutputRoot.BLOB.BLOB = InputRoot.BLOB.BLOB;
+		ELSEIF EXISTS(Environment.Variables.fileContents[]) THEN
+			SET OutputRoot.BLOB.BLOB = Environment.Variables.request.filebody;
+		END IF;
+		
+		RETURN TRUE;
+	END;
+END MODULE;
