@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmFileInput.msgnode="ComIbmFileInput.msgnode" xmlns:ComIbmLabel.msgnode="ComIbmLabel.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:sharepointlibrary_token_requestToken.subflow="sharepointlibrary/token/requestToken.subflow" xmlns:sharepointlibrary_upload_requestUpload.subflow="sharepointlibrary/upload/requestUpload.subflow"
+    xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="sharepoint/uploadFile.msgflow" nsPrefix="sharepoint_uploadFile.msgflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" nodeLayoutStyle="SQUARE">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.site_id" name="site_id" lowerBound="1" defaultValueLiteral="...">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.drive_id" name="drive_id" lowerBound="1" defaultValueLiteral="...">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.parent_id" name="parent_id" lowerBound="1" defaultValueLiteral="...">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <translation xmi:type="utility:TranslatableString" key="uploadFile" bundleName="sharepoint/uploadFile" pluginId="SharepointFileUpload"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/SharepointFileUpload/icons/full/obj16/uploadFile.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/SharepointFileUpload/icons/full/obj30/uploadFile.gif"/>
+    <composition>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_6" location="208,241" computeExpression="esql://routine/sharepoint.upload#InputError.Main">
+        <translation xmi:type="utility:ConstantString" string="InputError"/>
+      </nodes>
+      <nodes xmi:type="ComIbmFileInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_10" location="67,157" inputDirectory="C:\Matthias\GIT\sharepointFileUpload\data" processedFileAction="moveToArchive" replaceDuplicateArchives="true" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="File Input"/>
+      </nodes>
+      <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="214,344" labelName="LOG">
+        <translation xmi:type="utility:ConstantString" string="LOG"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="226,155" computeExpression="esql://routine/sharepoint#uploadFile_Compute.Main">
+        <translation xmi:type="utility:ConstantString" string="StoreFile"/>
+      </nodes>
+      <nodes xmi:type="sharepointlibrary_token_requestToken.subflow:FCMComposite_1" xmi:id="FCMComposite_1_1" location="362,157">
+        <translation xmi:type="utility:ConstantString" string="requestToken"/>
+      </nodes>
+      <nodes xmi:type="sharepointlibrary_upload_requestUpload.subflow:FCMComposite_1" xmi:id="FCMComposite_1_4" location="536,153">
+        <translation xmi:type="utility:ConstantString" string="requestUpload"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.catch" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_1" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.Input"/>
+    </composition>
+    <propertyOrganizer>
+      <propertyDescriptor groupName="Group.Upload" configurable="true" userDefined="true" describedAttribute="Property.site_id">
+        <propertyName xmi:type="utility:TranslatableString" key="Property.site_id" bundleName="sharepoint/uploadFile" pluginId="SharepointFileUpload"/>
+        <propertyDescriptor groupName="Group.Upload" configurable="true" userDefined="true" describedAttribute="Property.drive_id">
+          <propertyName xmi:type="utility:TranslatableString" key="Property.drive_id" bundleName="sharepoint/uploadFile" pluginId="SharepointFileUpload"/>
+          <propertyDescriptor groupName="Group.Upload" configurable="true" userDefined="true" describedAttribute="Property.parent_id">
+            <propertyName xmi:type="utility:TranslatableString" key="Property.parent_id" bundleName="sharepoint/uploadFile" pluginId="SharepointFileUpload"/>
+          </propertyDescriptor>
+        </propertyDescriptor>
+      </propertyDescriptor>
+    </propertyOrganizer>
+    <stickyBoard>
+      <stickyNote location="224,410">
+        <body xmi:type="utility:ConstantString" string="client secret needs to be added to keyvault"/>
+      </stickyNote>
+    </stickyBoard>
+  </eClassifiers>
+</ecore:EPackage>
