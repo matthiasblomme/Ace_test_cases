@@ -1,0 +1,18 @@
+BROKER SCHEMA sharepointlibrary.download
+
+CREATE COMPUTE MODULE requestDelete_RequestError
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+	-- check and log error 
+		CALL sharepointlibrary.HandleErrorReply(InputRoot, InputExceptionList, Environment, 'delete-reply');
+		PROPAGATE TO LABEL 'DELETELOG';
+		
+		SET Environment.Variables.oAuth.Retry = true;
+		SET Environment.Variables.oAuth.RetryReason = 'HTTP Error ' || CAST(InputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" AS CHAR);
+				
+		-- propagate error reply for further processing
+		SET OutputRoot = InputRoot;
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		RETURN TRUE;
+	END;
+END MODULE;

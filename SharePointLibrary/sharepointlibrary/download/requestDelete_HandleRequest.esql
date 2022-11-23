@@ -1,0 +1,19 @@
+BROKER SCHEMA sharepointlibrary.download
+
+CREATE COMPUTE MODULE requestDelete_HandleRequest
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- log reply
+		SET Environment.Variables.Log.Entry.type = 'INFO';
+		SET Environment.Variables.Log.Entry.status = 'delete-reply';
+		SET Environment.Variables.Log.Entry.statusCode = InputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code";
+		SET Environment.Variables.Log.Entry.guid = Environment.Variables.ActivityId;
+		SET Environment.Variables.Log.Entry.aceApplication = ApplicationLabel;
+		SET Environment.Variables.Log.Entry.messageFlow = MessageFlowLabel;
+		SET Environment.Variables.Log.Entry.fileid = InputRoot.JSON.Data.id;
+		PROPAGATE TO LABEL 'DELETELOG';
+		
+		-- continue
+		RETURN TRUE;
+	END;
+END MODULE;

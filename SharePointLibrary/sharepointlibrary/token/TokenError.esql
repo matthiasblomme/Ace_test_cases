@@ -1,0 +1,16 @@
+BROKER SCHEMA sharepointlibrary.token
+
+CREATE COMPUTE MODULE TokenError
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- check and log error 
+		CALL sharepointlibrary.HandleErrorReply(InputRoot, InputExceptionList, Environment, 'token-reply');
+		PROPAGATE TO LABEL 'TOKENLOG' DELETE NONE;
+		
+		-- propagate error reply for further processing
+		SET OutputRoot = InputRoot;
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		RETURN TRUE;
+	END;
+END MODULE;
+
