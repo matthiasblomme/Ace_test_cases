@@ -1,0 +1,20 @@
+BROKER SCHEMA sharepointlibrary.upload
+
+CREATE COMPUTE MODULE HandleUploadReply
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- log reply
+		SET Environment.Variables.Log.Entry.type = 'INFO';
+		SET Environment.Variables.Log.Entry.status = 'upload-reply';
+		SET Environment.Variables.Log.Entry.statusCode = InputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code";
+		SET Environment.Variables.Log.Entry.guid = Environment.Variables.ActivityId;
+		SET Environment.Variables.Log.Entry.aceApplication = ApplicationLabel;
+		SET Environment.Variables.Log.Entry.messageFlow = MessageFlowLabel;
+		SET Environment.Variables.Log.Entry.fileid = InputRoot.JSON.Data.id;
+		PROPAGATE TO LABEL 'UPLOADLOG';
+		
+		-- continue
+		RETURN TRUE;
+	END;
+END MODULE;
+
