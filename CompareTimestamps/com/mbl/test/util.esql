@@ -1,0 +1,10 @@
+BROKER SCHEMA com.mbl.test
+
+CREATE PROCEDURE getTime(INOUT data TIME) BEGIN
+	SET data =  CURRENT_TIME;
+END;
+
+CREATE FUNCTION  getTimeJava()
+	RETURNS CHARACTER
+	LANGUAGE JAVA 
+	EXTERNAL NAME "com.mbl.test.getTime.getTimeStamp";
