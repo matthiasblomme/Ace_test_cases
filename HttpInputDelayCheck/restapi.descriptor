@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:restapiDescriptor xmlns="http://com.ibm.etools.mft.descriptor.base" xmlns:ns2="http://com.ibm.etools.mft.descriptor.restapi" definitionType="openapi_3" definitionFile="openapi.json" implementation="gen/HttpInputDelayCheck.msgflow" https="false" definitionWithExtRef="false" faultFormat="JSON">
+    <ns2:operations>
+        <ns2:operation name="getDelay" implementation="getDelay.subflow"/>
+    </ns2:operations>
+    <ns2:errorHandlers>
+        <ns2:errorHandler type="CATCH" implementation="HttpInputDelayCheckInputCatchHandler.subflow"/>
+        <ns2:errorHandler type="FAILURE" implementation="HttpInputDelayCheckInputFailureHandler.subflow"/>
+        <ns2:errorHandler type="TIMEOUT" implementation="HttpInputDelayCheckInputTimeoutHandler.subflow"/>
+    </ns2:errorHandlers>
+</ns2:restapiDescriptor>
