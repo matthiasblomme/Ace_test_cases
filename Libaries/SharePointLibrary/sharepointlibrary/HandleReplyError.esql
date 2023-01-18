@@ -1,0 +1,49 @@
+BROKER SCHEMA sharepointlibrary
+
+CREATE PROCEDURE HandleErrorReply(IN InputRoot REFERENCE, IN InputExceptionList REFERENCE, IN Environment REFERENCE, IN Status CHARACTER) BEGIN
+	
+	IF CARDINALITY(InputExceptionList.*[]) > 0 THEN
+		DECLARE ErrorNum INT;
+		DECLARE ErrorText CHARACTER;
+		CALL getLastExceptionDetail(InputExceptionList, ErrorNum, ErrorText);
+		SET Environment.Variables.Log.Entry.errorNumber = ErrorNum;
+		SET Environment.Variables.Log.Entry.errorText = ErrorText;	
+	ELSEIF EXISTS(InputRoot.BLOB.*[]) THEN
+		SET Environment.Variables.Log.Entry.errorText = CAST(InputRoot.BLOB.BLOB AS CHARACTER CCSID 1208);
+		SET Environment.Variables.Log.Entry.errorNumber = InputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code";
+	ELSEIF EXISTS(InputRoot.JSON.*[]) THEN
+		SET Environment.Variables.Log.Entry.errorText = InputRoot.JSON.Data.error;
+		SET Environment.Variables.Log.Entry.errorNumber = InputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code";
+	ELSE
+		SET Environment.Variables.Log.Entry.errorText = 'Unknown exception type';
+	END IF;
+
+	SET Environment.Variables.Log.Entry.type = 'ERROR';
+	SET Environment.Variables.Log.Entry.status = Status;
+	SET Environment.Variables.Log.Entry.guid = Environment.Variables.ActivityId;
+	SET Environment.Variables.Log.Entry.aceApplication = ApplicationLabel;
+	SET Environment.Variables.Log.Entry.messageFlow = MessageFlowLabel;
+
+END;
+
+CREATE PROCEDURE getLastExceptionDetail(IN InputTree reference,OUT messageNumber integer,OUT messageText char)	
+    /****************************************************************************
+	 * A procedure that will get the details of the last exception from a message
+	 * IN InputTree:  The incoming exception list
+	 * IN messageNumber:  The last message numberr.
+	 * IN messageText: The last message text.
+	 *****************************************************************************/
+   BEGIN
+   	    -- Create a reference to the first child of the exception list
+   	    declare ptrException reference to InputTree.*[1];
+   	    -- keep looping while the moves to the child of exception list work 
+		WHILE lastmove(ptrException) DO
+			-- store the current values for the error number and text
+			IF ptrException.Number is not null THEN
+        		SET messageNumber = ptrException.Number;
+        		SET messageText = ptrException.Text;
+  			END IF;
+  			-- now move to the last child which should be the next exceptionlist
+			move ptrException lastchild;
+		END WHILE; 
+	END;

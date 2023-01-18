@@ -1,0 +1,26 @@
+BROKER SCHEMA sharepointlibrary.download
+
+CREATE COMPUTE MODULE requestChildren_HandleRequest
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- store information for download (only first item)
+		SET Environment.Variables.Download.URL = InputRoot.JSON.Data.value.Item[1]."@microsoft.graph.downloadUrl";
+		SET Environment.Variables.Download.FileName = InputRoot.JSON.Data.value.Item[1].name;
+		SET Environment.Variables.Download.item_id = InputRoot.JSON.Data.value.Item[1].id;
+		
+		-- log reply
+		SET Environment.Variables.Log.Entry.type = 'INFO';
+		SET Environment.Variables.Log.Entry.status = 'listchildren-reply';
+		SET Environment.Variables.Log.Entry.statusCode = InputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code";
+		SET Environment.Variables.Log.Entry.guid = Environment.Variables.ActivityId;
+		SET Environment.Variables.Log.Entry.aceApplication = ApplicationLabel;
+		SET Environment.Variables.Log.Entry.messageFlow = MessageFlowLabel;
+		SET Environment.Variables.Log.Entry.downloadFile = Environment.Variables.Download.FileName;
+		SET Environment.Variables.Log.Entry.fileId = Environment.Variables.Download.item_id;
+		PROPAGATE TO LABEL 'CHILDRENLOG';
+		
+		-- continue with empty msg
+		SET OutputRoot.HTTPRequestHeader = InputRoot.HTTPRequestHeader;
+		RETURN TRUE;
+	END;
+END MODULE;
