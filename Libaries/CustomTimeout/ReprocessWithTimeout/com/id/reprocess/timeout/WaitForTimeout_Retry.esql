@@ -1,0 +1,75 @@
+BROKER SCHEMA com.id.reprocess.timeout
+
+
+DECLARE MaxAttempts EXTERNAL INTEGER 0;
+DECLARE TimeOut EXTERNAL INTEGER 0;
+DECLARE RetryLabel EXTERNAL CHARACTER '';
+
+CREATE COMPUTE MODULE WaitForTimeout_Retry
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		IF EXISTS(Environment.variables.attempt[]) THEN
+			SET Environment.variables.attempt = Environment.variables.attempt + 1;
+		ELSE
+			SET Environment.variables.attempt = 1;
+		END IF;
+		
+		IF (Environment.variables.attempt > MaxAttempts) THEN
+			return true;
+		END IF;
+		
+		
+		-- Create new message with timeout control
+		SET OutputRoot.MQMD.Expiry = TimeOut; -- 30s
+		SET OutputRoot.JSON.Data.Message = 'wait';
+		PROPAGATE TO TERMINAL 'out1';
+		
+		-- Loop until msg is gone and timout is completed
+		X : LOOP 
+		  IF Environment.variables.continue THEN
+		    LEAVE X;
+		  END IF;
+		  SET OutputRoot.MQMD.MsgId = Environment.variables.msgid;
+		  PROPAGATE TO TERMINAL 'out2';
+		  --DECLARE returnValue BOOLEAN SLEEP(10);
+		END LOOP X;
+			
+		-- Redo HTTP Request
+		CALL CopyEntireMessage();
+		PROPAGATE TO LABEL RetryLabel;
+		
+		RETURN FALSE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE WaitForTimeout_Continue
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.variables.continue = true;
+		RETURN FALSE;
+	END;
+END MODULE;
+
+
+CREATE COMPUTE MODULE WaitForTimeout_StoreMsgId
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.variables.msgid = InputLocalEnvironment.WrittenDestination.MQ.DestinationData.msgId;
+		SET Environment.variables.continue = false;
+		RETURN FALSE;
+	END;
+END MODULE;
