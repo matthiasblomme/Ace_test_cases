@@ -1,11 +1,15 @@
-BROKER SCHEMA com.ibm.test.wft
 
 
-CREATE COMPUTE MODULE WaitForTimeout_OK
+CREATE COMPUTE MODULE getDelay2_Compute
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
-		-- CALL CopyMessageHeaders();
-		-- CALL CopyEntireMessage();
+		CALL CopyMessageHeaders();
+		Set OutputRoot.JSON.Data.msg.env = Environment;
+		Set OutputRoot.JSON.Data.msg.localenv = InputLocalEnvironment;
+		Set OutputRoot.JSON.Data.msg.origmsg = InputRoot;
+		
+		SET OutputRoot.Properties.Topic = 'publish/data' ;
+		
 		RETURN TRUE;
 	END;
 

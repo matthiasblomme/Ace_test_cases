@@ -25,6 +25,15 @@
         }
       },
       "parameters": []
+    },
+    "/delay2": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        }
+      }
     }
   }
 }
