@@ -1,0 +1,25 @@
+BROKER SCHEMA sharepointlibrary.download
+
+CREATE COMPUTE MODULE requestDownload_HandleRequest
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- log download reply
+		SET Environment.Variables.Log.Entry.type = 'INFO';
+		SET Environment.Variables.Log.Entry.status = 'download-reply';
+		SET Environment.Variables.Log.Entry.statusCode = InputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code";
+		SET Environment.Variables.Log.Entry.guid = Environment.Variables.ActivityId;
+		SET Environment.Variables.Log.Entry.aceApplication = ApplicationLabel;
+		SET Environment.Variables.Log.Entry.messageFlow = MessageFlowLabel;
+		SET Environment.Variables.Log.Entry.downloadFile = Environment.Variables.Download.FileName;
+		SET Environment.Variables.Log.Entry.fileId = Environment.Variables.Download.item_id;
+		PROPAGATE TO LABEL 'DOWNLOADLOG';
+		
+		-- set file name and contents
+		SET OutputLocalEnvironment.Destination.File.Name = Environment.Variables.Download.FileName;
+		SET OutputRoot.HTTPRequestHeader = InputRoot.HTTPRequestHeader; 
+		SET OutputRoot.BLOB.BLOB = InputRoot.BLOB.BLOB;
+		
+		-- send file
+		RETURN TRUE;
+	END;
+END MODULE;

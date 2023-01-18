@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><mappingRoot xmlns="http://www.ibm.com/2008/ccl/Mapping" domainID="com.ibm.msl.mapping.xml" domainIDExtension="mb" mainMap="true" targetNamespace="maps" version="8.0.5.0" xmlns:map="maps">
+    <input path="/input.xsd"/>
+    <output path="/output.xsd"/>
+    <generation engine="xquery"/>
+    <mappingDeclaration name="XMLMapping">
+        <input path="mb:msg(inputmsg,assembly,XMLNSC,Properties)" var="MessageAssembly"/>
+        <output path="mb:msg(outputmsg,assembly,XMLNSC,Properties)" var="MessageAssembly1"/>
+        <move>
+            <input path="$MessageAssembly/Properties"/>
+            <output path="$MessageAssembly1/Properties"/>
+        </move>
+        <move>
+            <input path="$MessageAssembly/inputmsg/data/message"/>
+            <output path="$MessageAssembly1/outputmsg/m"/>
+        </move>
+        <move>
+            <input path="$MessageAssembly/inputmsg/data/subject"/>
+            <output path="$MessageAssembly1/outputmsg/s"/>
+        </move>
+        <move>
+            <input path="$MessageAssembly/inputmsg/source/email"/>
+            <output path="$MessageAssembly1/outputmsg/from/contact"/>
+        </move>
+        <move>
+            <input path="$MessageAssembly/inputmsg/source/name"/>
+            <output path="$MessageAssembly1/outputmsg/from/name"/>
+        </move>
+        <foreach>
+            <input path="$MessageAssembly/inputmsg/target"/>
+            <output path="$MessageAssembly1/outputmsg/to"/>
+            <move>
+                <input path="name"/>
+                <output path="name"/>
+            </move>
+            <move>
+                <input path="email"/>
+                <output path="contact"/>
+            </move>
+        </foreach>
+    </mappingDeclaration>
+</mappingRoot>
