@@ -1,0 +1,18 @@
+BROKER SCHEMA sharepointlibrary.upload
+
+CREATE COMPUTE MODULE RequestError
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- check and log error 
+		CALL sharepointlibrary.HandleErrorReply(InputRoot, InputExceptionList, Environment, 'upload-reply');
+		PROPAGATE TO LABEL 'UPLOADLOG';
+		
+		SET Environment.Variables.oAuth.Retry = true;
+		SET Environment.Variables.oAuth.RetryReason = 'HTTP Error ' || CAST(InputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" AS CHAR);
+
+		-- propagate error reply for further processing
+		SET OutputRoot = InputRoot;
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		RETURN TRUE;
+	END;
+END MODULE;
