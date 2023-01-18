@@ -2,6 +2,7 @@
 <ns2:restapiDescriptor xmlns="http://com.ibm.etools.mft.descriptor.base" xmlns:ns2="http://com.ibm.etools.mft.descriptor.restapi" definitionType="openapi_3" definitionFile="openapi.json" implementation="gen/HttpInputDelayCheck.msgflow" https="false" definitionWithExtRef="false" faultFormat="JSON">
     <ns2:operations>
         <ns2:operation name="getDelay" implementation="getDelay.subflow"/>
+        <ns2:operation name="getDelay2" implementation="getDelay2.subflow"/>
     </ns2:operations>
     <ns2:errorHandlers>
         <ns2:errorHandler type="CATCH" implementation="HttpInputDelayCheckInputCatchHandler.subflow"/>
