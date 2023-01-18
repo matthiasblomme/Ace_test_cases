@@ -1,0 +1,15 @@
+BROKER SCHEMA sharepointlibrary.download
+
+CREATE COMPUTE MODULE requestDownload_RequestError
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- check and log error 
+		CALL sharepointlibrary.HandleErrorReply(InputRoot, InputExceptionList, Environment, 'download-reply');
+		PROPAGATE TO LABEL 'DOWNLOADLOG';
+		
+		-- propagate error reply for further processing
+		SET OutputRoot = InputRoot;
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		RETURN TRUE;
+	END;
+END MODULE;

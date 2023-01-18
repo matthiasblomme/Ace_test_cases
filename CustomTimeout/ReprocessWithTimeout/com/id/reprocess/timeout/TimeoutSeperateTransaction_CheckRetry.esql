@@ -1,0 +1,87 @@
+BROKER SCHEMA com.id.reprocess.timeout
+
+DECLARE msgid SHARED BLOB;
+DECLARE attempt SHARED INTEGER 0;
+
+CREATE COMPUTE MODULE TimeoutSeperateTransaction_CheckRetry
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET OutputRoot.MQMD.MsgId = msgid;
+		--SET Environment.variables.originalMessage = InputLocalEnvironment.OriginalMessage;
+		RETURN TRUE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE TimeoutSeperateTransaction_Retry
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+--		IF (attempt = 0) THEN
+--			SET Environment.variables.originalMessage = InputRoot;
+--			--SET originalMessage = InputRoot;
+--			--SET OutputLocalEnvironment.OriginalMessage = InputRoot;
+--		END IF;
+		
+		SET attempt = attempt + 1;
+		
+		IF (attempt > MaxAttempts) THEN
+			SET msgid = '';
+			SET attempt = 0;
+			return true;
+		END IF;
+		
+		-- Send timeout message
+		SET OutputRoot.MQMD.Expiry = TimeOut; -- 30s
+		SET OutputRoot.JSON.Data.Message = 'wait';
+		PROPAGATE TO TERMINAL 'out1';
+		
+		-- Store original mesage
+		SET OutputRoot = InputRoot;
+		SET OutputRoot.MQMD.CorrelId = msgid; 
+		PROPAGATE TO LABEL 'StoreOriginalMessage';
+		
+		-- Send timeout control
+		SET OutputLocalEnvironment.TimeoutRequest.Action = 'SET';
+		SET OutputLocalEnvironment.TimeoutRequest.Identifier = 'retryTimeout';
+		SET OutputLocalEnvironment.TimeoutRequest.Count = -1;
+		SET OutputLocalEnvironment.TimeoutRequest.Interval = 1;
+		SET OutputLocalEnvironment.OriginalMessage = Environment.variables.originalMessage;
+		PROPAGATE TO LABEL 'TimeoutControl';
+		
+		RETURN FALSE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE TimeoutSeperateTransaction_Continue
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- Cancel timeout control
+		SET OutputLocalEnvironment.TimeoutRequest.Action = 'CANCEL';
+		SET OutputLocalEnvironment.TimeoutRequest.Identifier = 'retryTimeout';
+		PROPAGATE TO LABEL 'TimeoutControl';
+		
+		-- restore original message and retry
+		--SET OutputRoot = originalMessage;
+		SET OutputRoot.MQMD.CorrelId = msgid;
+		PROPAGATE TO LABEL 'GetOriginalMessage';
+		
+		SET OutputRoot = Environment.variables.originalMessage;
+		PROPAGATE TO LABEL RetryLabel;
+		RETURN FALSE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE TimeoutSeperateTransaction_StoreMsgId
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET msgid = InputLocalEnvironment.WrittenDestination.MQ.DestinationData.msgId;
+		RETURN FALSE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE TimeoutSeperateTransaction_CopyOriginalMessage
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.variables.originalMessage = InputRoot;
+		RETURN FALSE;
+	END;
+END MODULE;

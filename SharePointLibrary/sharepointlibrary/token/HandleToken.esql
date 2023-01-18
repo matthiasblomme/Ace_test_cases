@@ -1,0 +1,21 @@
+BROKER SCHEMA sharepointlibrary.token
+
+CREATE COMPUTE MODULE HandleToken
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- store token for further requests
+		SET Environment.request.token = InputRoot.JSON.Data.access_token;
+		
+		-- log reply
+		SET Environment.Variables.Log.Entry.type = 'INFO';
+		SET Environment.Variables.Log.Entry.status = 'token-reply';
+		SET Environment.Variables.Log.Entry.statusCode = InputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code";
+		SET Environment.Variables.Log.Entry.guid = Environment.Variables.ActivityId;
+		SET Environment.Variables.Log.Entry.aceApplication = ApplicationLabel;
+		SET Environment.Variables.Log.Entry.messageFlow = MessageFlowLabel;
+		PROPAGATE TO LABEL 'TOKENLOG';
+		
+		-- continue
+		RETURN TRUE;
+	END;
+END MODULE;
