@@ -1,0 +1,45 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PDF",
+    "version": "1.0.0",
+    "description": "PDF"
+  },
+  "servers": [
+    {
+      "url": "/pdf/v1"
+    }
+  ],
+  "paths": {
+    "/upload/{pdfName}": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "success"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "pdfName",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true,
+          "description": "the name of the pdf"
+        }
+      ]
+    }
+  }
+}
