@@ -1,0 +1,51 @@
+
+
+CREATE COMPUTE MODULE testCaseConverstion_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		DECLARE pascalCase CHARACTER;
+		DECLARE camelCase CHARACTER;
+		
+		SET pascalCase = 'TESTPascalCase';
+		SET camelCase = LOWER(SUBSTRING(pascalCase FROM 1 FOR 1));
+		
+		DECLARE i INTEGER;
+		SET i = 2;
+		
+		WHILE i <= LENGTH(pascalCase)-1 DO
+		    DECLARE currentChar CHARACTER;
+		    DECLARE nextChar CHARACTER;
+		    SET currentChar = SUBSTRING(pascalCase FROM i FOR 1);
+		    SET nextChar = SUBSTRING(pascalCase FROM i+1 FOR 1);
+		
+		    IF (currentChar BETWEEN 'A' AND 'Z') AND (nextChar BETWEEN 'A' AND 'Z') THEN
+		        SET camelCase = camelCase || LOWER(currentChar);
+		    ELSE
+		        SET camelCase = camelCase || currentChar;
+		    END IF;
+		
+		    SET i = i + 1;
+		END WHILE;
+		SET camelCase = camelCase || LOWER(SUBSTRING(pascalCase FROM i FOR 1));
+
+		
+		-- Output the resulting camelCase string
+		SET OutputRoot.JSON.Data.camelCaseString = camelCase;
+
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
