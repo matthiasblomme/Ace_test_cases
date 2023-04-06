@@ -1,0 +1,14 @@
+BROKER SCHEMA shared
+
+CREATE COMPUTE MODULE HandleEvent_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		CALL CopyEntireMessage();
+		SET OutputLocalEnvironment.Destination.File.Name = 'Error' || CAST(CURRENT_DATE AS CHARACTER FORMAT 'yyyyMMdd') || '.txt';
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
