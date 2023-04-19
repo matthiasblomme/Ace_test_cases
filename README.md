@@ -61,5 +61,5 @@ A flow to verify that the flow restarts or reinitializes if you change a UDP val
 ### Working With References
 Upon playing around with references I noticed that sometimes the reference doesn't show up in the debugger but is still 
 callable. There was a specific use cases that required to know if there were children (by using cardinality) of a certain
-reference. Depending where you create the reference from (object or message tree) the behaviour is different. I wanted
+reference. Depending on where you create the reference from (object or message tree) the behaviour is different. I wanted
 to test and see the differences in behaviour.
