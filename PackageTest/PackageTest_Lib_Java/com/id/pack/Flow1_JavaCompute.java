@@ -33,10 +33,10 @@ public class Flow1_JavaCompute extends MbJavaComputeNode {
 			Iterator<MbProperty> iter = props.iterator();
 			while(iter.hasNext()) {
 				MbProperty prop = iter.next();
-				prop.valueAsString()
+				prop.valueAsString();
 			}
 			
-			pol.getProperties()
+			pol.getProperties();
 			// End of user code
 			// ----------------------------------------------------------
 		} catch (MbException e) {

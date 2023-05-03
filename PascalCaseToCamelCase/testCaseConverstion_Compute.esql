@@ -6,7 +6,7 @@ CREATE COMPUTE MODULE testCaseConverstion_Compute
 		DECLARE pascalCase CHARACTER;
 		DECLARE camelCase CHARACTER;
 		
-		SET pascalCase = 'TESTPascalCase';
+		SET pascalCase = 'ECNHeader';
 		SET camelCase = LOWER(SUBSTRING(pascalCase FROM 1 FOR 1));
 		
 		DECLARE i INTEGER;
