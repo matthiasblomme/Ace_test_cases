@@ -4,7 +4,6 @@ DECLARE reply SHARED ROW;
 CREATE COMPUTE MODULE HTTPReceive_Compute
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
-		
 		SET OutputRoot.Properties = InputRoot.Properties;
 		CREATE NEXTSIBLING of OutputRoot.Properties DOMAIN 'MQMD' ;
 		SET OutputRoot.MQMD.Format = 'MQHRF2';
@@ -14,7 +13,8 @@ CREATE COMPUTE MODULE HTTPReceive_Compute
 		CREATE NEXTSIBLING of OutputRoot.MQMD DOMAIN 'MQRFH2' ;
 		SET OutputRoot.MQRFH2.(MQRFH2.Field)Version = 2;
 		SET OutputRoot.MQRFH2.(MQRFH2.Field)Format = MQFMT_NONE;
-		SET OutputRoot.MQRFH2.(MQRFH2.Field)NameValueCCSID = 1208;		
+		--SET OutputRoot.MQRFH2.(MQRFH2.Field)NameValueCCSID = 1208;
+		SET OutputRoot.MQRFH2.(MQRFH2.Field)CodedCharSetId = 1208;		
 		SET OutputRoot.MQRFH2.Usr.HTTPReply.id = InputLocalEnvironment.Destination.HTTP.RequestIdentifier;
 		RETURN TRUE;
 	END;
