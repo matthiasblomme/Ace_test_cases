@@ -1,0 +1,16 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"$id": "sampleMessage.json",
+	"description": "Generic sample message model used by the CCSID test",
+	"type": "object",
+	"properties": {
+		"id": {
+			"description": "Message identifier",
+			"type": "string"
+		},
+		"text": {
+			"description": "Free text; put non-ASCII characters here to exercise CCSID conversion",
+			"type": "string"
+		}
+	}
+}
