@@ -1,0 +1,2345 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"$id": "customerECN.json",
+	"description": "Schema that defines the customer ECN message in Json format",
+	"type": "object",
+	"properties": {
+		"interchangeHeader": {
+			"description": "Interchange Header",
+			"type": "object",
+			"properties": {
+				"interchangeID": {
+					"description": "Unique ID for interchange. Will be calculated on file creation. To detect multiple receiving of the same message and to identify the interchange. \nCIM: none\nREAD:  - receiving system\nWRITE:  - on file creation\nAMEND:  - not allowed",
+					"type": "integer",
+					"pattern": "^[0-9]{1,13}$"
+				},
+				"senderIdentification": {
+					"description": "use here the 4 digit code of the sending system. This may be a code according to UIC leaflet 920-1 of the file creating railway (like 2185). Also the code of the central system can be entered here, if it is the creator of the file.\nREAD:  - receiving system\nWRITE:  - sending system on file creation\nAMEND:  - not allowed",
+					"$ref": "#/definitions/carrierCodeType"
+				},
+				"receiverIdentification": {
+					"description": "use here the 4 digit code of the receiving system. This may be a code according to UIC leaflet 920-1 of the railway, which should receive the file (like 2185). Also the code of the central system can be entered here, if it is the destination of the file.\nREAD:  - receiving system\nWRITE:  - sending system on file creation\nAMEND:  - not allowed",
+					"$ref": "#/definitions/carrierCodeType"
+				},
+				"msgPreparationDatetime": {
+					"description": "Date and Time of preparation of the file.\nREAD:  - receiving system\nWRITE:  - sending system on file creation\nAMEND:  - not allowed",
+					"type": "string",
+					"pattern": ".*[+-]\\d{2}:\\d{2}"
+				},
+				"xsdVersion": {
+					"description": "Used version of xsd. This has to be a valid value (i.e. '1.0') to secure the correct handling of the message by the recipient/central system.\nCIM:  - none\nREAD:  - receiving system\nWRITE:  - sending system\nAMEND:  - not allowed",
+					"type": "string",
+					"enum": [
+						"1.4"
+					]
+				},
+				"testIndicator": {
+					"description": "Test Indicator (sent only for testing purposes). This flag is used to indicate test messages, which should be processed by special agreements due to testing purposes.\nCIM: none\nREAD:  - receiving system\nWRITE:  - sending system\nAMEND:  - not allowed",
+					"type": "string",
+					"enum": [
+						"1"
+					]
+				}
+			},
+			"required": [
+				"interchangeID",
+				"senderIdentification",
+				"receiverIdentification",
+				"msgPreparationDatetime",
+				"xsdVersion"
+			],
+			"additionalProperties": false
+		},
+		"ecns": {
+			"type": "array",
+			"minItems": 1,
+			"maxItems": 50,
+			"items": {
+				"description": "Message",
+				"type": "object",
+				"properties": {
+					"ecnHeader": {
+						"description": "Header",
+						"type": "object",
+						"properties": {
+							"sendingCarrier": {
+								"description": "Use here the 4 digit code according to UIC leaflet 920-1 of the railway, which created/amended the message (like 2185).\nREAD:  ---\nWRITE:  ---\nAMEND:  - contractual carrier - successive carrier - central system",
+								"$ref": "#/definitions/carrierCodeType"
+							},
+							"receivingCarrier": {
+								"description": "Use here the 4 digit code according to UIC leaflet 920-1 of the railway, which is the receipient of the message (like 2185).If omitted the central system applies the receiving carrier code for all outgoing messages, using the carriers' chain provided by the group \"ECNs/ECN/Carriers\".\nREAD:  ---\nWRITE:  ---\nAMEND:  - contractual carrier - successive carrier - central system",
+								"$ref": "#/definitions/carrierCodeType"
+							},
+							"messageReferenceNumber": {
+								"description": "Message Reference NumberThis identification is being generated during creation of the message. This allows the tracing of the message.",
+								"type": "string",
+								"pattern": "^.{1,18}$"
+							},
+							"shipmentType": {
+								"description": "Classification of the ECN as 'CUV' or 'CIM'.\nCIM: 30\nREAD:  - consignee\nWRITE:  - consignor\nAMEND:  - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor.)",
+								"type": "string",
+								"enum": [
+									"CIM",
+									"CUV"
+								]
+							},
+							"messageType": {
+								"description": "Type of the message. This message structure is being used for several purposes. I.e. it is used as electronic consignment note (ECN) and also as informal message in case, the ECN has been printed (PCN). Further descriptions of the possible values can be found by the enumeration values.\nCIM: none",
+								"type": "string",
+								"enum": [
+									"ECN",
+									"PCN",
+									"PRN",
+									"INFE",
+									"INFP",
+									"AOD",
+									"ACK",
+									"NACK",
+									"HNDO",
+									"CANCEL",
+									"DEL",
+									"ECTD",
+									"EUTD",
+									"EDTD"
+								]
+							},
+							"madeAvailable": {
+								"description": "Time (month, day, hour) that the consignment is made available to the consignee.\nCIM: 60\nREAD:  - Shipper - Consignee\nWRITE: --- ---\nAMEND:  - Contractual carrier - Successive carrier (Data provided by the destination carrier.)",
+								"type": "string",
+								"pattern": ".*[+-]\\d{2}:\\d{2}"
+							},
+							"ecnPreparationDatetime": {
+								"description": "Date and Time of preparation of the ECN.\nCIM: none\nREAD:  - contractual carrier - successive carrier - central system - Consignor  - Consignee \nWRITE:  - Consignor\nAMEND:  - not allowed - not allowed",
+								"type": "string",
+								"pattern": ".*[+-]\\d{2}:\\d{2}"
+							},
+							"dossierNumber": {
+								"description": "Internal identification number of the RU, which created the ECN. This information is important to be able to identify the ECN even after modifications. Format: RRRRYYYYMMDDNNNNNNN Where RRRR = railway code, YYYY = year, MM = month, DD = day and NNNNNNN = running number.\nCIM: none\nREAD:  - contractual carrier - successive carrier - central system \nWRITE:  - shipping carrier\nAMEND:  - not allowed - not allowed",
+								"type": "string",
+								"pattern": "\\d{4}20\\d{2}[0-1][0-9][0-3]\\d{8}"
+							},
+							"ecnVersionNumber": {
+								"description": "Message version number. This number hast to be incremented after each modification. On creation this value has to be set to 0.\nCIM: none\nREAD:  - contractual carrier - successive carrier - central system \nWRITE:  ---\nAMEND:  - contractual carrier - successive carrier - central system ",
+								"type": "integer",
+								"pattern": "^(100|[1-9]?[0-9])$"
+							},
+							"printForm": {
+								"description": "Which form to use for printout. CIM-CN or CIM-CN for combined traffic. This information assures, that the same paper document will be used for the 'duplicate of the consignment note' and the final print out of the ECN for the consignee.\nRULE: IF (Omitted) THEN default value = 'WLT'\nCIM: none\nREAD:  - contractual carrier - successive carrier - central system \nWRITE:  - contractual carrier - shipping carrier\nAMEND:  - not allowed - not allowed",
+								"type": "string",
+								"enum": [
+									"WLT",
+									"CT"
+								]
+							},
+							"requestAOD": {
+								"description": "Check this element only, if the contractual carrier wants to receive an 'advice of delivery' from the destination carrier.",
+								"type": "boolean"
+							},
+							"refusalReason": {
+								"description": "Reason of declining of an ECN during hand-over. Element only allowed when MessageType = NACK.\nRULE: IF (MessageType == 'NACK') THEN allowed ELSE not permitted\nCIM: none",
+								"type": "object",
+								"properties": {
+									"refusalCode": {
+										"description": "CODE: code list has to be created. Use code 99 as default value.\nCIM: none",
+										"type": "integer",
+										"pattern": "^(99|[0-9]?[0-9])$"
+									},
+									"refusalDescription": {
+										"description": "Additional information concerning the refusal.\nCIM: none",
+										"type": "string",
+										"pattern": "^.{1,350}$"
+									}
+								},
+								"required": [
+									"refusalCode"
+								],
+								"additionalProperties": false
+							},
+							"orfimo": {
+								"type": "integer",
+								"pattern": "^0|1$"
+							}
+						},
+						"required": [
+							"sendingCarrier",
+							"messageReferenceNumber",
+							"shipmentType",
+							"messageType",
+							"ecnPreparationDatetime",
+							"dossierNumber",
+							"ecnVersionNumber"
+						],
+						"additionalProperties": false
+					},
+					"ecn": {
+						"type": "object",
+						"properties": {
+							"acceptancePoint": {
+								"description": "Information about the shipping station of the transport.",
+								"type": "object",
+								"properties": {
+									"point": {
+										"$ref": "#/definitions/point"
+									},
+									"station": {
+										"description": "Details of station serving the point",
+										"$ref": "#/definitions/pointStation"
+									},
+									"productionStation": {
+										"description": "Details of production station serving the point",
+										"$ref": "#/definitions/productionStation"
+									},
+									"acceptanceDate": {
+										"description": "Date and time (month, day and hour) at which the goods were accepted. \nCIM: 16\nREAD:  - Contractual carrier - Successive carrier - Consignee \nWRITE:  - Consignor\nAMEND:  - not allowed",
+										"type": "string",
+										"pattern": ".*\\d{2}:\\d{2}"
+									},
+									"carrierCode": {
+										"description": "Code of the shipping carrier.\nCIM: 62\nREAD:  - Consignor - Consignee\nWRITE:  - Contractual carrier - Successive carrier (Data providedby theforwarding carrier) \nAMEND:  - not allowed - not allowed",
+										"$ref": "#/definitions/carrierCodeType"
+									},
+									"consignmentNumber": {
+										"description": "Running number and check digit of the consignment. Format: NNNNNC The number consists of NNNNN = running number C = check digit\nCIM: 62\nREAD:  - Consignor - Consignee\nWRITE:  - Contractual carrier - Successive carrier (Data providedby theforwarding carrier) \nAMEND:  - not allowed - not allowed",
+										"type": "string",
+										"pattern": "^\\d{6}$"
+									},
+									"forwardingTrainNumber": {
+										"description": "Train number at shipping \nCIM: 40\nREAD:  - Consignor - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier - Successive carrier (Coding by theforwarding carrier.) ",
+										"type": "string",
+										"pattern": "^\\d{6}$"
+									}
+								},
+								"additionalProperties": false,
+								"required": [
+									"station",
+									"acceptanceDate",
+									"carrierCode"
+								]
+							},
+							"deliveryPoint": {
+								"type": "object",
+								"required": [
+									"station"
+								],
+								"additionalProperties": false,
+								"properties": {
+									"point": {
+										"$ref": "#/definitions/point"
+									},
+									"station": {
+										"description": "Details of station serving the point",
+										"$ref": "#/definitions/pointStation"
+									},
+									"productionStation": {
+										"description": "Details of production station serving the point",
+										"$ref": "#/definitions/productionStation"
+									}
+								}
+							},
+							"customers": {
+								"description": "Information about the consignor, consignee and freight payers.",
+								"type": "array",
+								"minItems": 2,
+								"maxItems": 10,
+								"items": {
+									"description": "Customer information. At least consignor and consignee must be given.",
+									"type": "object",
+									"properties": {
+										"customerCode": {
+											"description": "CODE: Customer Code (according to UIC leflet 920-10)\nCIM: 2 Customer.Type = 'CR'\nCIM: 3 Customer.Type = 'FPCR'\nCIM: 5 Customer.Type = 'CE'\nCIM: 6 Customer.Type = 'FPCE'\nRULE: IF (customer.type == 'CR') THEN Mandatory ELSE Optional\nREAD: IF (Customer.Type == 'CR') THEN - Contractual carrier - Successive carrier - Consignee ELSE - Consignee\nWRITE: ---IF (Customer.Type == 'CE') THEN - Carrier ELSE - Consignor\nAMEND: IF (Customer.Type == 'CR' OR Customer.Type == 'FPCR') THEN - Contractual carrier - Successive carrier (Addition of code. Amendment only in the case of subsequent orders or on the instruction of the consignor). ELSE IF (Customer.Type == 'CE') THEN - Contractual carrier - Successive carrier (Addition of code. Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE IF (Customer.Type == 'FPCE') THEN - Contractual carrier - Successive carrier (Addition of code. Amendment only in case of subsequent orders or on the instruction of the consignor or consignee.) ",
+											"type": "string",
+											"pattern": "^.{1,16}$"
+										},
+										"name": {
+											"description": "Customer Name (Partner Name)\nCIM: 1 Customer.Type = 'CR'\nCIM: 4 Customer.Type = 'CE'\nRULE: IF (customer.type == 'CR' or customer.type == 'CE) THEN Mandatory ELSE Optional\nREAD: IF (Customer.Type == 'CR') THEN - Contractual carrier - Successive carrier - Consignee ELSE - Consignee\nWRITE:  - Consignor\nAMEND: IF (Customer.Type == 'CE') THEN - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.)ELSE none",
+											"type": "string",
+											"pattern": "^.{1,45}$"
+										},
+										"additionalInformation": {
+											"description": "Additional information supplied by the customer\nCIM: 1 Customer.Type = 'CR'\nCIM: 4 Customer.Type = 'CE'\nREAD: IF (Customer.Type == 'CR') THEN - Contractual carrier - Successive carrier - Consignee ELSE - Consignee\nWRITE:  - Consignor\nAMEND: IF (Customer.Type == 'CE') THEN - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+											"type": "string",
+											"pattern": "^.{1,45}$"
+										},
+										"VAT": {
+											"description": "VAT identification Nr of customer\nCIM: 1 Customer.Type = 'CR'\nCIM: 4 Customer.Type = 'CE'\nCODE: National codification\nREAD: IF (Customer.Type == 'CR') THEN - Contractual carrier - Successive carrier - Consignee ELSE - Consignee\nWRITE:  - Consignor\nAMEND: IF (Customer.Type == 'CE') THEN - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+											"type": "string",
+											"pattern": "^.{1,25}$"
+										},
+										"POBox": {
+											"description": "P.O. Box\nCIM: 1 Customer.Type = 'CR'\nCIM: 4 Customer.Type = 'CE'\nREAD: IF (Customer.Type == 'CR') THEN - Contractual carrier - Successive carrier - Consignee ELSE - Consignee\nWRITE:  - Consignor\nAMEND: IF (Customer.Type == 'CE') THEN - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+											"type": "string",
+											"pattern": "^.{1,35}$"
+										},
+										"streetNumber": {
+											"description": "House number\nCIM: 1 Customer.Type = 'CR'\nCIM: 4 Customer.Type = 'CE'\nREAD: IF (Customer.Type == 'CR') THEN - Contractual carrier - Successive carrier - Consignee ELSE - Consignee\nWRITE:  - Consignor\nAMEND: IF (Customer.Type == 'CE') THEN - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+											"type": "string",
+											"pattern": "^.{1,5}$"
+										},
+										"street": {
+											"description": "Street\nCIM: 1 Customer.Type = 'CR'\nCIM: 4 Customer.Type = 'CE'\nRULE: IF (customer.type == 'CR' or customer.type == 'CE) THEN Mandatory ELSE Optional\nREAD: IF (Customer.Type == 'CR') THEN - Contractual carrier - Successive carrier - Consignee ELSE - Consignee\nWRITE:  - Consignor\nAMEND: IF (Customer.Type == 'CE') THEN - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+											"type": "string",
+											"pattern": "^.{1,35}$"
+										},
+										"country": {
+											"description": "Country Code (ISO Code)\nCIM: 1 Customer.Type = 'CR'\nCIM: 4 Customer.Type = 'CE'\nRULE: IF (customer.type == 'CR' or customer.type == 'CE) THEN Mandatory ELSE Optional\nCODE: ISO-3166-2\nREAD: IF (Customer.Type == 'CR') THEN - Contractual carrier - Successive carrier - Consignee ELSE - Consignee\nWRITE:  - Consignor\nAMEND: IF (Customer.Type == 'CE') THEN - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+											"$ref": "#/definitions/countryCodeType"
+										},
+										"ZIPCode": {
+											"description": "Postal Code\nCIM: 1 Customer.Type = 'CR'\nCIM: 4 Customer.Type = 'CE'\nRULE: IF (customer.type == 'CR' or customer.type == 'CE) THEN Mandatory ELSE Optional\nCODE: National codification\nREAD: IF (Customer.Type == 'CR') THEN - Contractual carrier - Successive carrier - Consignee ELSE - Consignee\nWRITE:  - Consignor\nAMEND: IF (Customer.Type == 'CE') THEN - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+											"type": "string",
+											"pattern": "^.{1,9}$"
+										},
+										"city": {
+											"description": "City/Town\nCIM: 1 Customer.Type = 'CR'\nCIM: 4 Customer.Type = 'CE'\nRULE: IF (customer.type == 'CR' or customer.type == 'CE) THEN Mandatory ELSE Optional\nREAD: IF (Customer.Type == 'CR') THEN - Contractual carrier - Successive carrier - Consignee ELSE - Consignee\nWRITE:  - Consignor\nAMEND: IF (Customer.Type == 'CE') THEN - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+											"type": "string",
+											"pattern": "^.{1,35}$"
+										},
+										"signature": {
+											"description": "Signature\nCIM: 1 Customer.Type = 'CR'\nCIM: 4 Customer.Type = 'CE'\nRULE: IF (Customer.Type == 'CR') AND (ECNHeader.MessageType == 'ECN') THEN Mandatory\nREAD: IF (Customer.Type == 'CR') THEN - Contractual carrier - Successive carrier - Consignee ELSE - Consignee\nWRITE:  - Consignor\nAMEND: IF (Customer.Type == 'CE') THEN - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+											"type": "string",
+											"pattern": "^.{1,35}$"
+										},
+										"contactInformation": {
+											"description": "Contact information\nRULE: Transmission of empty tag is prohibited.",
+											"type": "object",
+											"properties": {
+												"phoneNumber": {
+													"description": "Telephone number\nCIM: 1\nCIM: 4\nREAD: IF (Customer.Type == 'CR') THEN - Contractual carrier - Successive carrier - Consignee ELSE - Consignee\nWRITE:  - Consignor\nAMEND: IF (Customer.Type == 'CE') THEN - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+													"type": "string",
+													"pattern": "^.{1,30}$"
+												},
+												"faxNumber": {
+													"description": "Fax number\nCIM: 1\nCIM: 4\nREAD: IF (Customer.Type == 'CR') THEN - Contractual carrier - Successive carrier - Consignee ELSE - Consignee\nWRITE:  - Consignor\nAMEND: IF (Customer.Type == 'CE') THEN - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+													"type": "string",
+													"pattern": "^.{1,30}$"
+												},
+												"email": {
+													"description": "Email address\nCIM: 1\nCIM: 4\nREAD: IF (Customer.Type == 'CR') THEN - Contractual carrier - Successive carrier - Consignee ELSE - Consignee\nWRITE:  - Consignor\nAMEND: IF (Customer.Type == 'CE') THEN - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+													"type": "string",
+													"pattern": "^.{1,50}$"
+												}
+											},
+											"additionalProperties": false
+										},
+										"type": {
+											"type": "string",
+											"enum": [
+												"CR",
+												"CE",
+												"FPCR",
+												"FPCE",
+												"FR",
+												"FI",
+												"IV"
+											]
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								}
+							},
+							"consignorDeclarations": {
+								"description": "Consignor's Declaration",
+								"type": "array",
+								"items": {
+									"description": "Consignor's Declaration",
+									"type": "object",
+									"minItems": 1,
+									"maxItems": 10,
+									"properties": {
+										"code": {
+											"description": "Consignor's declarations committing the carrier. If codes 1, 2, 6, 7 and 8 are used, enter the code and its meaning.\nCIM: 7\nRULE: IF (MsgHeader.MessageType == 'CUV') THEN Valid codes: 5, 9, 10, 11, 16, 18 ELSE Valid codes: 1-16\nCODE: CIM proposition\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier - Successive carrier (Amendment only in case of subsequent orders or on the instruction of the consignor or consignee.)",
+											"type": "string",
+											"enum": [
+												"1",
+												"2",
+												"3",
+												"4",
+												"5",
+												"6",
+												"7",
+												"8",
+												"9",
+												"10",
+												"11",
+												"12",
+												"13",
+												"14",
+												"15",
+												"16",
+												"17",
+												"18",
+												"24"
+											]
+										},
+										"text": {
+											"description": "Declarartion Text (only for variable part of text)\nCIM: 7\nRULE: IF (ConsignorDeclaration.Code == [1, 2, 6, 7, 8]) THEN Optional ELSE Mandatory\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier - Successive carrier (Amendment only in case of subsequent orders or on the instruction of the consignor or consignee.)",
+											"type": "string",
+											"pattern": "^.{1,350}$"
+										}
+									},
+									"required": [
+										"code"
+									],
+									"additionalProperties": false
+								}
+							},
+							"additionalInformation": {
+								"description": "Additional Infos\nRULE: Transmission of empty tag is prohibited.",
+								"type": "object",
+								"properties": {
+									"consignorReference": {
+										"description": "Consignor's reference\nCIM: 8\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier - Successive carrier (Amendment only in the caseof subsequent orders or on theinstruction of the consignor.) ",
+										"type": "string",
+										"pattern": "^.{1,35}$"
+									},
+									"informationConsignee": {
+										"description": "Information from the consignor to the consignee relating to the consignment. This information is not to commit the carrier.\nCIM: 15\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - not allowed - not allowed",
+										"type": "string",
+										"pattern": "^.{1,350}$"
+									},
+									"wagonGroupInfo": {
+										"description": "Consignor information regarding the whole consignment. Comparable with the fiel WagonInfo, but for all wagons.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier - Successive carrier (With the agreement of the consignor.) ",
+										"type": "string",
+										"pattern": "^.{1,500}$"
+									}
+								},
+								"additionalProperties": false
+							},
+							"attachedDocuments": {
+								"description": "Paper documents accompanying the transport\nCIM: 9",
+								"type": "array",
+								"items": {
+									"description": "Listing of all the accompanying documents required for carriage which are attached to the consignment note. Additional information may be entered in a free text area for each code. The UN/DIFACT 1001 list of codes is to be used to code accompanying documents. \nCIM: 9",
+									"type": "object",
+									"minItems": 1,
+									"maxItems": 10,
+									"properties": {
+										"type": {
+											"description": "Type code of attached document. The UN/DIFACT 1001 list of codes is to be used to code accompanying documents.\nCIM: 9\nCODE: UN/EDIFACT 1001, use code 916 as 'others' code\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor,or when documents attached are removed during transit.) ",
+											"type": "integer",
+											"pattern": "^.{1,999}$"
+										},
+										"documentInformation": {
+											"description": "Additional information regarding the attached document may be entered here.\nCIM: 9\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor, or when documents attached are removed during transit.) ",
+											"type": "string",
+											"pattern": "^.{1,35}$"
+										},
+										"quantity": {
+											"description": "Number of copies of the current type is accompanying the transport.",
+											"type": "integer",
+											"pattern": "^.{1,99}$"
+										},
+										"documentTypeDescription": {
+											"description": "Description of document type, when it is not in the UN/EDIFACT 1001 list included.\nCIM: 9\nRULE: IF (Type == 916) THEN mandatory ELSE not allowed\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor,or when documents attached are removed during transit.) ",
+											"type": "string",
+											"pattern": "^.{1,35}$"
+										}
+									},
+									"required": [
+										"type"
+									],
+									"additionalProperties": false
+								}
+							},
+							"commercialSpecifications": {
+								"description": "Commercial Specifications",
+								"type": "array",
+								"minItems": 1,
+								"maxItems": 5,
+								"items": {
+									"description": "Commercial Specifications",
+									"type": "object",
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"text": {
+													"description": "Additional text of commercial specification\nCIM: 13\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier - Successive carrier (Amendment only in the caseof subsequent orders or on the instruction of the consignor or consignee.) ",
+													"type": "string",
+													"pattern": "^.{1,350}$"
+												},
+												"code": {
+													"description": "Commercial specifications code\nCIM: 13\nCODE: CIM proposal\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.)",
+													"type": "string",
+													"enum": [
+														"1",
+														"2",
+														"3",
+														"4",
+														"5"
+													]
+												}
+											},
+											"required": [
+												"text",
+												"code"
+											],
+											"additionalProperties": false
+										},
+										{
+											"type": "object",
+											"properties": {
+												"code": {
+													"description": "Commercial specifications code\nCIM: 13\nCODE: CIM proposal\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.)",
+													"type": "string",
+													"enum": [
+														"1",
+														"2",
+														"3",
+														"4",
+														"5"
+													]
+												},
+												"carrierCodeAndContractNumbers": {
+													"type": "array",
+													"minItems": 2,
+													"maxItems": 20,
+													"items": {
+														"type": "object",
+														"properties": {
+															"carrierCode": {
+																"description": "additional carrier code belonging to the given contract number\nCIM: 13\nRULE: IF (CommercialSpecification.Code == 5) THEN Allowed ELSE Not Permitted\nCODE: UIC-Code\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ",
+																"$ref": "#/definitions/carrierCodeType"
+															},
+															"contractNumber": {
+																"description": "additional contract number according to the given carrier code.\nCIM: 13\nRULE: IF (CommercialSpecification.Code == 5) THEN Allowed ELSE Not Permitted\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ",
+																"$ref": "#/definitions/contractNumber"
+															}
+														},
+														"additionalProperties": false
+													}
+												}
+											},
+											"required": [
+												"carrierCodeAndContractNumbers",
+												"code"
+											],
+											"additionalProperties": false
+										}
+									]
+								}
+							},
+							"prepaymentInstruction": {
+								"description": "Prepayment",
+								"type": "object",
+								"properties": {
+									"prepaymentcustomer": {
+										"description": "Prepaidcode (given by the client)\nCIM: 20",
+										"type": "object",
+										"properties": {
+											"prepaidCode": {
+												"description": "Prepaidcode (given by the client)\nCIM: 20\nCODE: UIC-Code\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ",
+												"type": "string",
+												"enum": [
+													"10",
+													"11",
+													"12",
+													"13",
+													"14",
+													"15",
+													"16",
+													"17",
+													"20",
+													"42",
+													"43",
+													"44",
+													"45",
+													"46",
+													"47",
+													"90"
+												]
+											},
+											"incotermCode": {
+												"description": "Incoterm (given by the client)\nCIM: 20\nCODE: INCOTERM (UIC leaflet 920-7)\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ",
+												"type": "string",
+												"enum": [
+													"CIP",
+													"CPT",
+													"DAF",
+													"DDP",
+													"DDU",
+													"EXW",
+													"FCA",
+													"DAP",
+													"DAT"
+												]
+											}
+										},
+										"additionalProperties": false
+									},
+									"prepaidcodeCarrier": {
+										"description": "Prepaidcode (given by the railway)\nCIM: 49\nCODE: UIC-Code\nREAD: ---\nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier ",
+										"type": "string",
+										"enum": [
+											"10",
+											"11",
+											"12",
+											"13",
+											"14",
+											"15",
+											"16",
+											"17",
+											"20",
+											"42",
+											"43",
+											"44",
+											"45",
+											"46",
+											"47",
+											"90"
+										]
+									},
+									"paidUpTo": {
+										"description": "Charges Paid Up To ... This information is being sent by the consignor in agreement with the contractual carrier so only one structure is needed for field 20 and 49. The carrier is only allowed to apply changes, when ordered by the consignor.",
+										"type": "object",
+										"additionalProperties": false,
+										"oneOf": [
+											{
+												"type": "object",
+												"properties": {
+													"station": {
+														"description": "Station",
+														"type": "object",
+														"properties": {
+															"UICCountryCode": {
+																"description": "Country Code\nCIM: 20\nCIM: 49\nRULE: IF (PrepaidUpTo/Station/StationCode is present) THEN Mandatory ELSE Allowed\nCODE: UIC country code\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the caseof subsequent orders or on the instruction of the consignor or consignee.) ",
+																"$ref": "#/definitions/UICCountryCodeType"
+															},
+															"stationCode": {
+																"description": "Station Code including Check-digit (Railway Station Code)\nCIM: 20\nCIM: 49\nCODE: UIC-Code\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the caseof subsequent orders or on the instruction of the consignor or consignee.) ",
+																"$ref": "#/definitions/stationCodeType"
+															},
+															"stationName": {
+																"description": "Station Name\nCIM: 20\nCIM: 49\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the caseof subsequent orders or on the instruction of the consignor or consignee.) ",
+																"type": "string",
+																"pattern": "^.{1,35}$"
+															}
+														},
+														"required": [
+															"UICCountryCode",
+															"stationCode"
+														],
+														"additionalProperties": false
+													}
+												},
+												"required": [
+													"station"
+												],
+												"additionalProperties": false
+											},
+											{
+												"type": "object",
+												"properties": {
+													"borderPoint": {
+														"description": "Border",
+														"type": "object",
+														"properties": {
+															"UICCountryCode": {
+																"description": "Country Code\nCIM: 20\nCIM: 49\nCODE: UIC country code\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the caseof subsequent orders or on the instruction of the consignor or consignee.) ",
+																"$ref": "#/definitions/UICCountryCodeType"
+															},
+															"pointCode": {
+																"description": "Border crossing point code\nCIM: 20\nCIM: 49\nCODE: UIC-Code\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the caseof subsequent orders or on the instruction of the consignor or consignee.) ",
+																"type": "string",
+																"pattern": "^\\d{3,4}"
+															},
+															"PointName": {
+																"description": "Border crossing point name\nCIM: 20\nCIM: 49\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the caseof subsequent orders or on the instruction of the consignor or consignee.) ",
+																"type": "string",
+																"pattern": "^.{1,35}$"
+															}
+														},
+														"required": [
+															"UICCountryCode",
+															"pointCode"
+														],
+														"additionalProperties": false
+													}
+												},
+												"required": [
+													"borderPoint"
+												],
+												"additionalProperties": false
+											}
+										]
+									},
+									"additionalCharges": {
+										"description": "Additional Charges (Mandatory for prepaid codes 11, 12, 13, 14)",
+										"type": "array",
+										"items": {
+											"description": "Additional Charges (Mandatory for prepaid codes 11, 12, 13, 14)",
+											"type": "object",
+											"properties": {
+												"code": {
+													"description": "Additional charges code according CIT GLV-CIM appendix 3\nCIM: 49\nCODE: CIT GLV-CIM appendix 3\nREAD: ---\nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier ",
+													"type": "string",
+													"pattern": "\\d{2}"
+												},
+												"description": {
+													"description": "Additional charges description\nCIM: 49\nREAD: ---\nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier ",
+													"type": "string",
+													"pattern": "^.{1,35}$"
+												}
+											},
+											"required": [
+												"code"
+											],
+											"additionalProperties": false
+										},
+										"additionalProperties": false
+									}
+								},
+								"required": [
+									"prepaidcodeCarrier"
+								],
+								"additionalProperties": false
+							},
+							"tariff": {
+								"description": "Number of customer agreement or tariff",
+								"type": "object",
+
+								"oneOf": [
+									{
+										"type": "object",
+										"properties": {
+											"contractNumber": {
+												"description": "Number of customer agreement.\nCIM: 14\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ",
+												"$ref": "#/definitions/contractNumber"
+											}
+										},
+										"required": [
+											"contractNumber"
+										],
+										"additionalProperties": false
+									},
+									{
+										"type": "object",
+										"properties": {
+											"tariffNumber": {
+												"description": "Number of the tariff. \nCIM: 14\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ",
+												"$ref": "#/definitions/tariffNumber"
+											}
+										},
+										"required": [
+											"tariffNumber"
+										],
+										"additionalProperties": false
+									}
+								]
+							},
+							"sectionalInvoicing": {
+								"description": "Sectional Invoicing",
+								"type": "object",
+								"properties": {
+									"sections": {
+										"type": "array",
+										"minItems": 1,
+										"maxItems": 30,
+										"items": {
+											"description": "Sectional Invoicing",
+											"type": "object",
+											"properties": {
+												"invoicingCarrierCode": {
+													"description": "Sectional invoicing by\nCIM: 19\nCODE: UIC-Code\nREAD: ---\nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the caseof subsequent orders or on theinstruction of the consignor orconsignee.) ",
+													"$ref": "#/definitions/carrierCodeType"
+												},
+												"invoicedSection": {
+													"description": "Information about the section to be invoiced.",
+													"type": "object",
+													"properties": {
+														"UICCountryCode": {
+															"description": "Invoiced section specified by country\nCIM: 19\nCODE: UIC country code\nREAD: ---\nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the caseof subsequent orders or on theinstruction of the consignor orconsignee.) ",
+															"$ref": "#/definitions/UICCountryCodeType"
+														},
+														"carrierCode": {
+															"description": "Invoiced section specified by carrier\nCIM: 19\nCODE: UIC-Code\nREAD: ---\nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the caseof subsequent orders or on theinstruction of the consignor orconsignee.) ",
+															"$ref": "#/definitions/carrierCodeType"
+														}
+													},
+													"required": [
+														"UICCountryCode",
+														"carrierCode"
+													],
+													"additionalProperties": false
+												}
+											},
+											"required": [
+												"invoicingCarrierCode",
+												"invoicedSection"
+											],
+											"additionalProperties": false
+										}
+									}
+								},
+								"required": [
+									"sections"
+								],
+								"additionalProperties": false
+							},
+							"declarationOfValue": {
+								"description": "Details of the value of the goods and the currency code when the value exceeds the limit given in CIM Article 30 section 2.",
+								"type": "object",
+								"properties": {
+									"value": {
+										"description": "Amount\nCIM: 26\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the caseof subsequent orders by the consignor.) ",
+										"$ref": "#/definitions/moneyType"
+									},
+									"currencyCode": {
+										"description": "Currency abbreviation (ISO-4217 alphanumeric)\nCIM: 26\nCODE: ISO-4217 alphanumeric\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the caseof subsequent orders by the consignor.) ",
+										"$ref": "#/definitions/currencyCodeType"
+									}
+								},
+								"required": [
+									"value",
+									"currencyCode"
+								],
+								"additionalProperties": false
+							},
+							"interestInDelivery": {
+								"description": "Details of the amount and currency code of a special interest in delivery.",
+								"type": "object",
+								"properties": {
+									"amount": {
+										"description": "Amount\nCIM: 27\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the caseof subsequent orders from the consignor.) ",
+										"$ref": "#/definitions/moneyType"
+									},
+									"currencyCode": {
+										"description": "Currency abbreviation (ISO-4217 alphanumeric)\nCIM: 27\nCODE: ISO-4217 alphanumeric\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the caseof subsequent orders from the consignor.)",
+										"$ref": "#/definitions/currencyCodeType"
+									}
+								},
+								"required": [
+									"amount",
+									"currencyCode"
+								],
+								"additionalProperties": false
+							},
+							"cashOnDelivery": {
+								"description": "Details of the amount to be collected on delivery and the currency code.",
+								"type": "object",
+								"properties": {
+									"amount": {
+										"description": "Amount\nCIM: 28\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the case of subsequent orders from the consignor.) ",
+										"$ref": "#/definitions/moneyType"
+									},
+									"currencyCode": {
+										"description": "Currency abbreviation (ISO-4217 alphanumeric)\nCIM: 28\nCODE: ISO-4217 alphanumeric\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (Amendment only in the case of subsequent orders from the consignor.)",
+										"$ref": "#/definitions/currencyCodeType"
+									}
+								},
+								"required": [
+									"amount",
+									"currencyCode"
+								],
+								"additionalProperties": false
+							},
+							"routing": {
+								"description": "Has to be present for transports using CIM. For national (transports without border crossing) this element can be omitted.",
+								"type": "object",
+								"properties": {
+									"routeSections": {
+										"type": "array",
+										"minItems": 1,
+										"maxItems": 30,
+										"items": {
+											"description": "Routing",
+											"type": "object",
+											"properties": {
+												"routeCode": {
+													"description": "Route code (RIP)\nCIM: 50\nCODE:\nREAD:  - Consignor  - Consignee \nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier ",
+													"type": "string",
+													"pattern": "^\\d{5}$"
+												},
+												"routeText": {
+													"description": "Route (in clear)\nCIM: 50\nREAD:  - Consignor  - Consignee \nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier ",
+													"type": "string",
+													"pattern": "^.{1,80}$"
+												},
+												"diversion": {
+													"description": "Where there have been circumstances preventing carriage, enter the reason in this element ('Diverted because of ...').\nCIM: 50\nREAD:  - Consignor - Consignee \nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier ",
+													"type": "string",
+													"pattern": "^.{1,350}$"
+												},
+												"borderPointCode": {
+													"description": "Border point code\nCIM: 50\nCODE: UIC-Code\nREAD:  - Consignor - Consignee \nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier ",
+													"type": "string",
+													"pattern": "^\\d{3,4}$"
+												},
+												"sequenceID": {
+													"type": "string",
+													"pattern": "^(?:[1-9]|[1-2][0-9]|30)$"
+												}
+											},
+											"required": [
+												"routeCode",
+												"sequenceID"
+											],
+											"additionalProperties": false
+										}
+									}
+								},
+								"required": [
+									"routeSections"
+								],
+								"additionalProperties": false
+							},
+							"specialTreatments": {
+								"description": "Special treatment\nCIM: 50",
+								"type": "array",
+								"items": {
+									"description": "Special treatment\nCIM: 50",
+									"type": "object",
+									"properties": {
+										"carrierCode": {
+											"description": "additional carrier who shall do the special treatment.\nCIM: 50\nCODE: UIC-Code\nREAD:  - Consignor - Consignee \nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier ",
+											"$ref": "#/definitions/carrierCodeType"
+										},
+										"specialTreatmentCode": {
+											"description": "Special Treatment code\nCIM: 50\nCODE: UIC-Code\nREAD:  - Consignor - Consignee \nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier ",
+											"type": "string",
+											"enum": [
+												"11",
+												"12",
+												"13",
+												"14",
+												"21",
+												"22",
+												"23",
+												"24",
+												"25",
+												"26",
+												"41",
+												"42",
+												"43",
+												"44",
+												"45",
+												"46",
+												"74",
+												"75",
+												"76",
+												"77",
+												"99"
+											]
+										},
+										"specialTreatmentInformation": {
+											"description": "Additional comment to the SpecialTreatmentCode used.\nCIM: 50\nREAD:  - Consignor  - Consignee\nWRITE: ---\nWRITE:AMEND:  - Contractual carrier  - Successive carrier ",
+											"type": "string",
+											"pattern": "^.{1,40}"
+										},
+										"UICCountryCode": {
+											"description": "Country Code\nCIM: 50\nCODE: UIC country code\nREAD:  - Consignor - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier",
+											"$ref": "#/definitions/UICCountryCodeType"
+										},
+										"stationCode": {
+											"description": "Station Code including Check-digit (Railway Station Code)\nCIM: 50\nCODE: UIC-Code\nREAD:  - Consignor - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier",
+											"$ref": "#/definitions/stationCodeType"
+										},
+										"stationName": {
+											"description": "Station Name\nCIM: 50\nREAD:  - Consignor - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier",
+											"type": "string",
+											"pattern": "^.{1,35}"
+										}
+									},
+									"required": [
+										"specialTreatmentCode",
+										"UICCountryCode",
+										"stationCode"
+									],
+									"additionalProperties": false
+								}
+							},
+							"customsProcedure": {
+								"description": "Customs procedures",
+								"type": "object",
+								"properties": {
+									"UICCountryCode": {
+										"description": "Country Code where the customs procedures are foreseen.\nCIM: 51\nCODE: UIC country code\nREAD:  - Consignor - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier",
+										"$ref": "#/definitions/UICCountryCodeType"
+									},
+									"stationCode": {
+										"description": "Station code including Check-digit (Railway Station Code) in which the formalities required by the customs and other administrative authorities are to be undertaken.\nCIM: 51\nCODE: UIC-Code\nREAD:  - Consignor - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier",
+										"$ref": "#/definitions/stationCodeType"
+									},
+									"stationName": {
+										"description": "Station name in which the formalities required by the customs and other administrative authorities are to be undertaken.\nCIM: 51\nREAD:  - Consignor - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier",
+										"type": "string",
+										"pattern": "^.{1,35}"
+									},
+									"carrierCode": {
+										"description": "Code of the carrier entrusted of customs procedures.\nCIM: 51\nCODE: UIC-Code\nREAD:  - Consignor - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier  - Successive carrier",
+										"$ref": "#/definitions/carrierCodeType"
+									}
+								},
+								"required": [
+									"UICCountryCode",
+									"stationCode"
+								],
+								"additionalProperties": false
+							},
+							"customsData": {
+								"description": "Customs Data",
+								"type": "object",
+								"properties": {
+									"STP": {
+										"description": "Simplified transport procedure is used (VGVV).\nCIM: 58\nREAD:  - Successive carrier - Consignor - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier",
+										"type": "boolean",
+										"default": false
+									},
+									"principalCode": {
+										"description": "Code for the principal\nCIM: 58\nCODE: UIC-Code\nRULE: IF (STP == true) THEN mandatory\nREAD:  - Successive carrier - Consignor  - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier",
+										"$ref": "#/definitions/carrierCodeType"
+									},
+									"customsSurveillance": {
+										"description": "Good under customs surveillance\nCIM: 99",
+										"type": "boolean"
+									},
+									"customsEndorsement": {
+										"description": "Reserved for endorsements by customs or a consignor/consignee authorised by customs. Data element in accordance with Regulation (EC) 1875/2006).\nCIM: 99\nREAD:  - Contractual carrier  - Successive carrier - Consignor - Consignee \nWRITE: ---\nAMEND:  - Customs authorities - Authorised consignor - Authorised consignee",
+										"type": "string",
+										"pattern": "^.{1,350}"
+									}
+								},
+								"required": [
+									"STP",
+									"customsSurveillance"
+								],
+								"additionalProperties": false
+							},
+							"contractualCarrier": {
+								"description": "Contractual carrier",
+								"type": "object",
+								"properties": {
+									"carrierCode": {
+										"description": "Contractual carrier, railway undertaking (Railway Code).\nCIM: 58\nCODE: UIC-Code\nREAD:  - Successive carrier - Consignor  - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier",
+										"$ref": "#/definitions/carrierCodeType"
+									},
+									"carriername": {
+										"description": "Name of contractual carrier\nCIM: 58\nREAD:  - Successive carrier - Consignor  - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier",
+										"type": "string",
+										"pattern": "^.{1,35}"
+									},
+									"streetNumber": {
+										"description": "Street number of contractual carrier\nCIM: 58\nCODE: National codification\nREAD:  - Successive carrier - Consignor  - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier",
+										"type": "string",
+										"pattern": "^.{1,5}"
+									},
+									"street": {
+										"description": "Street name of contractual carrier\nCIM: 58\nREAD:  - Successive carrier - Consignor  - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier",
+										"type": "string",
+										"pattern": "^.{1,35}"
+									},
+									"ZIPCode": {
+										"description": "Postal code\nCIM: 58\nCODE: National codification\nREAD:  - Successive carrier - Consignor  - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier",
+										"type": "string",
+										"pattern": "^.{1,9}"
+									},
+									"city": {
+										"description": "City/Town\nCIM: 58\nREAD:  - Successive carrier - Consignor  - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier",
+										"type": "string",
+										"pattern": "^.{1,35}"
+									},
+									"countryCode": {
+										"description": "Country code (ISO Code) of the contractual carrier.\nCIM: 58\nCODE: ISO-3166-2\nREAD:  - Successive carrier - Consignor  - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier",
+										"$ref": "#/definitions/countryCodeType"
+									},
+									"signature": {
+										"description": "Signature of the contractual carrier. When missing, the shipment number (CIM: 62) shall be used for signature purposes.\nCIM: 58\nREAD:  - Successive carrier - Consignor  - Consignee\nWRITE: ---\nAMEND:  - Contractual carrier",
+										"$ref": "#/definitions/signatureType"
+									}
+								},
+								"required": [
+									"carrierCode"
+								],
+								"additionalProperties": false
+							},
+							"madeOut": {
+								"description": "Made out\nCIM: 29",
+								"type": "object",
+								"properties": {
+									"place": {
+										"description": "Place at which the consignment note was made out.\nCIM: 29\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor.) ",
+										"type": "string",
+										"pattern": "^.{1,35}"
+									},
+									"date": {
+										"description": "Date at which the consignment note was made out.\nCIM: 29\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor.) ",
+										"type": "string",
+										"pattern": "^20(2[1-9]|[3-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$"
+									}
+								},
+								"required": [
+									"place",
+									"date"
+								],
+								"additionalProperties": false
+							},
+							"changeLogs": {
+								"type": "array",
+								"minItems": 1,
+								"maxItems": 100,
+								"items": {
+									"description": "Log of changes made by the carriers during the transport.\nCIM: none",
+									"type": "object",
+									"properties": {
+										"carrierCode": {
+											"$ref": "#/definitions/carrierCodeType"
+										},
+										"dateTime": {
+											"type": "string",
+											"pattern": ".*[+-]\\d{2}:\\d{2}"
+										},
+										"numberOfModifiedVersion": {
+											"type": "integer",
+											"pattern": "^([0-9]|[1-9][0-9]|100)$"
+										}
+									},
+									"required": [
+										"carrierCode",
+										"dateTime",
+										"numberOfModifiedVersion"
+									],
+									"additionalProperties": false
+								}
+							},
+							"carrierSpecific": {
+								"type": "object",
+								"properties": {
+									"CNAttributes": {
+										"type": "object",
+										"properties": {
+											"validated": {
+												"type": "boolean"
+											},
+											"paperCNExists": {
+												"type": "boolean"
+											},
+											"invoiceReference": {
+												"type": "string"
+											},
+											"extCNcustomerReference": {
+												"type": "string"
+											},
+											"customs": {
+												"type": "object",
+												"properties": {
+													"permittedCRPrevalidateNumber": {
+														"type": "string"
+													},
+													"permittedCRExportDocumentDate": {
+														"type": "string",
+														"pattern": "^.*[+-]\\d{2}:\\d{2}$"
+													},
+													"permittedCRcustomsOffice": {
+														"type": "string"
+													},
+													"permittedCRname": {
+														"type": "string"
+													},
+													"permittedCRPermissionNumber": {
+														"type": "string"
+													},
+													"generalcustomsStatus": {
+														"type": "string"
+													},
+													"exportIndicator": {
+														"type": "boolean"
+													}
+												},
+												"additionalProperties": false
+											},
+											"orderOriginISOCtryCd": {
+												"type": "string"
+											},
+											"orderDestinationISOCtryCd": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"validated",
+											"paperCNExists"
+										],
+										"additionalProperties": false
+									},
+									"orderAttributes": {
+										"type": "object",
+										"properties": {
+											"blockReference": {
+												"type": "string"
+											},
+											"plannedTransport": {
+												"type": "object",
+												"properties": {
+													"plannedTrain": {
+														"type": "string"
+													},
+													"plannedDate": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"plannedTrain",
+													"plannedDate"
+												],
+												"additionalProperties": false
+											},
+											"orderMedium": {
+												"type": "string"
+											},
+											"senderIdentificationEDI": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"senderIdentificationEDI"
+										],
+										"additionalProperties": false
+									},
+									"XCAP": {
+										"type": "object",
+										"properties": {
+											"bookingRecordId": {
+												"type": "string",
+												"pattern": "^([0-9]{4}:[0-9]{17}:[a-f0-9-]+)$"
+											},
+											"wagonIds": {
+												"type": "array",
+												"minItems": 1,
+												"maxItems": 99,
+												"items": {
+													"type": "object",
+													"properties": {
+														"wagonNumber": {
+															"$ref": "#/definitions/wagonNumber"
+														},
+														"wagonId": {
+															"$ref": "#/definitions/wagonId"
+														}
+													},
+													"required": [
+														"wagonNumber",
+														"wagonId"
+													],
+													"additionalProperties": false
+												}
+											}
+										},
+										"required": [
+											"bookingRecordId",
+											"wagonIds"
+										],
+										"additionalProperties": false
+									},
+									"CTTypeCN": {
+										"type": "object",
+										"properties": {
+											"uniqueLinkingKey": {
+												"description": "Used to combine CT-Type CN's in one order of CIS",
+												"type": "string",
+												"pattern": "^.{13}"
+											},
+											"orderDestinationUICCountryCode": {
+												"description": "UIC Code of the country of the station serving the delivery of the order.",
+												"$ref": "#/definitions/UICCountryCodeType"
+											},
+											"orderDestinationUICStationCode": {
+												"description": "UIC Code of station serving the delivery of the order.",
+												"type": "string",
+												"pattern": "^.{5}"
+											}
+										},
+										"required": [
+											"uniqueLinkingKey",
+											"orderDestinationUICCountryCode",
+											"orderDestinationUICStationCode"
+										],
+										"additionalProperties": false
+									}
+								},
+								"required": [
+									"CNAttributes",
+									"orderAttributes"
+								],
+								"additionalProperties": false
+							}
+						},
+						"required": [
+							"acceptancePoint",
+							"deliveryPoint",
+							"customers",
+							"prepaymentInstruction",
+							"tariff",
+							"madeOut",
+							"wagons",
+							"carrierSpecific"
+						],
+						"additionalProperties": false
+					}
+				},
+				"required": [
+					"ecnHeader",
+					"ecn"
+				],
+				"additionalProperties": false
+			},
+			"additionalProperties": false
+		}
+	},
+	"required": [
+		"interchangeHeader",
+		"ecns"
+	],
+	"additionalProperties": false,
+	"definitions": {
+		"wagonId": {
+			"type": "string",
+			"pattern": "^([0-9]{4}:[0-9]{17}:[a-f0-9-]+)$"
+		},
+		"wagonNumber": {
+			"type": "string",
+			"pattern": "^\\d{12}"
+		},
+		"equipmentNumberType": {
+			"type": "string",
+			"pattern": "^.{1,13}$"
+		},
+		"NHMCodeType": {
+			"type": "string",
+			"pattern": "^\\d{1,6}$"
+		},
+		"signatureType": {
+			"type": "string",
+			"pattern": "^.{1,35}$"
+		},
+		"currencyCode": {
+			"type": "string",
+			"pattern": "^[A-Z][A-Z][A-Z]$"
+		},
+		"tariffNumber": {
+			"type": "string",
+			"pattern": "^\\d{1,6}"
+		},
+		"contractNumber": {
+			"type": "string",
+			"pattern": "^0*[0-9]{1,6}$"
+		},
+		"stationCodeType": {
+			"type": "string",
+			"pattern": "\\d{6}"
+		},
+		"station": {
+			"type": "object",
+			"properties": {
+				"code": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"country": {
+					"$ref": "#/definitions/stationCountry"
+				}
+			},
+			"required": [
+				"code",
+				"name",
+				"country"
+			],
+			"additionalProperties": false
+		},
+		"UICCountryCodeType": {
+			"description": "Code of the country of the station serving the delivery or acceptance point.\nCIM: 12\nCIM: 62\nCODE: UIC country code\nREAD: IF (DeliveryPoint) THEN  - Consignee IF (AcceptancePoint) THEN  - Consignor  - Consignee\nWRITE: IF (DeliveryPoint) THEN  - Consignor IF (AcceptancePoint) THEN  - Contractual carrier  - Successive carrier (Data provided by the forwarding carrier) \nAMEND: IF (DeliveryPoint) THEN  - Contractual carrier  - Successive carrier (Addition of code. Amendment only if the name and delivery point do not match, or in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+			"type": "integer",
+			"pattern": "^(1[0-9]|[1-9][0-9])$"
+		},
+		"countryCodeType": {
+			"type": "string",
+			"pattern": "[A-Z][A-Z]"
+		},
+		"carrierCodeType": {
+			"type": "string",
+			"pattern": "^\\d{4}$"
+		},
+		"pointCountry": {
+			"type": "object",
+			"properties": {
+				"UICCountryCode": {
+					"$ref": "#/definitions/UICCountryCodeType"
+				},
+				"name": {
+					"type": "string",
+					"pattern": "^.{1,35}$"
+				}
+			},
+			"required": [
+				"UICCountryCode",
+				"name"
+			],
+			"additionalProperties": false
+		},
+		"point": {
+			"type": "object",
+			"properties": {
+				"code": {
+					"description": "Code of the delivery or acceptance point. If the code is missing it may be entered by the carrier.\nCIM: 11\nCIM: 17\nCODE: National codification\nREAD:  - Consignee\nWRITE: IF (DeliveryPointCode) THEN  - Consignor IF (AcceptancePointCode) THEN  - Consignor - Contractual carrier  - Successive carrier \nAMEND: IF (DeliveryPointCode) THEN  - Contractual carrier - Subsequent carrier (Addition of code. Amendment only in case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+					"type": "string",
+					"pattern": "^[0-9]{1,14}$"
+				},
+				"name": {
+					"description": "Name of the delivery or acceptance point.\nCIM: 10\nCIM: 16\nREAD: IF (DeliveryPointName) THEN  - Consignee IF (AcceptancePointName) THEN  - Contractual carrier  - Successive carrier - Consignee \nWRITE:  - Consignor\nAMEND: IF (DeliveryPointName) THEN  - Contractual carrier  - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+					"type": "string",
+					"pattern": "^.{1,35}$"
+				},
+				"country": {
+					"description": "Country information of the point\nCIM: 10",
+					"$ref": "#/definitions/pointCountry"
+				}
+			},
+			"required": [
+				"name",
+				"country"
+			],
+			"additionalProperties": false
+		},
+		"stationCountry": {
+			"description": "Details of country of the point\nCIM: 10",
+			"type": "object",
+			"properties": {
+				"UICCountryCode": {
+					"description": "Code of the country of the station serving the delivery or acceptance point.\nCIM: 12\nCIM: 62\nCODE: UIC country code\nREAD: IF (DeliveryPoint) THEN  - Consignee IF (AcceptancePoint) THEN  - Consignor  - Consignee\nWRITE: IF (DeliveryPoint) THEN  - Consignor IF (AcceptancePoint) THEN  - Contractual carrier  - Successive carrier (Data provided by the forwarding carrier) \nAMEND: IF (DeliveryPoint) THEN  - Contractual carrier  - Successive carrier (Addition of code. Amendment only if the name and delivery point do not match, or in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+					"$ref": "#/definitions/UICCountryCodeType"
+				},
+				"name": {
+					"description": "Neme of the country of the station serving the delivery or acceptance point.\nCIM: 16 (AcceptancePoint)\nCIM: 10 (DeliveryPoint)",
+					"type": "string",
+					"pattern": "^.{1,35}$"
+				}
+			},
+			"required": [
+				"UICCountryCode"
+			],
+			"additionalProperties": false
+		},
+		"pointStation": {
+			"type": "object",
+			"properties": {
+				"code": {
+					"description": "Code of station serving the delivery or acceptance point.\nCIM: 12\nCIM: 62\nCODE: UIC leaflet 920-14\nREAD: IF (DeliveryPoint) THEN  - ConsigneeIF (AcceptancePoint) THEN  - Consignor  - Consignee\nWRITE: IF (DeliveryPoint) THEN  - Consignor IF (AcceptancePoint) THEN  - Contractual carrier  - Successive carrier (Data providedby theforwarding carrier) \nAMEND: IF (DeliveryPoint) THEN  - Contractual carrier  - Successive carrier (Addition of code. Amendment only if the name and delivery point do not match, or in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+					"type": "string",
+					"pattern": "^[0-9]{6}$"
+				},
+				"name": {
+					"description": "Name of station serving the delivery or acceptance point.\nCIM: 10\nCIM: 16\nREAD: IF (DeliveryPoint) THEN  - Consignee IF (AcceptancePoint) THEN  - Contractual carrier  - Successive carrier - Consignee \nWRITE:  - Consignor\nAMEND: IF (DeliveryPoint) THEN  - Contractual carrier  - Successive carrier (Amendment only in the case of subsequent orders or on the instruction of the consignor or consignee.) ELSE none",
+					"type": "string",
+					"pattern": "^.{1,35}$"
+				},
+				"country": {
+					"description": "Details of country of the point\nCIM: 10",
+					"$ref": "#/definitions/stationCountry"
+				}
+			},
+			"required": [
+				"code",
+				"name",
+				"country"
+			],
+			"additionalProperties": false
+		},
+		"productionStation": {
+			"type": "object",
+			"properties": {
+				"code": {
+					"description": "Code of production station serving the acceptance or delivery point.\nCIM: 16 (AcceptancePoint)\nCODE: National codification\nCIM: 10 (DeliveryPoint)",
+					"type": "string",
+					"pattern": "^[1-9]{6}$"
+				},
+				"name": {
+					"description": "Name of the production station serving the acceptance or delivery point.\nCIM: 16 (AcceptancePoint)\nCIM: 10 (DeliveryPoint)",
+					"type": "string",
+					"pattern": "^.{1,35}$"
+				},
+				"RPCode": {
+					"description": "Routing point code of the production station of the acceptance or delivery point. Suppress the '.'.\nCIM: 16 (AcceptancePoint)\nCIM: 10 (DeliveryPoint)",
+					"type": "string",
+					"pattern": "^.{5}$"
+				},
+				"country": {
+					"description": "Country code of the production station serving the acceptance or delivery point.\nCIM: 16 (AcceptancePoint)\nCIM: 10 (DeliveryPoint)\nCODE: UIC country code",
+					"$ref": "#/definitions/stationCountry"
+				}
+			},
+			"required": [
+				"code",
+				"country"
+			],
+			"additionalProperties": false
+		},
+		"pointType": {
+			"type": "object",
+			"properties": {
+				"point": {
+					"$ref": "#/definitions/point"
+				},
+				"station": {
+					"description": "Details of station serving the point",
+					"$ref": "#/definitions/pointStation"
+				},
+				"productionStation": {
+					"description": "Details of production station serving the point",
+					"$ref": "#/definitions/productionStation"
+				}
+			},
+			"required": [
+				"station"
+			],
+			"additionalProperties": false
+		},
+		"equipmentCodeType": {
+			"type": "string",
+			"enum": [
+				"cn",
+				"sw",
+				"te"
+			]
+		},
+		"sealsType": {
+			"type": "object",
+			"properties": {
+				"numberOfSeals": {
+					"description": "Number of the seals attached by the consignor.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+					"type": "integer",
+					"pattern": "^[0-9]{1,2}$"
+				},
+				"sealsDescriptions": {
+					"description": "Array with descriptions of each seal",
+					"type": "array",
+					"items": {
+						"description": "Additional information of the consignor regarding the attached seals.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+						"type": "string",
+						"pattern": "^.{1,10}$"
+					}
+				}
+			},
+			"required": [
+				"numberOfSeals",
+				"sealsDescriptions"
+			],
+			"additionalProperties": false
+		},
+		"shipType": {
+			"type": "object",
+			"properties": {
+				"shipName": {
+					"description": "Name of ship.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+					"type": "string",
+					"pattern": "^.{1,35}$"
+				},
+				"harbourName": {
+					"description": "Name of harbour, where the transport will be taken over to a ship.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+					"type": "string",
+					"pattern": "^.{1,35}$"
+				},
+				"shipOwner": {
+					"description": "Name of ship owner.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+					"type": "string",
+					"pattern": "^.{1,35}$"
+				},
+				"endOfCharging": {
+					"description": "End date/time of loading from ship from wagon.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+					"type": "string",
+					"pattern": ".*[+-]\\d{2}:\\d{2}"
+				}
+			},
+			"additionalProperties": false
+		},
+		"goodsType": {
+			"type": "array",
+			"minItems": 1,
+			"maxItems": 99,
+			"items": {
+				"type": "object",
+				"properties": {
+					"RID": {
+						"description": "The requirement (optional/mandatory) of the RID detail tags depend on the dangerous good and the regarding RID regulations.\nCIM: 21\nRULE: IF (PreviousLoadedGood is present) THEN RID information belongs to PreviousLoadedGood",
+						"type": "object",
+						"properties": {
+							"law": {
+								"description": "The law after which the RID data are declared.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+								"type": "string",
+								"enum": [
+									"2021",
+									"2023",
+									"2025",
+									"2027",
+									"2029",
+									"2031"
+								]
+							},
+							"dangerLabels": {
+								"type": "array",
+								"minItems": 0,
+								"maxItems": 5,
+								"items": {
+									"description": "All Danger Label of this dangerous good according to the RID chapter 3.2, table A, column 5, excepting the shunting labels Model 13 and 15.\nCIM: 21\nCODE: OTIF RID-Specification\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+									"type": "string",
+									"enum": [
+										"1",
+										"1.4",
+										"1.5",
+										"1.6",
+										"2.1",
+										"2.2",
+										"2.3",
+										"3",
+										"4.1",
+										"4.2",
+										"4.3",
+										"5.1",
+										"5.2",
+										"6.1",
+										"6.2",
+										"7A",
+										"7B",
+										"7C",
+										"7D",
+										"7E",
+										"8",
+										"9"
+									]
+								}
+							},
+							"technicalDescription": {
+								"description": "The Technical Description is an approved chemical or biological name and has to be present if the dangerous good has assigned a special provision 274 according to RID chapter 3.2, table A, column 6.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+								"type": "string",
+								"pattern": "^.{1,350}"
+							},
+							"longTextDescription": {
+								"description": "The official name of this dangerous good according to the RID chapter 3.2, table A, column 2 Mandatory, except it concerns a declaration of an empty packaging of the type \"EMPTY PACKAGING\", \"EMPTY RECEPTACLE\", \"EMPTY RECEPTACLE <=1000L, \"EMPTY IBC\" or \"EMPTY LARGE PACKAGING\" (the values still have to be defined).\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+								"type": "string",
+								"pattern": "^.{1,350}"
+							},
+							"additionalInformation": {
+								"description": "Additional description i.e. additional provisions (5.4.1.2.2)\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+								"type": "string",
+								"pattern": "^.{1,350}"
+							},
+							"weight": {
+								"description": "The total mass of this dangerous good - for empty RID = 0.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+								"type": "number",
+								"pattern": "^[0-9]{1,8}(\\.[0-9]{1})?$"
+							},
+							"weightNettoExplosiveMass": {
+								"description": "Special provision only necessary and allowed for Class 1 - the total net mass of explosive substance (RID 5.4.1.2.1).\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+								"type": "number",
+								"pattern": "^[0-9]{1,8}(\\.[0-9]{1})?$"
+							},
+							"hazardNumber": {
+								"description": "The Hazard Number of the dangerous good according to the RID chapter 3.2, table A, column 20. It's Mandatory, when a marking in accordance the RID chapter 5.3.2.1 is prescribed.\nCIM: 21\nCODE: OTIF RID-Specification\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+								"type": "string",
+								"pattern": "^.{1,4}$"
+							},
+							"UNNumber": {
+								"description": "The UNNumber of the dangerous good according to the RID chapter 3.2, table A, column 1. Mandatory, except it concerns a declaration of an empty packaging of the type \"EMPTY PACKAGING\", \"EMPTY RECEPTACLE <=1000L\", \"EMPTY IBC\" or \"EMPTY LARGE PACKAGING\" (the values still have to be defined).\nCIM: 21\nCODE: OTIF RID-Specification\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+								"type": "string",
+								"pattern": "^\\d*[1-9]\\d*$"
+							},
+							"class": {
+								"description": "The Class of the dangerous good according to the RID chapter 3.2, table A, column 3a.\nCIM: 21\nCODE: OTIF RID-Specification (structure: xx.x)\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+								"type": "string",
+								"pattern": "\\d\\d?(\\.\\d)?"
+							},
+							"classificationCode": {
+								"description": "The Classification Code of the dangerous good according to the RID chapter 3.2, table A, column 3b. Mandatory for Class 1 - optional, but possibly for all the other classes.\nCIM: 21\nCODE: OTIF RID-Specification\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+								"type": "string",
+								"pattern": "^.{1,4}$"
+							},
+							"packingGroup": {
+								"description": "The Packing Group according to the RID chapter 3.2, table A, column 4. Possible values are \"I\", \"II\" or \"III\", otherwise the Packing Group have to be omitted. Mandatory, if it's foreseen in column 4, except it concerns a declaration of an empty packaging of the type \"EMPTY PACKAGING\", \"EMPTY RECEPTACLE <=1000L\", \"EMPTY IBC\" or \"EMPTY LARGE PACKAGING\" (the values still have to be defined). \nCIM: 21\nCODE: OTIF RID-Specification\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+								"type": "string",
+								"enum": [
+									"I",
+									"II",
+									"III"
+								]
+							},
+							"emptyPackingCode": {
+								"description": "Code of empty packing as described in RID 5.4.1.1.6.2\nCIM: 21\nCODE: OTIF RID-Specification, element EMPTY has been added as 'dummy' until the code list has been finished and approved. \nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+								"type": "string",
+								"enum": [
+									"01",
+									"02",
+									"03",
+									"04",
+									"05",
+									"06",
+									"07",
+									"08",
+									"09",
+									"10",
+									"11",
+									"12",
+									"13",
+									"14",
+									"15",
+									"16",
+									"17",
+									"18"
+								]
+							}
+						},
+						"required": [
+							"law",
+							"weight"
+						],
+						"additionalProperties": false
+					},
+					"packing": {
+						"type": "object",
+						"properties": {
+							"natureOfPacking": {
+								"description": "Nature of packing\nCIM: 21\nCODE: UN/ECE-Recommendation No. 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+								"type": "string",
+								"pattern": "[0-9]{1,2}"
+							},
+							"numberOfPackages": {
+								"description": "Number of packages.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+								"type": "integer",
+								"pattern": "[0-9]{1,5}"
+							},
+							"packageIdentifications": {
+								"type": "array",
+								"minItems": 0,
+								"maxItems": 99,
+								"items": {
+									"description": "Particular marks and numbers to identify less than wagon load assignments.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+									"type": "string",
+									"pattern": "^.{1,35}"
+								}
+							}
+						},
+						"additionalProperties": false
+					},
+					"NHMCode": {
+						"description": "NHM code of the good\nOn the Expertsmeeting on 07.03.2012 it was decided to re-define this data element as optional and to add the following rule: if the group \"Good\" is used in the frame of the data element \"UTI\" or \"Rola\" and the attribute \"LoadingStatus\" of the related data element \"UTIDetails\" or \"RolaDetails\" = \"empty\", the data element \"NHMCode\" may not be present. In all other cases the data element \"NHMCode\" has to be provided. \n\nCIM: 21\nCODE: UIC-Code\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+						"$ref": "#/definitions/NHMCodeType"
+					},
+					"previousLoadedGood": {
+						"description": "NHM code of the previous loaded good.\nCUV: 21\nRULE: IF (wagon loadingStatus = 'empty') then allowed ELSE prohibited",
+						"$ref": "#/definitions/NHMCodeType"
+					},
+					"goodDescription": {
+						"description": "Description of the good.\nCIM: 21\nRULE: IF (CIM) THEN Mandatory ELSE optional\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+						"type": "string",
+						"pattern": "^.{1,350}"
+					},
+					"additionalGoodInformation": {
+						"description": "Additional information regarding the loaded good, given by the customer.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+						"type": "string",
+						"pattern": "^.{1,350}"
+					},
+					"grossMass": {
+						"description": "Gross mass [kg] of the good, incl. packaging.\nCIM: 25\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier - Subsequent carrier (Addition of data. Amendment in the case of examination.)",
+						"type": "number",
+						"pattern": "^[0-9]{1,7}\\.[0-9]{1}$"
+					},
+					"HSCode": {
+						"description": "HS-Code for sensible goods (appendix 44c of ccip) 10 digits are needed, if a good code was already assigned for 'Zollanmeldung'. In this case this good code has to be taken. These good codes may have more than 6 digits.\nCIM: 21\nCODE: Harmonized-System, RZZ of EG\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+						"type": "string",
+						"pattern": "^\\d{6,10}$"
+					},
+					"AVVKey": {
+						"description": "Used for waste transports\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)\nCODE: European waste catalogue (EWC) 2000/532/EC",
+						"type": "string",
+						"pattern": "^\\d{2,6}$"
+					},
+					"limitedQuantityIndicator": {
+						"type": "boolean"
+					},
+					"environmentallyHazardousIndicator": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"grossMass"
+				],
+				"additionalProperties": false
+			}
+		},
+		"referenceNumbers": {
+			"type": "array",
+			"minItems": 0,
+			"maxItems": 99,
+			"items": {
+				"type": "object",
+				"properties": {
+					"MRN": {
+						"type": "object",
+						"properties": {
+							"MRNType": {
+								"type": "string",
+								"enum": [
+									"MRN-E",
+									"MRN-T",
+									"MRN-TS",
+									"MRN-EXS",
+									"MRN-ENS",
+									"01",
+									"02",
+									"03",
+									"04",
+									"05",
+									"06",
+									"07",
+									"08",
+									"09",
+									"ARC"
+								]
+							},
+							"MRNNumber": {
+								"type": "string",
+								"pattern": "^.{18,21}"
+							}
+						},
+						"required": [
+							"MRNType",
+							"MRNNumber"
+						],
+						"additionalProperties": false
+					},
+					"ARC": {
+						"type": "string",
+						"pattern": "^.{21}"
+					}
+				},
+				"additionalProperties": false
+			}
+		},
+		"loadingTacklesType": {
+			"type": "array",
+			"minItems": 1,
+			"maxItems": 99,
+			"items": {
+				"type": "object",
+				"properties": {
+					"totalWeight": {
+						"type": "number",
+						"pattern": "^\\d{1,8}(.\\d{1})?$"
+					},
+					"quantity": {
+						"type": "integer",
+						"pattern": "^[1-9][0-9]{0,4}$"
+					},
+					"typeDescription": {
+						"type": "string",
+						"pattern": "^.{1,35}$"
+					},
+					"type": {
+						"type": "string",
+						"pattern": "^.{2,3}"
+					}
+				},
+				"required": [
+					"totalWeight",
+					"quantity",
+					"type"
+				],
+				"additionalProperties": false
+			}
+		},
+		"moneyType": {
+			"type": "number",
+			"pattern": "^\\d{1,16}(\\.\\d{1,2})?$"
+		},
+		"currencyCodeType": {
+			"type": "string",
+			"pattern": "[A-Z][A-Z][A-Z]"
+		},
+		"UTIs": {
+			"type": "array",
+			"minItems": 1,
+			"maxItems": 25,
+			"items": {
+				"type": "object",
+				"properties": {
+					"UTIDetails": {
+						"type": "object",
+						"properties": {
+							"prefix": {
+								"description": "Prefix\nCIM: 21\nRULE: IF (UTIType == 'cn') THEN Mandatory ELSE optional\nRULE: IF (UTIType == 'cn') THEN 4-digits\n                                    Mandatory\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+								"type": "string",
+								"pattern": "^.{1,5}"
+							},
+							"checkdigit": {
+								"description": "Check digit\nCIM: 21 (UTI)\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+								"type": "integer",
+								"pattern": "^\\d{1}$"
+							},
+							"dimensions": {
+								"description": "Dimensions of the UTI.",
+								"type": "object",
+								"properties": {
+									"lengthCode": {
+										"description": "Length code\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)\nCODE: UIC leaflet 592-2",
+										"type": "integer",
+										"pattern": "^(1[0-9]|[2-9][0-9])$"
+									},
+									"length": {
+										"description": "Length of UTI.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+										"type": "object",
+										"properties": {
+											"value": {
+												"type": "number",
+												"pattern": "^([0-9]{1,9}|[0-9]{1,9}.[0-9])$"
+											},
+											"measure": {
+												"type": "string",
+												"enum": [
+													"ft",
+													"mm"
+												]
+											}
+										},
+										"required": [
+											"value",
+											"measure"
+										],
+										"additionalProperties": false
+									},
+									"width": {
+										"description": "Width of UTI\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+										"type": "object",
+										"properties": {
+											"value": {
+												"type": "number",
+												"pattern": "^([0-9]{1,9}|[0-9]{1,9}.[0-9])$"
+											},
+											"measure": {
+												"type": "string",
+												"enum": [
+													"ft",
+													"mm"
+												]
+											}
+										},
+										"required": [
+											"value",
+											"measure"
+										],
+										"additionalProperties": false
+									},
+									"height": {
+										"description": "Height of UTI.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+										"type": "object",
+										"properties": {
+											"value": {
+												"type": "number",
+												"pattern": "^([0-9]{1,9}|[0-9]{1,9}.[0-9])$"
+											},
+											"measure": {
+												"type": "string",
+												"enum": [
+													"ft",
+													"mm"
+												]
+											}
+										},
+										"required": [
+											"value",
+											"measure"
+										],
+										"additionalProperties": false
+									}
+								},
+								"required": [
+									"lengthCode"
+								],
+								"additionalProperties": false
+							},
+							"tareWeight": {
+								"description": "Tare weight [kg] of UTI.\nCIM: 25\nREAD:  - Consignee \nWRITE:  - Consignor \nAMEND:  - Contractual carrier - Subsequent carrier (Addition of data. Amendment in the case of examination.)",
+								"type": "number",
+								"pattern": "^\\d{8}$"
+							},
+							"codification": {
+								"description": "Codification used for swap bodies.\nCIM: 21\nCODE:\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+								"type": "string",
+								"pattern": "^.{3,4}"
+							},
+							"forwarding": {
+								"description": "Final destination of the UTI.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+								"type": "string",
+								"pattern": "^.{1,80}"
+							},
+							"ship": {
+								"$ref": "#/definitions/shipType"
+							},
+							"turninNumber": {
+								"description": "Reference number used for empty containers in depots of shipping company.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+								"type": "string",
+								"pattern": "^.{1,30}"
+							},
+							"deliveryReference": {
+								"description": "CIM: 21 (UTI)",
+								"type": "string",
+								"pattern": "^.{1,30}"
+							},
+							"origincountry": {
+								"description": "Code of origin country of the UTI.\nCIM: 21\nCODE: ISO-3166-2\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+								"$ref": "#/definitions/countryCodeType"
+							},
+							"departurecountry": {
+								"description": "Code of departure country of the UTI.\nCIM: 21\nCODE: ISO-3166-2\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+								"$ref": "#/definitions/countryCodeType"
+							},
+							"destinationcountry": {
+								"description": "Code of the destination country of the UTI.\nCIM: 21\nCODE: ISO-3166-2\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+								"$ref": "#/definitions/countryCodeType"
+							},
+							"seals": {
+								"$ref": "#/definitions/sealsType"
+							},
+							"referenceNumbers": {
+								"$ref": "#/definitions/referenceNumbers"
+							},
+							"UTIType": {
+								"$ref": "#/definitions/equipmentCodeType"
+							},
+							"number": {
+								"$ref": "#/definitions/equipmentNumberType"
+							},
+							"loadingStatus": {
+								"type": "string",
+								"enum": [
+									"loaded",
+									"empty"
+								]
+							},
+							"UTITypeDetail": {
+								"type": "string",
+								"enum": [
+									"BX",
+									"BK",
+									"FL",
+									"HT",
+									"HC",
+									"IN",
+									"OT",
+									"HH",
+									"PW",
+									"OS",
+									"RF",
+									"SD",
+									"SL",
+									"VE",
+									"TC",
+									"RH"
+								]
+							}
+						},
+						"required": [
+							"dimensions",
+							"tareWeight",
+							"UTIType",
+							"number",
+							"loadingStatus"
+						],
+						"additionalProperties": false
+					},
+					"loadingTackles": {
+						"$ref": "#/definitions/loadingTacklesType"
+					},
+					"goods": {
+						"$ref": "#/definitions/goodsType"
+					}
+				},
+				"required": [
+					"UTIDetails"
+				],
+				"additionalProperties": false
+			}
+		},
+		"wagonDetails": {
+			"type": "object",
+			"properties": {
+				"wagonInfo": {
+					"description": "Additional information, concerning the goods of the whole wagon. Consignor -> Consignee\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor.)",
+					"type": "string",
+					"pattern": "^.{1,500}"
+				},
+				"wagonTypeDetails": {
+					"description": "These elements are only needed, if the wagon has to be treated as CUV (empty wagon).\nRULE: IF (CUV) THEN mandatory ELSE optional",
+					"type": "object",
+					"properties": {
+						"wagonMass": {
+							"description": "Weight [kg] of the empty wagon.\nCUV: 21",
+							"type": "number",
+							"pattern": "^\\d{1,8}(.\\d{1})?$"
+						},
+						"axleNumber": {
+							"description": "Number of axles of the wagon.\nCUV: 21",
+							"type": "integer",
+							"pattern": "^(?:[2-9]|[1-9][0-9]|99)$"
+						},
+						"wagonLength": {
+							"description": "Length of wagon [dm].\nCUV: 21",
+							"type": "number",
+							"pattern": "^\\d{1,8}(.\\d{1})?$"
+						}
+					},
+					"required": [
+						"axleNumber",
+						"wagonLength"
+					],
+					"additionalProperties": false
+				},
+				"totalMass": {
+					"description": "Total mass of the loaded wagon [kg]. The total mass of the consignment can be calculated accumulating the weight of all wagons without the tare of the wagon and without fixed loading tackles.\nCIM: 25\nRULE: If (CIM) THEN mandatory ELSE optional\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+					"type": "number",
+					"pattern": "^\\d{1,8}(.\\d{1})?$"
+				},
+				"loadLimit": {
+					"description": "Load limit from 'Lastgrenzenraster' in [t].\nCIM: 56\nREAD:  - Consignee - Consignor \nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier",
+					"type": "number",
+					"pattern": "^[0-9]{1,4}$"
+				},
+				"seals": {
+					"$ref": "#/definitions/sealsType"
+				},
+				"ship": {
+					"$ref": "#/definitions/shipType"
+				},
+				"deliveryReference": {
+					"type": "string",
+					"pattern": "^.{1,30}$"
+				},
+				"originCountry": {
+					"description": "Country code of the origin country of the good.\nCIM: 21\nCODE: ISO-3166-2\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+					"$ref": "#/definitions/countryCodeType"
+				},
+				"exceptionalConsignments": {
+					"type": "array",
+					"minItems": 0,
+					"maxItems": 10,
+					"items": {
+						"type": "object",
+						"properties": {
+							"IMCode": {
+								"$ref": "#/definitions/carrierCodeType"
+							},
+							"permissionNumber": {
+								"type": "string",
+								"pattern": "^.{1,24}$"
+							}
+						},
+						"required": [
+							"IMCode",
+							"permissionNumber"
+						],
+						"additionalProperties": false
+					}
+				},
+				"examinations": {
+					"type": "array",
+					"minItems": 0,
+					"maxItems": 10,
+					"items": {
+						"type": "object",
+						"properties": {
+							"carrierCode": {
+								"$ref": "#/definitions/carrierCodeType"
+							},
+							"result": {
+								"type": "string",
+								"pattern": "^.{1,180}$"
+							}
+						},
+						"required": [
+							"carrierCode",
+							"result"
+						],
+						"additionalProperties": false
+					}
+				},
+				"formalReports": {
+					"type": "array",
+					"minItems": 1,
+					"maxItems": 15,
+					"items": {
+						"type": "object",
+						"properties": {
+							"creationDate": {
+								"type": "string",
+								"pattern": "^20(2[1-9]|[3-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$"
+							},
+							"number": {
+								"type": "string",
+								"pattern": "^.{1,13}$"
+							},
+							"carrierCode": {
+								"$ref": "#/definitions/carrierCodeType"
+							}
+						},
+						"required": [
+							"creationDate",
+							"carrierCode"
+						],
+						"additionalProperties": false
+					}
+				},
+				"shuntingModalLabel": {
+					"description": "CIM: 21",
+					"type": "string",
+					"enum": [
+						"13",
+						"15"
+					]
+				},
+				"referenceNumbers": {
+					"$ref": "#/definitions/referenceNumbers"
+				},
+				"customerReferences": {
+					"type": "array",
+					"minItems": 1,
+					"maxItems": 5,
+					"items": {
+						"type": "string",
+						"pattern": "^.{0,30}"
+					}
+				},
+				"loadingStatus": {
+					"type": "string",
+					"enum": [
+						"loaded",
+						"empty",
+						"uti"
+					]
+				}
+			},
+			"required": [
+				"loadingStatus"
+			],
+			"additionalProperties": false
+		},
+		"rola": {
+			"type": "array",
+			"minItems": 1,
+			"maxItems": 5,
+			"items": {
+				"type": "object",
+				"properties": {
+					"rolaDetails": {
+						"type": "object",
+						"properties": {
+							"type": {
+								"description": "Type of loaded vehicle.\nCIM: 21\nCODE:\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+								"type": "string",
+								"enum": [
+									"HGZ",
+									"SAL",
+									"MW",
+									"ANH"
+								]
+							},
+							"vehicles": {
+								"description": "List of vehicles loaded (i.e. truck and trailer).",
+								"type": "array",
+								"items": {
+									"type": "object",
+									"minItems": 1,
+									"maxItems": 2,
+									"properties": {
+										"numberPlate": {
+											"description": "Number plate of the vehicle.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+											"type": "string",
+											"pattern": "^\\d{1,10}"
+										},
+										"countryCode": {
+											"description": "Country code of the vehicle.\nCIM: 21\nCODE: ISO-3166-2\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+											"$ref": "#/definitions/countryCodeType"
+										}
+									},
+									"required": [
+										"numberPlate",
+										"countryCode"
+									],
+									"additionalProperties": false
+								}
+							},
+							"taraVehicle": {
+								"description": "Total weight [kg] of vehicle (truck and trailer).\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+								"type": "number",
+								"pattern": "^\\d{1,8}(.\\d{1})?$"
+							},
+							"haulier": {
+								"description": "Information concerning the haulier.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier (With the agreement of the consignor)",
+								"type": "object",
+								"properties": {
+									"name": {
+										"description": "Name of haulier.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+										"type": "string",
+										"pattern": "^.{1,35}"
+									},
+									"countryCode": {
+										"description": "Country code of haulier.\nCIM: 21\nCODE: National codification\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+										"$ref": "#/definitions/countryCodeType"
+									}
+								},
+								"required": [
+									"name",
+									"countryCode"
+								],
+								"additionalProperties": false
+							},
+							"attendants": {
+								"type": "array",
+								"minItems": 1,
+								"maxItems": 2,
+								"items": {
+									"description": "Attendants during the transport.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+									"type": "object",
+									"properties": {
+										"lastname": {
+											"description": "Last name of attendant.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+											"type": "string",
+											"pattern": "^.{1,25}"
+										},
+										"firstname": {
+											"description": "Optional first name of the attendant.\nCIM: 21\nREAD:  - Consignee\nWRITE:  - Consignor\nAMEND:  - Contractual carrier  - Successive carrier  (With the agreement of the consignor)",
+											"type": "string",
+											"pattern": "^.{1,15}"
+										}
+									},
+									"required": [
+										"lastname"
+									],
+									"additionalProperties": false
+								}
+							},
+							"loadingStatus": {
+								"type": "string",
+								"enum": [
+									"loaded",
+									"empty"
+								]
+							}
+						},
+						"required": [
+							"taraVehicle",
+							"loadingStatus"
+						],
+						"additionalProperties": false
+					},
+					"goods": {
+						"$ref": "#/definitions/goodsType"
+					}
+				},
+				"required": [
+					"rolaDetails"
+				],
+				"additionalProperties": false
+			}
+		}
+	}
+}
