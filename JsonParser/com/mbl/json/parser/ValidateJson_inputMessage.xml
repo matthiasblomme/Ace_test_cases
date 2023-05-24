@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MessagePool xmlns="http://wwww.ibm.com/iib/test/1.0.0">
+    <InputMessage timestamp="1684924620971" nodeId="FCMComposite_1_1" name="nok" id="1684924620971-456">
+        <plainText>%7B%0D%0A++%22data%22%3A+%22value%22%2C%0D%0A++%22number%22%3A+%22wrong%22%2C%0D%0A++%22array%22+%3A+%5B%0D%0A++++%7B%0D%0A++++++%22item%22%3A+%22itemtext%22%0D%0A++++%7D%2C%0D%0A++++%7B%0D%0A++++++%22item2%22%3A+%22wrong%22%0D%0A++++%7D%0D%0A++%5D%0D%0A%7D</plainText>
+    </InputMessage>
+    <InputMessage timestamp="1684924603436" nodeId="FCMComposite_1_1" name="ok" id="1684924603436-403">
+        <plainText>%7B%0D%0A++%22data%22%3A+%22value%22%2C%0D%0A++%22number%22%3A+112%2C%0D%0A++%22array%22+%3A+%5B%0D%0A++++%7B%0D%0A++++++%22item%22%3A+%22itemtext%22%2C%0D%0A++++++%22item%22+%3A+%22othertext%22%0D%0A++++%7D%0D%0A++%5D%0D%0A%7D</plainText>
+    </InputMessage>
+    <InputMessage timestamp="1684925312713" nodeId="FCMComposite_1_1" name="nok2" id="1684925312713-697">
+        <plainText>%7B%0D%0A++%22data%22%3A+10101010%2C%0D%0A++%22number%22%3A+%22wrong%22%2C%0D%0A++%22array%22+%3A+%5B%0D%0A++++%7B%0D%0A++++++%22item%22%3A+%22itemtext%22%0D%0A++++%7D%2C%0D%0A++++%7B%0D%0A++++++%22item2%22%3A+%22wrong%22%0D%0A++++%7D%0D%0A++%5D%0D%0A%7D</plainText>
+    </InputMessage>
+</MessagePool>
