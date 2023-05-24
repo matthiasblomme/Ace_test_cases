@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><MessageAssembly iib:parser="GENERICROOT" xmlns:iib="http://com.ibm.iib/lt/1.0">
+   <version xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">1</version>
+   <checkpoint>
+      <messageId xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">0000399C-646B5B5F-00000001</messageId>
+      <propagationCount xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">1</propagationCount>
+      <nodeCallDepth xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">2</nodeCallDepth>
+      <timestamp xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="TIMESTAMP">2023-05-22 12:09:03.424</timestamp>
+      <source>
+         <name xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">Java Compute</name>
+         <identifier xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">com.mbl.test.GetJavaEnv#FCMComposite_1_2</identifier>
+         <type xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">ComIbmJavaComputeNode</type>
+         <terminal xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">out</terminal>
+         <nodePath>
+            <application xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">JavaEnvironment</application>
+            <messageFlow xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">com.mbl.test.GetJavaEnv</messageFlow>
+            <node xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">Java Compute</node>
+         </nodePath>
+         <inputNode xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="BOOLEAN">FALSE</inputNode>
+      </source>
+      <target>
+         <name xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">HTTP Reply</name>
+         <identifier xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">com.mbl.test.GetJavaEnv#FCMComposite_1_3</identifier>
+         <type xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">ComIbmWSReplyNode</type>
+         <terminal xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">in</terminal>
+         <nodePath>
+            <application xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">JavaEnvironment</application>
+            <messageFlow xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">com.mbl.test.GetJavaEnv</messageFlow>
+            <node xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">HTTP Reply</node>
+         </nodePath>
+      </target>
+   </checkpoint>
+   <environment/>
+   <localEnvironment xmlns:iib="http://com.ibm.iib/lt/1.0" iib:parser="MQROOT">
+      <Destination>
+         <HTTP>
+            <RequestIdentifier iib:valueType="BLOB">455648540000000000000000c0ec5c43d892000000000000</RequestIdentifier>
+         </HTTP>
+      </Destination>
+   </localEnvironment>
+   <exceptionList/>
+   <message xmlns:iib="http://com.ibm.iib/lt/1.0" iib:parser="WSRoot">
+      <JSON iib:parser="json">
+         <Data>
+            <Content iib:valueType="CHARACTER">Java Environment</Content>
+            <Env iib:elementType="0x03000000" iib:value="" iib:valueType="CHARACTER">
+               <key iib:valueType="CHARACTER">value</key>
+            </Env>
+         </Data>
+      </JSON>
+   </message>
+</MessageAssembly>
