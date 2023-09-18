@@ -6,13 +6,13 @@
     <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/JsonParser/icons/full/obj16/ValidateJson.gif"/>
     <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/JsonParser/icons/full/obj30/ValidateJson.gif"/>
     <composition>
-      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="59,39" URLSpecifier="/json/validate" messageDomainProperty="JSON" messageSetProperty="test.schema.json">
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="59,39" URLSpecifier="/json/validate" messageDomainProperty="JSON" messageSetProperty="schema.json">
         <translation xmi:type="utility:ConstantString" string="HTTP Input"/>
       </nodes>
       <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="717,33">
         <translation xmi:type="utility:ConstantString" string="HTTP Reply"/>
       </nodes>
-      <nodes xmi:type="ComIbmValidate.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="312,35" domain="JSON" checkDomain="true" set="test.schema.json" checkSet="true" validateMaster="contentAndValue" validateFailureAction="exceptionList">
+      <nodes xmi:type="ComIbmValidate.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="312,35" domain="JSON" checkDomain="true" set="schema.json" checkSet="true" validateMaster="contentAndValue" validateFailureAction="exceptionList">
         <translation xmi:type="utility:ConstantString" string="Validate"/>
       </nodes>
       <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4" location="514,120" computeExpression="esql://routine/com.mbl.json.parser#ValidateJson_ok.Main">
