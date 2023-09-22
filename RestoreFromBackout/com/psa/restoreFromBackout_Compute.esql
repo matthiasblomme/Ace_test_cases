@@ -1,0 +1,37 @@
+BROKER SCHEMA com.psa
+
+
+CREATE COMPUTE MODULE restoreFromBackout_Determine
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.Variables.backout.sourceQueue = InputRoot.JSON.Data.inQ;
+		SET Environment.Variables.backout.targetQueue = InputRoot.JSON.Data.outQ;
+		SET OutputLocalEnvironment.MQ.GET.QueueName = Environment.Variables.backout.sourceQueue;
+		RETURN TRUE;
+	END;
+END MODULE;
+
+
+
+CREATE COMPUTE MODULE restoreFromBackout_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		-- CALL CopyEntireMessage();
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
