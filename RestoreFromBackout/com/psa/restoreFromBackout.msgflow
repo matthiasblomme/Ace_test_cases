@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmFileInput.msgnode="ComIbmFileInput.msgnode" xmlns:ComIbmLabel.msgnode="ComIbmLabel.msgnode" xmlns:ComIbmMQGet.msgnode="ComIbmMQGet.msgnode" xmlns:ComIbmMQOutput.msgnode="ComIbmMQOutput.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="com/psa/restoreFromBackout.msgflow" nsPrefix="com_psa_restoreFromBackout.msgflow">
-  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" nodeLayoutStyle="RECTANGLE">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" nodeLayoutStyle="SQUARE">
     <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
     <translation xmi:type="utility:TranslatableString" key="restoreFromBackout" bundleName="com/psa/restoreFromBackout" pluginId="RestoreFromBackout"/>
     <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/RestoreFromBackout/icons/full/obj16/restoreFromBackout.gif"/>
     <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/RestoreFromBackout/icons/full/obj30/restoreFromBackout.gif"/>
     <composition>
-      <nodes xmi:type="ComIbmMQGet.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="514,145" queueName="DUMMY" messageDomainProperty="BLOB">
-        <translation xmi:type="utility:ConstantString" string="MQ Get"/>
+      <nodes xmi:type="ComIbmMQGet.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="330,88" queueName="DUMMY" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="ReadQueue"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5" location="266,144" computeExpression="esql://routine/com.psa#restoreFromBackout_Determine.Main" computeMode="destinationAndMessage">
-        <translation xmi:type="utility:ConstantString" string="determine"/>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5" location="161,86" computeExpression="esql://routine/com.psa#restoreFromBackout_Determine.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="DetermineQueue"/>
       </nodes>
-      <nodes xmi:type="ComIbmMQOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_6" location="1032,141" destinationMode="list">
-        <translation xmi:type="utility:ConstantString" string="MQ Output"/>
+      <nodes xmi:type="ComIbmMQOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_6" location="652,86" destinationMode="list">
+        <translation xmi:type="utility:ConstantString" string="WriteQueue"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_7" location="788,234" computeExpression="esql://routine/com.psa#restoreFromBackout_Compute1.Main">
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_7" location="467,164" computeExpression="esql://routine/com.psa#restoreFromBackout_NoMsgAvailable.Main">
         <translation xmi:type="utility:ConstantString" string="LogNoMessages"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_8" location="1329,137" computeExpression="esql://routine/com.psa#restoreFromBackout_HandleError.Main">
-        <translation xmi:type="utility:ConstantString" string="handleError"/>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_8" location="819,83" computeExpression="esql://routine/com.psa#restoreFromBackout_HandleError.Main" computeMode="exception">
+        <translation xmi:type="utility:ConstantString" string="HandleError"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_9" location="792,142" computeExpression="esql://routine/com.psa#restoreFromBackout_CheckAttempt.Main" computeMode="destinationAndMessage">
-        <translation xmi:type="utility:ConstantString" string="checkAttempt"/>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_9" location="474,85" computeExpression="esql://routine/com.psa#restoreFromBackout_CheckAttempt.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="CheckAttempt"/>
       </nodes>
-      <nodes xmi:type="ComIbmFileInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_10" location="37,147" inputDirectory="C:\Matthias\temp\backout\" filenamePattern="*.json" messageDomainProperty="JSON">
-        <translation xmi:type="utility:ConstantString" string="File Input"/>
+      <nodes xmi:type="ComIbmFileInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_10" location="36,90" inputDirectory="C:\Matthias\temp\backout\" filenamePattern="*.json" messageDomainProperty="JSON">
+        <translation xmi:type="utility:ConstantString" string="ReadFile"/>
       </nodes>
-      <nodes xmi:type="ComIbmMQOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_11" location="1579,139" queueName="BACKOUT.HOLD">
+      <nodes xmi:type="ComIbmMQOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_11" location="947,85" queueName="BACKOUT.HOLD">
         <translation xmi:type="utility:ConstantString" string="BACKOUT.HOLD"/>
       </nodes>
-      <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_12" location="279,234" labelName="NextMessage">
+      <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_12" location="176,160" labelName="NextMessage">
         <translation xmi:type="utility:ConstantString" string="NextMessage"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_14" location="1333,204" computeExpression="esql://routine/com.psa#restoreFromBackout_LogNextMessage.Main">
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_14" location="804,160" computeExpression="esql://routine/com.psa#restoreFromBackout_LogNextMessage.Main">
         <translation xmi:type="utility:ConstantString" string="LogNextMessage"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_15" location="268,337" computeExpression="esql://routine/com.psa#restoreFromBackout_Compute.Main">
-        <translation xmi:type="utility:ConstantString" string="Compute"/>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_15" location="175,243" computeExpression="esql://routine/com.psa#restoreFromBackout_HandleError.Main">
+        <translation xmi:type="utility:ConstantString" string="Error"/>
       </nodes>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
       <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_7" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.noMessage" targetTerminalName="InTerminal.in"/>
