@@ -1,0 +1,138 @@
+BROKER SCHEMA com.psa
+
+
+CREATE COMPUTE MODULE restoreFromBackout_CheckAttempt
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		CALL CopyEntireMessage();
+		
+		IF (FIELDTYPE(InputRoot.MQRFH2.usr.restore.attempt) IS NOT NULL) THEN
+			IF (InputRoot.MQRFH2.usr.restore.attempt > 2) THEN
+				LOG EVENT SEVERITY 1 CATALOG 'BIPmsgs' MESSAGE 2951 VALUES('To many retries');
+				PROPAGATE TO TERMINAL 'out1';
+				RETURN FALSE;
+			END IF;
+			
+			SET OutputRoot.MQRFH2.usr.restore.attempt = InputRoot.MQRFH2.usr.restore.attempt + 1;
+		ELSE
+			IF (FIELDTYPE(InputRoot.MQRFH2) IS NULL) THEN 
+				CREATE NEXTSIBLING OF OutputRoot.MQMD DOMAIN 'MQRFH2';
+			END IF;
+			
+			IF (FIELDTYPE(InputRoot.MQRFH2.usr) IS NULL) THEN 
+				CREATE LASTCHILD OF OutputRoot.MQRFH2 NAME 'usr';
+			END IF;
+			
+			IF (FIELDTYPE(InputRoot.MQRFH2.usr.restore) IS NULL) THEN 
+				CREATE LASTCHILD OF OutputRoot.MQRFH2.usr NAME 'restore';
+				SET OutputRoot.MQRFH2.usr.restore.attempt = 1;
+				SET OutputRoot.MQRFH2.usr.restore.source = Environment.Variables.backout.sourceQueue;
+				SET OutputRoot.MQRFH2.usr.restore.target = Environment.Variables.backout.targetQueue;
+			END IF;
+		END IF;		
+		
+		LOG EVENT SEVERITY 1 CATALOG 'BIPmsgs' MESSAGE 2951 VALUES('Writing to ' || Environment.Variables.backout.targetQueue);
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputLocalEnvironment.Destination.MQ.DestinationData[1].queueName = Environment.Variables.backout.targetQueue;
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE restoreFromBackout_Determine
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.Variables.backout.sourceQueue = InputRoot.JSON.Data.inQ;
+		SET Environment.Variables.backout.targetQueue = InputRoot.JSON.Data.outQ;
+		SET OutputLocalEnvironment.MQ.GET.QueueName = Environment.Variables.backout.sourceQueue;
+		SET Environment.Variables.base64.encoded = BASE64ENCODE(InputRoot.JSON);
+		SET Environment.Variables.base64.decoded = CAST(BASE64DECODE(Environment.Variables.base64.encoded)  AS CHARACTER CCSID 1208);
+		SET Environment.Variables.base64.encoded2 = BASE64ENCODE(Environment.Variables.backout.sourceQueue);
+		SET Environment.Variables.base64.decoded2 = CAST(BASE64DECODE(Environment.Variables.base64.encoded2)  AS CHARACTER CCSID 1208);
+		SET Environment.Variables.base64.encoded3 = ASBITSTREAM(Environment.Variables.backout.sourceQueue CCSID 1208);
+		RETURN TRUE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE restoreFromBackout_LogNextMessage
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		LOG EVENT SEVERITY 1 CATALOG 'BIPmsgs' MESSAGE 2951 VALUES('Message moved to ' || Environment.Variables.backout.targetQueue );
+		PROPAGATE TO LABEL 'NextMessage';
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE restoreFromBackout_HandleError
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		LOG EVENT SEVERITY 1 CATALOG 'BIPmsgs' MESSAGE 2951 VALUES('Error occured, Putting msg on hold');
+		PROPAGATE TO TERMINAL 'out1';
+		
+		LOG EVENT SEVERITY 1 CATALOG 'BIPmsgs' MESSAGE 2951 VALUES('Checking for additional messages');
+		PROPAGATE TO LABEL 'NextMessage';
+		RETURN FALSE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE restoreFromBackout_NoMsgAvailable
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		LOG EVENT SEVERITY 1 CATALOG 'BIPmsgs' MESSAGE 2951 VALUES('No Msg Available');
+		RETURN TRUE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE restoreFromBackout_HandleError
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		-- CALL CopyEntireMessage();
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
+
