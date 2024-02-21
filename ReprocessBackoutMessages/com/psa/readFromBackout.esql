@@ -1,0 +1,285 @@
+BROKER SCHEMA com.psa
+
+DECLARE MaxAttempts EXTERNAL INTEGER 2;
+
+CREATE COMPUTE MODULE readFromBackout_Validate
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.Variables.Log.Entry.type = 'INFO';
+		SET Environment.Variables.Log.Entry.status = 'read-message';
+		SET Environment.Variables.Log.Entry.activityId = COALESCE(Environment.Variables.ActivityId, UUIDASCHAR);
+		SET Environment.Variables.Log.Entry.sourceQueue = Environment.Variables.TriggerMessage.JSON.Data.inQ;
+		SET Environment.Variables.Log.Entry.targetQueue = Environment.Variables.TriggerMessage.JSON.Data.outQ;
+		set Environment.Variables.Log.Entry.Application = ApplicationLabel;
+		set Environment.Variables.Log.Entry.Flow = MessageFlowLabel;
+		PROPAGATE TO LABEL 'LOG';		
+	
+		IF (ENDSWITH(Environment.Variables.TriggerMessage.JSON.Data.inQ, '.TRG.IN.BACKOUT') OR 
+			(Environment.Variables.TriggerMessage.JSON.Data.inQ = 'BROKER.SSHMOVE.CONFIG.IN.BACKOUT') OR 
+			(Environment.Variables.TriggerMessage.JSON.Data.inQ = 'BROKER.SSHMOVE.IN.BACKOUT')) THEN
+			SET Environment.Variables.Log.Entry.type = 'INFO';
+			SET Environment.Variables.Log.Entry.status = 'drop-message';
+			SET Environment.Variables.Log.Entry.activityId = COALESCE(Environment.Variables.ActivityId, UUIDASCHAR);
+			SET Environment.Variables.Log.Entry.sourceQueue = Environment.Variables.TriggerMessage.JSON.Data.inQ;
+			SET Environment.Variables.Log.Entry.targetQueue = Environment.Variables.TriggerMessage.JSON.Data.outQ;
+			set Environment.Variables.Log.Entry.Application = ApplicationLabel;
+			set Environment.Variables.Log.Entry.Flow = MessageFlowLabel;
+			PROPAGATE TO LABEL 'LOG';
+			PROPAGATE TO LABEL 'NextMessage';
+			RETURN FALSE;
+		END IF;
+		
+		CALL CopyEntireMessage();
+		
+		IF (FIELDTYPE(InputRoot.MQRFH2.usr.restore.attempt) IS NOT NULL) THEN
+			IF (InputRoot.MQRFH2.usr.restore.attempt > MaxAttempts) THEN
+				SET Environment.Variables.Log.Entry.type = 'WARN';
+				SET Environment.Variables.Log.Entry.status = 'retry-exceeded';
+				SET Environment.Variables.Log.Entry.activityId = COALESCE(Environment.Variables.ActivityId, UUIDASCHAR);
+				SET Environment.Variables.Log.Entry.sourceQueue = Environment.Variables.TriggerMessage.JSON.Data.inQ;
+				SET Environment.Variables.Log.Entry.targetQueue = Environment.Variables.TriggerMessage.JSON.Data.outQ;
+				set Environment.Variables.Log.Entry.Application = ApplicationLabel;
+				set Environment.Variables.Log.Entry.Flow = MessageFlowLabel;
+				PROPAGATE TO LABEL 'LOG' DELETE NONE;
+				PROPAGATE TO TERMINAL 'out1';
+				RETURN FALSE;
+			END IF;
+			
+			SET OutputRoot.MQRFH2.usr.restore.attempt = InputRoot.MQRFH2.usr.restore.attempt + 1;
+		ELSE
+			IF (FIELDTYPE(InputRoot.MQRFH2) IS NULL) THEN 
+				CREATE NEXTSIBLING OF OutputRoot.MQMD DOMAIN 'MQRFH2';
+				SET OutputRoot.MQMD.Format = MQFMT_RF_HEADER_2; 
+				SET OutputRoot.MQRFH2.(MQRFH2.Field)Version = MQRFH_VERSION_2;
+				SET OutputRoot.MQRFH2.(MQRFH2.Field)NameValueCCSID = 1208;
+				SET OutputRoot.MQRFH2.(MQRFH2.Field)Format = MQFMT_STRING;	
+			END IF;
+			
+			IF (FIELDTYPE(InputRoot.MQRFH2.usr) IS NULL) THEN 
+				CREATE LASTCHILD OF OutputRoot.MQRFH2 NAME 'usr';
+			END IF;
+			
+			IF (FIELDTYPE(InputRoot.MQRFH2.usr.restore) IS NULL) THEN 
+				CREATE LASTCHILD OF OutputRoot.MQRFH2.usr NAME 'restore';
+				SET OutputRoot.MQRFH2.usr.restore.attempt = 1;
+				SET OutputRoot.MQRFH2.usr.restore.source = Environment.Variables.TriggerMessage.JSON.Data.inQ;
+				SET OutputRoot.MQRFH2.usr.restore.target = Environment.Variables.TriggerMessage.JSON.Data.outQ;
+			END IF;
+		END IF;		
+		
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputLocalEnvironment.Destination.MQ.DestinationData[1].queueName = Environment.Variables.TriggerMessage.JSON.Data.outQ;
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE readFromBackout_Determine
+		
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.Variables.Log.Entry.type = 'INFO';
+		SET Environment.Variables.Log.Entry.status = 'received-trigger';
+		SET Environment.Variables.Log.Entry.activityId = COALESCE(Environment.Variables.ActivityId, UUIDASCHAR);
+		SET Environment.Variables.Log.Entry.sourceQueue = Environment.Variables.TriggerMessage.JSON.Data.inQ;
+		SET Environment.Variables.Log.Entry.targetQueue = Environment.Variables.TriggerMessage.JSON.Data.outQ;
+		set Environment.Variables.Log.Entry.Application = ApplicationLabel;
+		set Environment.Variables.Log.Entry.Flow = MessageFlowLabel;
+		PROPAGATE TO LABEL 'LOG';
+		
+		-- Store input message for later retry if required
+		SET Environment.Variables.TriggerMessage = InputRoot;
+		
+		SET OutputLocalEnvironment.MQ.GET.QueueName = Environment.Variables.TriggerMessage.JSON.Data.inQ;
+		RETURN TRUE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE readFromBackout_LogNextMessage
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.Variables.Log.Entry.type = 'INFO';
+		SET Environment.Variables.Log.Entry.status = 'written-message';
+		SET Environment.Variables.Log.Entry.activityId = COALESCE(Environment.Variables.ActivityId, UUIDASCHAR);
+		SET Environment.Variables.Log.Entry.sourceQueue = Environment.Variables.TriggerMessage.JSON.Data.inQ;
+		SET Environment.Variables.Log.Entry.targetQueue = Environment.Variables.TriggerMessage.JSON.Data.outQ;
+		set Environment.Variables.Log.Entry.Application = ApplicationLabel;
+		set Environment.Variables.Log.Entry.Flow = MessageFlowLabel;
+		PROPAGATE TO LABEL 'LOG';
+		
+		CALL AdapterLibrary.RestoreMessage(Environment.Variables.TriggerMessage, OutputRoot);		
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE readFromBackout_HandleError
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.Variables.Log.Entry.type = 'ERROR';
+		SET Environment.Variables.Log.Entry.status = 'write-exception';
+		DECLARE ErrorNum INT;
+		DECLARE ErrorText CHAR;
+		CALL AdapterLibrary.getLastExceptionDetail(InputExceptionList, ErrorNum, ErrorText);
+		SET Environment.Variables.Log.Entry.errorNumber = ErrorNum;
+		SET Environment.Variables.Log.Entry.errorText = ErrorText;
+		SET Environment.Variables.Log.Entry.activityId = COALESCE(Environment.Variables.ActivityId, UUIDASCHAR);
+		SET Environment.Variables.Log.Entry.sourceQueue = Environment.Variables.TriggerMessage.JSON.Data.inQ;
+		SET Environment.Variables.Log.Entry.targetQueue = Environment.Variables.TriggerMessage.JSON.Data.outQ;
+		set Environment.Variables.Log.Entry.Application = ApplicationLabel;
+		set Environment.Variables.Log.Entry.Flow = MessageFlowLabel;
+		PROPAGATE TO LABEL 'LOG' DELETE NONE;
+		
+		PROPAGATE TO TERMINAL 'out1';
+		PROPAGATE TO LABEL 'NextMessage';
+		RETURN FALSE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE readFromBackout_NoMsgAvailable
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.Variables.Log.Entry.type = 'INFO';
+		SET Environment.Variables.Log.Entry.status = 'no-messages';
+		SET Environment.Variables.Log.Entry.activityId = COALESCE(Environment.Variables.ActivityId, UUIDASCHAR);
+		SET Environment.Variables.Log.Entry.sourceQueue = Environment.Variables.TriggerMessage.JSON.Data.inQ;
+		SET Environment.Variables.Log.Entry.targetQueue = Environment.Variables.TriggerMessage.JSON.Data.outQ;
+		set Environment.Variables.Log.Entry.Application = ApplicationLabel;
+		set Environment.Variables.Log.Entry.Flow = MessageFlowLabel;
+		PROPAGATE TO LABEL 'LOG';
+		
+		RETURN FALSE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE readFromBackout_HandleErrorAndStop
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.Variables.Log.Entry.type = 'ERROR';
+		SET Environment.Variables.Log.Entry.status = 'input-exception';
+		DECLARE ErrorNum INT;
+		DECLARE ErrorText CHAR;
+		CALL AdapterLibrary.getLastExceptionDetail(InputExceptionList, ErrorNum, ErrorText);
+		SET Environment.Variables.Log.Entry.errorNumber = ErrorNum;
+		SET Environment.Variables.Log.Entry.errorText = ErrorText;
+		SET Environment.Variables.Log.Entry.activityId = COALESCE(Environment.Variables.ActivityId, UUIDASCHAR);
+		SET Environment.Variables.Log.Entry.sourceQueue = Environment.Variables.TriggerMessage.JSON.Data.inQ;
+		SET Environment.Variables.Log.Entry.targetQueue = Environment.Variables.TriggerMessage.JSON.Data.outQ;
+		set Environment.Variables.Log.Entry.Application = ApplicationLabel;
+		set Environment.Variables.Log.Entry.Flow = MessageFlowLabel;
+		PROPAGATE TO LABEL 'LOG';
+		
+		RETURN FALSE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE readFromBackout_LogNextMessage2
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.Variables.Log.Entry.type = 'INFO';
+		SET Environment.Variables.Log.Entry.status = 'next-message';
+		SET Environment.Variables.Log.Entry.activityId = COALESCE(Environment.Variables.ActivityId, UUIDASCHAR);
+		SET Environment.Variables.Log.Entry.sourceQueue = Environment.Variables.TriggerMessage.JSON.Data.inQ;
+		SET Environment.Variables.Log.Entry.targetQueue = Environment.Variables.TriggerMessage.JSON.Data.outQ;
+		set Environment.Variables.Log.Entry.Application = ApplicationLabel;
+		set Environment.Variables.Log.Entry.Flow = MessageFlowLabel;
+		PROPAGATE TO LABEL 'LOG';
+		
+		PROPAGATE TO LABEL 'NextMessage';
+		RETURN FALSE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE readFromBackout_BackoutError
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.Variables.Log.Entry.type = 'ERROR';
+		SET Environment.Variables.Log.Entry.status = 'backout-exception';
+		DECLARE ErrorNum INT;
+		DECLARE ErrorText CHAR;
+		CALL AdapterLibrary.getLastExceptionDetail(InputExceptionList, ErrorNum, ErrorText);
+		SET Environment.Variables.Log.Entry.errorNumber = ErrorNum;
+		SET Environment.Variables.Log.Entry.errorText = ErrorText;
+		SET Environment.Variables.Log.Entry.activityId = COALESCE(Environment.Variables.ActivityId, UUIDASCHAR);
+		SET Environment.Variables.Log.Entry.sourceQueue = Environment.Variables.TriggerMessage.JSON.Data.inQ;
+		SET Environment.Variables.Log.Entry.targetQueue = Environment.Variables.TriggerMessage.JSON.Data.outQ;
+		set Environment.Variables.Log.Entry.Application = ApplicationLabel;
+		set Environment.Variables.Log.Entry.Flow = MessageFlowLabel;
+		PROPAGATE TO LABEL 'LOG';
+		
+		PROPAGATE TO LABEL 'NextMessage';
+		RETURN FALSE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
