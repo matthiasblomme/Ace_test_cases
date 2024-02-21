@@ -52,8 +52,16 @@ CREATE COMPUTE MODULE CreateJsonArray_Compute
 			SET OutputRoot.JSON.Data.list6.someField[k].{'entry' || CAST(k AS CHARACTER)} = 'value' || CAST(k AS CHARACTER);
 			set k = k + 1;
 		END FOR;
+
+		-- create with loop and sub groups without Item
+		CREATE FIELD OutputRoot.JSON.Data.list7 IDENTITY (JSON.Array)list7;
+		DECLARE l INTEGER 1;
+		FOR source as OutputRoot.JSON.Data.list3.Item[] DO
+			SET OutputRoot.JSON.Data.list7[l].{'entry' || CAST(l AS CHARACTER)} = 'value' || CAST(l AS CHARACTER);
+			set l = l + 1;
+		END FOR;
 		
-		RETURN TRUE;
+	RETURN TRUE;
 	END;
 
 	CREATE PROCEDURE CopyMessageHeaders() BEGIN

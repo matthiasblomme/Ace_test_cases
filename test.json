@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "messageHeader": {
+      "type": "object",
+      "properties": {
+        "destination": {
+          "type": "string"
+        },
+        "sender": {
+          "type": "string"
+        },
+        "messageType": {
+          "type": "string"
+        },
+        "correlationId": {
+          "type": "string"
+        },
+        "messageId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "destination",
+        "sender",
+        "messageType",
+        "correlationId",
+        "messageId"
+      ]
+    },
+    "messageContent": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "messageHeader",
+    "messageContent"
+  ]
+}

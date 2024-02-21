@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmFileInput.msgnode="ComIbmFileInput.msgnode" xmlns:ComIbmLabel.msgnode="ComIbmLabel.msgnode" xmlns:ComIbmMQOutput.msgnode="ComIbmMQOutput.msgnode" xmlns:ComIbmResetContentDescriptor.msgnode="ComIbmResetContentDescriptor.msgnode" xmlns:LoggingLibrary_Log.subflow="LoggingLibrary/Log.subflow" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow"
+    xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="com/psa/readTriggerFile.msgflow" nsPrefix="com_psa_readTriggerFile.msgflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" nodeLayoutStyle="SQUARE">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.Log_ElasticPrefix1" name="Log_ElasticPrefix1" defaultValueLiteral="reprocess-backout-trigger">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.Log_ToElastic1" name="Log_ToElastic1" lowerBound="1" defaultValueLiteral="true">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.filenamePattern" name="filenamePattern" lowerBound="1" defaultValueLiteral="*.json">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.inputDirectory" name="inputDirectory" lowerBound="1" defaultValueLiteral="E:\API_TRIGGER\RESTOREBACKOUT\">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <translation xmi:type="utility:TranslatableString" key="readTriggerFile" bundleName="com/psa/readTriggerFile" pluginId="ReprocessBackoutMessages"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/ReprocessBackoutMessages/icons/full/obj16/readTriggerFile.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/ReprocessBackoutMessages/icons/full/obj30/readTriggerFile.gif"/>
+    <composition>
+      <nodes xmi:type="ComIbmFileInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_10" location="29,32" inputDirectory="E:\API_TRIGGER\RESTOREBACKOUT\" filenamePattern="*.json" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="ReadFile"/>
+      </nodes>
+      <nodes xmi:type="ComIbmMQOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_11" location="598,34" queueName="BACKOUT.REPROCESS.TRIGGER">
+        <translation xmi:type="utility:ConstantString" string="BACKOUT.REPROCESS.TRIGGER"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_15" location="170,111" computeExpression="esql://routine/com.psa#readFromBackout_HandleErrorAndStop.Main">
+        <translation xmi:type="utility:ConstantString" string="Error"/>
+      </nodes>
+      <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="50,216" labelName="LOG">
+        <translation xmi:type="utility:ConstantString" string="LOG"/>
+      </nodes>
+      <nodes xmi:type="LoggingLibrary_Log.subflow:FCMComposite_1" xmi:id="FCMComposite_1_2" location="176,215" Log_ToElastic="true">
+        <translation xmi:type="utility:ConstantString" string="Log"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4" location="487,33" computeExpression="esql://routine/com.psa#readTriggerFile_ToQueue.Main">
+        <translation xmi:type="utility:ConstantString" string="ToQueue"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="174,28" computeExpression="esql://routine/com.psa#readTriggerFile_RemoveBom.Main">
+        <translation xmi:type="utility:ConstantString" string="RemoveBom"/>
+      </nodes>
+      <nodes xmi:type="ComIbmResetContentDescriptor.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5" location="290,30" messageDomain="JSON" resetMessageDomain="true" messageFormat="&lt;Check the box to change the value. Default is empty string>">
+        <translation xmi:type="utility:ConstantString" string="Reset Content Descriptor"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_17" targetNode="FCMComposite_1_15" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_19" targetNode="FCMComposite_1_15" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.catch" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_11" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_1" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer>
+      <propertyDescriptor groupName="Group.Logging" configurable="true" userDefined="true" describedAttribute="Property.Log_ElasticPrefix1">
+        <propertyName xmi:type="utility:TranslatableString" key="Property.Log_ElasticPrefix1" bundleName="com/psa/readTriggerFile" pluginId="ReprocessBackoutMessages"/>
+        <propertyDescriptor groupName="Group.Logging" configurable="true" userDefined="true" describedAttribute="Property.Log_ToElastic1">
+          <propertyName xmi:type="utility:TranslatableString" key="Property.Log_ToElastic1" bundleName="com/psa/readTriggerFile" pluginId="ReprocessBackoutMessages"/>
+          <propertyDescriptor groupName="Group.File" propertyEditor="com.ibm.etools.mft.ibmnodes.editors.file.FileInputNodeFilePropertyEditor" configurable="true" describedAttribute="Property.filenamePattern">
+            <propertyName xmi:type="utility:TranslatableString" key="Property.filenamePattern" bundleName="ComIbmFileInput" pluginId="com.ibm.etools.mft.ibmnodes.definitions"/>
+            <propertyDescriptor groupName="Group.File" propertyEditor="com.ibm.etools.mft.ibmnodes.editors.file.FileInputNodeDirPropertyEditor" configurable="true" describedAttribute="Property.inputDirectory">
+              <propertyName xmi:type="utility:TranslatableString" key="Property.inputDirectory" bundleName="ComIbmFileInput" pluginId="com.ibm.etools.mft.ibmnodes.definitions"/>
+            </propertyDescriptor>
+          </propertyDescriptor>
+        </propertyDescriptor>
+      </propertyDescriptor>
+    </propertyOrganizer>
+    <attributeLinks promotedAttribute="Property.Log_ElasticPrefix1" overriddenNodes="FCMComposite_1_2">
+      <overriddenAttribute href="LoggingLibrary/Log.subflow#Property.Log_ElasticPrefix"/>
+    </attributeLinks>
+    <attributeLinks promotedAttribute="Property.Log_ToElastic1" overriddenNodes="FCMComposite_1_2">
+      <overriddenAttribute href="LoggingLibrary/Log.subflow#Property.Log_ToElastic"/>
+    </attributeLinks>
+    <attributeLinks promotedAttribute="Property.filenamePattern" overriddenNodes="FCMComposite_1_10">
+      <overriddenAttribute href="ComIbmFileInput.msgnode#Property.filenamePattern"/>
+    </attributeLinks>
+    <attributeLinks promotedAttribute="Property.inputDirectory" overriddenNodes="FCMComposite_1_10">
+      <overriddenAttribute href="ComIbmFileInput.msgnode#Property.inputDirectory"/>
+    </attributeLinks>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>
