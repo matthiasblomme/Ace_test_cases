@@ -1,18 +1,11 @@
-BROKER SCHEMA com.ibm.test.bom
+BROKER SCHEMA com.psa
 
 
-CREATE COMPUTE MODULE bomheader_trim
+CREATE COMPUTE MODULE readTriggerFile_RemoveBom
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
 		CALL CopyMessageHeaders();
-		-- if is only here for logging if you want, it is obsolete
-		IF STARTSWITH(InputRoot.BLOB.BLOB, X'EFBBBF') THEN
-			SET OutputRoot.BLOB.BLOB = TRIM(LEADING X'EFBBBF' FROM InputRoot.BLOB.BLOB);
-		ELSE
-			SET OutputRoot.BLOB.BLOB = InputRoot.BLOB.BLOB;
-		END IF;
-		
-		-- CALL CopyEntireMessage();
+		SET OutputRoot.BLOB.BLOB = TRIM(LEADING X'EFBBBF' FROM InputRoot.BLOB.BLOB);
 		RETURN TRUE;
 	END;
 

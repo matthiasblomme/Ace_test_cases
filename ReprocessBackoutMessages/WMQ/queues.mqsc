@@ -1,0 +1,2 @@
+DEFINE QLOCAL(BACKOUT.REPROCESS.HOLD) DESCR('Hold queue for automatic backout reprocessing') MAXMSGL(104857600) DEFPSIST(YES)
+DEFINE QLOCAL(BACKOUT.REPROCESS.TRIGGER) DESCR('Trigger queue for automatic backout reprocessing') MAXMSGL(104857600) DEFPSIST(YES)
