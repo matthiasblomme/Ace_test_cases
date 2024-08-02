@@ -55,6 +55,9 @@ An esql test to remove single and/or double quotes
 ### Timer and File
 A flow to check and test that 2 input nodes start 2 input threads.
 
+### Unit Test Ignore Fields
+A applicatino setup to demo how to ignore specific fields in ACE unit/integration testing
+
 ### User Defined properties
 A flow to verify that the flow restarts or reinitializes if you change a UDP value.
 
