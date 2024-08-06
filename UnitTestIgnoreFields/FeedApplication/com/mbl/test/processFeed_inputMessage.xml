@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MessagePool xmlns="http://wwww.ibm.com/iib/test/1.0.0">
+    <InputMessage timestamp="1722511058977" nodeId="FCMComposite_1_1" name="feed-A1" id="1722511058977-6">
+        <plainText>%7B%0D%0A%09%22type%22%3A+%22feedRequest%22%2C%0D%0A%09%22request%22%3A+%7B%0D%0A%09%09%22time%22%3A+%222024-08-01+09%3A18%3A21%22%2C%0D%0A%09%09%22id%22%3A+%22A1%22%0D%0A%09%7D%2C%0D%0A%09%22data%22+%3A+%7B%0D%0A%09%09%22cat%22%3A%22tuna%22%2C%0D%0A%09%09%22dog%22%3A%22kibble%22%2C%0D%0A%09%09%22chicken%22%3A%22meelworm%22%0D%0A%09%7D%0D%0A%7D</plainText>
+    </InputMessage>
+</MessagePool>
