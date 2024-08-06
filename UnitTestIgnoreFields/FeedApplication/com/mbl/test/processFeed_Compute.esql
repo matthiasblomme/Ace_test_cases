@@ -1,0 +1,45 @@
+BROKER SCHEMA com.mbl.test
+
+
+CREATE COMPUTE MODULE processFeed_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.Variables.sessionId = COALESCE(Environment.Variables.sessionId, UUIDASCHAR);
+		
+		SET OutputRoot.Properties = InputRoot.Properties;
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'JSON';
+		
+		SET OutputRoot.JSON.Data.request = REPLACE(InputRoot.JSON.Data.type, 'Request', '');
+		DECLARE inputRequestData TIMESTAMP CAST(InputRoot.JSON.Data.request.time AS TIMESTAMP FORMAT 'yyyy-MM-dd HH:mm:ss');
+		SET OutputRoot.JSON.Data.requestDate = CAST(inputRequestData AS DATE FORMAT 'yyyy-MM-dd') ;
+		SET OutputRoot.JSON.Data.requestTime = CAST(inputRequestData AS TIME FORMAT 'HH:mm:ss');	
+		SET OutputRoot.JSON.Data.requestId = InputRoot.JSON.Data.Request.id;
+		SET OutputRoot.JSON.Data.requestSession = Environment.Variables.sessionId;
+		SET OutputRoot.JSON.Data.requestProcessed = CURRENT_TIMESTAMP;
+		SET OutputRoot.JSON.Data.feedCount = CARDINALITY(InputRoot.JSON.Data.data.*[]);
+		SET OutputRoot.JSON.Data.feed = InputRoot.JSON.Data.data;
+		PROPAGATE TO TERMINAL 'out1';
+		
+		CALL CopyMessageHeaders();
+		CREATE LASTCHILD OF OutputRoot DOMAIN 'JSON';
+		SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 200;
+		SET OutputRoot.HTTPReplyHeader."Content-Type" = 'application/json';
+		SET OutputRoot.JSON.Data.sessionId = Environment.Variables.sessionId;
+		SET OutputRoot.JSON.Data.status = 'processed';
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><MessageAssembly iib:parser="GENERICROOT" xmlns:iib="http://com.ibm.iib/lt/1.0">
+    <version xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">1</version>
+    <checkpoint>
+        <messageId xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">000089D0-66AB7A66-00000001</messageId>
+        <propagationCount xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">1</propagationCount>
+        <nodeCallDepth xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">2</nodeCallDepth>
+        <timestamp xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="TIMESTAMP">2024-08-01 12:07:02.149</timestamp>
+        <source>
+            <name xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">Compute</name>
+            <identifier xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">com.mbl.test.processFeed#FCMComposite_1_2</identifier>
+            <type xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">ComIbmComputeNode</type>
+            <terminal xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">out1</terminal>
+            <nodePath>
+                <application xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">FeedApplication</application>
+                <messageFlow xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">com.mbl.test.processFeed</messageFlow>
+                <node xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">Compute</node>
+            </nodePath>
+            <inputNode xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="BOOLEAN">FALSE</inputNode>
+        </source>
+        <target>
+            <name xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">File Output</name>
+            <identifier xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">com.mbl.test.processFeed#FCMComposite_1_3</identifier>
+            <type xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">ComIbmOutputTemplateNode</type>
+            <terminal xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">in</terminal>
+            <nodePath>
+                <application xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">FeedApplication</application>
+                <messageFlow xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">com.mbl.test.processFeed</messageFlow>
+                <node xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">File Output</node>
+            </nodePath>
+        </target>
+    </checkpoint>
+    <environment xmlns:iib="http://com.ibm.iib/lt/1.0" iib:parser="MQROOT">
+        <Variables>
+            <sessionId iib:valueType="CHARACTER">61137506-a21b-49db-8e13-5f857e937a46</sessionId>
+        </Variables>
+    </environment>
+    <localEnvironment xmlns:iib="http://com.ibm.iib/lt/1.0" iib:parser="MQROOT">
+        <Destination>
+            <HTTP>
+                <RequestIdentifier iib:valueType="BLOB">455648540000000000000000051fd60d44c2160000000000</RequestIdentifier>
+            </HTTP>
+        </Destination>
+    </localEnvironment>
+    <exceptionList/>
+    <message xmlns:iib="http://com.ibm.iib/lt/1.0" iib:parser="WSRoot">
+        <Properties iib:parser="MQPROPERTYPARSER">
+            <MessageSet iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <MessageType iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <MessageFormat iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <Encoding iib:valueType="INTEGER">546</Encoding>
+            <CodedCharSetId iib:valueType="INTEGER">1208</CodedCharSetId>
+            <Transactional iib:valueType="BOOLEAN">FALSE</Transactional>
+            <Persistence iib:valueType="BOOLEAN">FALSE</Persistence>
+            <CreationTime iib:valueType="GMTTIMESTAMP">2024-08-01 12:07:02.149</CreationTime>
+            <ExpirationTime iib:valueType="INTEGER">-1</ExpirationTime>
+            <Priority iib:valueType="INTEGER">0</Priority>
+            <ReplyIdentifier iib:valueType="BLOB">000000000000000000000000000000000000000000000000</ReplyIdentifier>
+            <ReplyProtocol iib:valueType="CHARACTER">SOAP-HTTP</ReplyProtocol>
+            <Topic iib:elementType="0x03000000"/>
+            <ContentType iib:valueType="CHARACTER">application/json; charset=utf-8</ContentType>
+            <IdentitySourceType iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentitySourceToken iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentitySourcePassword iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentitySourceIssuedBy iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedType iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedToken iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedPassword iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedIssuedBy iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+        </Properties>
+        <JSON iib:parser="json">
+            <Data>
+                <request iib:valueType="CHARACTER">feed</request>
+                <requestDate iib:valueType="DATE">2024-08-01</requestDate>
+                <requestTime iib:tz="Europe/Brussels" iib:valueType="TIME">09:18:21</requestTime>
+                <requestSession iib:valueType="CHARACTER">61137506-a21b-49db-8e13-5f857e937a46</requestSession>
+                <requestProcessed iib:tz="Europe/Brussels" iib:valueType="TIMESTAMP">2024-08-01 14:07:02.149596</requestProcessed>
+                <feedCount iib:valueType="INTEGER">3</feedCount>
+                <feed>
+                    <cat iib:valueType="CHARACTER">tuna</cat>
+                    <dog iib:valueType="CHARACTER">kibble</dog>
+                    <chicken iib:valueType="CHARACTER">meelworm</chicken>
+                </feed>
+            </Data>
+        </JSON>
+    </message>
+</MessageAssembly>
