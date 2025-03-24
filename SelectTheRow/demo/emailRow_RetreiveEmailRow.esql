@@ -1,0 +1,29 @@
+BROKER SCHEMA demo
+
+
+CREATE COMPUTE MODULE emailRow_RetreiveEmailRow
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		CALL CopyMessageHeaders();
+
+		-- create proper json structure
+		CREATE FIELD OutputRoot.JSON.Data.emailRow IDENTITY(JSON.Array); 
+		
+		-- select required data into a row
+		SET OutputRoot.JSON.Data.emailRow = ROW (SELECT U.address 
+												FROM InputRoot.JSON.Data.contact.details.email.Item[] AS U 
+												WHERE U.type = 'personal');
+
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+END MODULE;
