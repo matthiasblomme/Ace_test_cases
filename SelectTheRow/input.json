@@ -1,0 +1,31 @@
+{
+	"contact": {
+		"info": {
+			"name": "John",
+			"lastName": "Wick",
+			"title": "baba yaga"
+			},
+		"details":{
+			"phone": [
+				{
+					"type": "business",
+					"number": "911"
+				}
+			],
+			"email": [
+				{
+					"type": "personal",
+					"address": "john@wick.com"
+				},
+				{
+					"type": "business",
+					"address": "baba@yaga.com"
+				},
+				{
+					"type": "personal",
+					"address": "shootemup@aol.com"
+				}
+			]
+		}
+	}
+}
