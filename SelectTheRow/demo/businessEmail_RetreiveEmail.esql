@@ -1,0 +1,29 @@
+BROKER SCHEMA demo
+
+
+CREATE COMPUTE MODULE businessEmail_RetreiveEmail
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		CALL CopyMessageHeaders();
+		
+		-- select the first match
+		SET Environment.Variables.businessEmail = THE (SELECT U.address 
+					FROM InputRoot.JSON.Data.contact.details.email.Item[] AS U 
+					WHERE U.type = 'business');
+		
+		-- return the value of the selected data
+		SET OutputRoot.JSON.Data.businessEmail = Environment.Variables.businessEmail.address;
+		
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+END MODULE;
