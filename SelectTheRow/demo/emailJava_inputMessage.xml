@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MessagePool xmlns="http://wwww.ibm.com/iib/test/1.0.0">
+    <InputMessage timestamp="1742908461591" nodeId="FCMComposite_1_1" name="new message 1" id="1742908461591-252">
+        <plainText>%7B%0D%0A++%22contact%22%3A+%7B%0D%0A++++%22info%22%3A+%7B%0D%0A++++++%22name%22%3A+%22John%22%2C%0D%0A++++++%22lastName%22%3A+%22Wick%22%2C%0D%0A++++++%22title%22%3A+%22baba+yaga%22%0D%0A++++%7D%2C%0D%0A++++%22details%22%3A+%7B%0D%0A++++++%22phone%22%3A+%5B%7B+%22type%22%3A+%22business%22%2C+%22number%22%3A+%22911%22+%7D%5D%2C%0D%0A++++++%22email%22%3A+%5B%0D%0A++++++++%7B+%22type%22%3A+%22personal%22%2C+%22address%22%3A+%22john%40wick.com%22+%7D%2C%0D%0A++++++++%7B+%22type%22%3A+%22business%22%2C+%22address%22%3A+%22baba%40yaga.com%22+%7D%2C%0D%0A++++++++%7B+%22type%22%3A+%22personal%22%2C+%22address%22%3A+%22shootemup%40aol.com%22+%7D%0D%0A++++++%5D%0D%0A++++%7D%0D%0A++%7D%0D%0A%7D%0D%0A</plainText>
+    </InputMessage>
+</MessagePool>

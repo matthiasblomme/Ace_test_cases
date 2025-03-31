@@ -6,8 +6,8 @@
     <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/SelectTheRow/icons/full/obj16/businessEmail.gif"/>
     <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/SelectTheRow/icons/full/obj30/businessEmail.gif"/>
     <composition>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="172,42" computeExpression="esql://routine/demo#businessEmail_RetreiveEmail.Main">
-        <translation xmi:type="utility:ConstantString" string="RetreiveEmail"/>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="172,42" computeExpression="esql://routine/demo#businessEmail_RetrieveEmail.Main">
+        <translation xmi:type="utility:ConstantString" string="RetrieveEmail"/>
       </nodes>
       <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="27,46" URLSpecifier="/mail/business" messageDomainProperty="JSON">
         <translation xmi:type="utility:ConstantString" string="HTTP Input"/>
