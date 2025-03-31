@@ -1,19 +1,20 @@
 BROKER SCHEMA demo
 
 
-CREATE COMPUTE MODULE emailRow_RetreiveEmailRow
+CREATE COMPUTE MODULE emailList_RetrieveEmailList
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
 		CALL CopyMessageHeaders();
-
-		-- create proper json structure
-		CREATE FIELD OutputRoot.JSON.Data.emailRow IDENTITY(JSON.Array); 
 		
-		-- select required data into a row
-		SET OutputRoot.JSON.Data.emailRow = ROW (SELECT U.address 
-												FROM InputRoot.JSON.Data.contact.details.email.Item[] AS U 
-												WHERE U.type = 'personal');
-
+		-- create proper json structure
+		CREATE FIELD OutputRoot.JSON.Data.emailList IDENTITY(JSON.Array); 
+		
+		-- select required data
+		SET OutputRoot.JSON.Data.emailList.Item[] = (SELECT U.address 
+													FROM InputRoot.JSON.Data.contact.details.email.Item[] AS U 
+													WHERE U.type = 'personal');
+										
+		
 		RETURN TRUE;
 	END;
 
