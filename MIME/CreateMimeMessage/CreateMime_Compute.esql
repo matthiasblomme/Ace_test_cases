@@ -1,0 +1,60 @@
+
+CREATE COMPUTE MODULE BuildMime
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		IF InputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 400 THEN	
+			-- build email notification
+			CALL CopyMessageHeaders();
+			DECLARE CRLF CHAR CAST(X'0D0A' AS CHAR CCSID 1208);
+
+			SET OutputRoot.EmailOutputHeader.To = 'matthias@embee.be';
+			SET OutputRoot.EmailOutputHeader.From = 'matthias@embee.be';
+			SET OutputRoot.EmailOutputHeader.Subject = 'MIME Setup test';
+			
+			DECLARE messageBody CHAR 
+				'Dear, ' || CRLF || CRLF ||
+				'This is a test email.' || CRLF || CRLF ||
+				'Kind regards,' || CRLF || 'Your favourite ACE expert.';
+
+			SET OutputRoot.Properties.ContentType = 'multipart/related; boundary=myBoundary';
+			CREATE FIELD OutputRoot.MIME TYPE Name;
+			DECLARE M REFERENCE TO OutputRoot.MIME;
+			CREATE FIELD M."Content-Type" TYPE NameValue VALUE 'multipart/related; boundary=myBoundary';
+			CREATE FIELD M."Content-ID"   TYPE NameValue VALUE 'new MIME document';
+			
+			CREATE LASTCHILD OF M TYPE Name NAME 'Parts';
+			CREATE LASTCHILD OF M.Parts TYPE Name NAME 'Part';
+			
+			DECLARE P1 REFERENCE TO M.Parts.Part;
+			CREATE FIELD P1."Content-Type" TYPE NameValue VALUE 'text/plain; charset=us-ascii';
+			CREATE FIELD P1."Content-Transfer-Encoding" TYPE NameValue VALUE '8bit';
+			CREATE LASTCHILD OF P1 TYPE Name NAME 'Data';
+			CREATE LASTCHILD OF P1.Data DOMAIN('BLOB') PARSE(CAST(messageBody AS BLOB CCSID 1208));
+			
+			CREATE LASTCHILD OF M.Parts TYPE Name NAME 'Part';
+		  	DECLARE P2 REFERENCE TO M.Parts.Part[2];
+			CREATE FIELD P2."Content-Type" TYPE NameValue VALUE 'text/plain; charset=us-ascii; name=message.json';
+			CREATE FIELD P2."Content-Transfer-Encoding" TYPE NameValue VALUE '8bit';
+			CREATE LASTCHILD OF P2 TYPE Name NAME 'Data';
+			CREATE LASTCHILD OF P2.Data DOMAIN('BLOB');
+			SET P2.Data.BLOB.BLOB = ASBITSTREAM(InputRoot.JSON.Data);
+			
+			PROPAGATE TO LABEL 'EMAIL';	
+			RETURN FALSE;
+		END IF;
+		
+		SET OutputRoot = InputRoot;
+		RETURN FALSE;
+	END;
+	
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+		
+END MODULE;
