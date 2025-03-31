@@ -3,6 +3,7 @@
 	<name>SelectTheRow</name>
 	<comment></comment>
 	<projects>
+		<project>SelectTheRowJava</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

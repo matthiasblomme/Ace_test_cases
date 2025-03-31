@@ -9,8 +9,8 @@
       <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="38,66" URLSpecifier="/mail/row" messageDomainProperty="JSON">
         <translation xmi:type="utility:ConstantString" string="HTTP Input"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="238,61" computeExpression="esql://routine/demo#emailRow_RetreiveEmailRow.Main">
-        <translation xmi:type="utility:ConstantString" string="RetreiveEmailRow"/>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="238,61" computeExpression="esql://routine/demo#emailRow_RetrieveEmailRow.Main">
+        <translation xmi:type="utility:ConstantString" string="RetrieveEmailRow"/>
       </nodes>
       <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="370,175">
         <translation xmi:type="utility:ConstantString" string="HTTP Reply"/>
