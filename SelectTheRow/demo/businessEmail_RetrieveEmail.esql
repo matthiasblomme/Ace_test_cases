@@ -1,7 +1,7 @@
 BROKER SCHEMA demo
 
 
-CREATE COMPUTE MODULE businessEmail_RetreiveEmail
+CREATE COMPUTE MODULE businessEmail_RetrieveEmail
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
 		CALL CopyMessageHeaders();

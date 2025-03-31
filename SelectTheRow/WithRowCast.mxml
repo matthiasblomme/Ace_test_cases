@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><MessageAssembly iib:parser="GENERICROOT" xmlns:iib="http://com.ibm.iib/lt/1.0">
+    <version xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">1</version>
+    <checkpoint>
+        <messageId xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">00137F4C-67E284FA-00000001</messageId>
+        <propagationCount xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">1</propagationCount>
+        <nodeCallDepth xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">2</nodeCallDepth>
+        <timestamp xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="TIMESTAMP">2025-03-25 10:27:06.586</timestamp>
+        <source>
+            <name xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">RetreiveEmailRow</name>
+            <identifier xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">demo.emailRow#FCMComposite_1_2</identifier>
+            <type xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">ComIbmComputeNode</type>
+            <terminal xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">out</terminal>
+            <nodePath>
+                <application xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">SelectTheRow</application>
+                <messageFlow xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">demo.emailRow</messageFlow>
+                <node xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">RetreiveEmailRow</node>
+            </nodePath>
+            <inputNode xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="BOOLEAN">FALSE</inputNode>
+        </source>
+        <target>
+            <name xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">HTTP Reply</name>
+            <identifier xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">demo.emailRow#FCMComposite_1_3</identifier>
+            <type xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">ComIbmWSReplyNode</type>
+            <terminal xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">in</terminal>
+            <nodePath>
+                <application xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">SelectTheRow</application>
+                <messageFlow xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">demo.emailRow</messageFlow>
+                <node xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">HTTP Reply</node>
+            </nodePath>
+        </target>
+    </checkpoint>
+    <environment/>
+    <localEnvironment xmlns:iib="http://com.ibm.iib/lt/1.0" iib:parser="MQROOT">
+        <Destination>
+            <HTTP>
+                <RequestIdentifier iib:valueType="BLOB">455648540000000000000000da72d7cc247c130000000000</RequestIdentifier>
+            </HTTP>
+        </Destination>
+    </localEnvironment>
+    <exceptionList/>
+    <message xmlns:iib="http://com.ibm.iib/lt/1.0" iib:parser="WSRoot">
+        <Properties iib:parser="MQPROPERTYPARSER">
+            <MessageSet iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <MessageType iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <MessageFormat iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <Encoding iib:valueType="INTEGER">546</Encoding>
+            <CodedCharSetId iib:valueType="INTEGER">1208</CodedCharSetId>
+            <Transactional iib:valueType="BOOLEAN">FALSE</Transactional>
+            <Persistence iib:valueType="BOOLEAN">FALSE</Persistence>
+            <CreationTime iib:valueType="GMTTIMESTAMP">2025-03-25 10:27:06.586</CreationTime>
+            <ExpirationTime iib:valueType="INTEGER">-1</ExpirationTime>
+            <Priority iib:valueType="INTEGER">0</Priority>
+            <ReplyIdentifier iib:valueType="BLOB">000000000000000000000000000000000000000000000000</ReplyIdentifier>
+            <ReplyProtocol iib:valueType="CHARACTER">SOAP-HTTP</ReplyProtocol>
+            <Topic iib:elementType="0x03000000"/>
+            <ContentType iib:valueType="CHARACTER">application/json; charset=utf-8</ContentType>
+            <IdentitySourceType iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentitySourceToken iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentitySourcePassword iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentitySourceIssuedBy iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedType iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedToken iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedPassword iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedIssuedBy iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+        </Properties>
+        <HTTPInputHeader iib:parser="WSINPHDR">
+            <Content-Type iib:valueType="CHARACTER">application/json; charset=utf-8</Content-Type>
+            <Cache-Control iib:valueType="CHARACTER">no-cache</Cache-Control>
+            <Pragma iib:valueType="CHARACTER">no-cache</Pragma>
+            <User-Agent iib:valueType="CHARACTER">Java/17.0.13</User-Agent>
+            <Host iib:valueType="CHARACTER">localhost:7800</Host>
+            <Accept iib:valueType="CHARACTER">*/*</Accept>
+            <Connection iib:valueType="CHARACTER">keep-alive</Connection>
+            <Content-Length iib:valueType="CHARACTER">462</Content-Length>
+            <X-Original-HTTP-Command iib:valueType="CHARACTER">POST http://localhost:7800/mail/row HTTP/1.1</X-Original-HTTP-Command>
+            <X-Server-Name iib:valueType="CHARACTER">localhost</X-Server-Name>
+            <X-Server-Port iib:valueType="CHARACTER">7800</X-Server-Port>
+            <X-Remote-Addr iib:valueType="CHARACTER">127.0.0.1</X-Remote-Addr>
+            <X-Remote-Host iib:valueType="CHARACTER">localhost</X-Remote-Host>
+            <X-Scheme iib:valueType="CHARACTER">http</X-Scheme>
+        </HTTPInputHeader>
+        <JSON iib:parser="json">
+            <Data>
+                <emailRow iib:elementType="0x01001000">
+                    <Column0>
+                        <address iib:valueType="CHARACTER">john@wick.com</address>
+                    </Column0>
+                    <Column0>
+                        <address iib:valueType="CHARACTER">shootemup@aol.com</address>
+                    </Column0>
+                </emailRow>
+            </Data>
+        </JSON>
+    </message>
+</MessageAssembly>
