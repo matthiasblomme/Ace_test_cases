@@ -1,8 +1,5 @@
 package demo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ibm.broker.javacompute.MbJavaComputeNode;
 import com.ibm.broker.plugin.MbElement;
 import com.ibm.broker.plugin.MbException;
@@ -11,7 +8,6 @@ import com.ibm.broker.plugin.MbMessage;
 import com.ibm.broker.plugin.MbMessageAssembly;
 import com.ibm.broker.plugin.MbOutputTerminal;
 import com.ibm.broker.plugin.MbUserException;
-import com.ibm.broker.plugin.MbXPath;
 
 public class EmailJava_JavaCompute extends MbJavaComputeNode {
 
