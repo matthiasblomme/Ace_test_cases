@@ -1,0 +1,39 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "The Case of the Missing Query Parameters",
+    "version": "1.0.0",
+    "description": "Demonstrates what happens when query parameters are not defined in the OpenAPI spec."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:7843/mystery/v1",
+      "description": "Local development server for debugging query param issues"
+    }
+  ],
+  "paths": {
+    "/search": {
+      "get": {
+        "summary": "Perform a search with a defined query parameter",
+        "parameters": [
+          {
+            "name": "searchQuery",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results returned successfully"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {}
+  }
+}
