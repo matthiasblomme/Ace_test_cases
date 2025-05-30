@@ -1,11 +1,10 @@
-BROKER SCHEMA com.psa
 
 
-CREATE COMPUTE MODULE readTriggerFile_RemoveBom
+CREATE COMPUTE MODULE MissingQueryParam_RESTAPIInputCatchHandler_Compute
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
-		CALL CopyMessageHeaders();
-		SET OutputRoot.BLOB.BLOB = TRIM(LEADING X'EFBBBF' FROM InputRoot.BLOB.BLOB);
+		-- CALL CopyMessageHeaders();
+		-- CALL CopyEntireMessage();
 		RETURN TRUE;
 	END;
 

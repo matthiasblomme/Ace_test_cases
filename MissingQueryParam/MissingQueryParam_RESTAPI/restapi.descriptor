@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:restapiDescriptor xmlns="http://com.ibm.etools.mft.descriptor.base" xmlns:ns2="http://com.ibm.etools.mft.descriptor.restapi" definitionType="openapi_3" definitionFile="MissingQueryParam.yaml" implementation="gen/MissingQueryParam_RESTAPI.msgflow" https="false" definitionWithExtRef="false" faultFormat="JSON">
+    <ns2:operations>
+        <ns2:operation name="getSearch" implementation="getSearch.subflow"/>
+    </ns2:operations>
+    <ns2:errorHandlers>
+        <ns2:errorHandler type="CATCH" implementation="MissingQueryParam_RESTAPIInputCatchHandler.subflow"/>
+        <ns2:errorHandler type="FAILURE" implementation="MissingQueryParam_RESTAPIInputFailureHandler.subflow"/>
+        <ns2:errorHandler type="TIMEOUT" implementation="MissingQueryParam_RESTAPIInputTimeoutHandler.subflow"/>
+    </ns2:errorHandlers>
+</ns2:restapiDescriptor>
