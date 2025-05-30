@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<psf version="2.0">
-<provider id="org.eclipse.team.cvs.core.cvsnature">
-<project reference="1.0,:pserver:BEANR-EDITESB01.netwerk.hessenoordnatie.com:\repository_IBM_Integration_Bus_9001,AdapterLibrary,AdapterLibrary"/>
-<project reference="1.0,:pserver:BEANR-EDITESB01.netwerk.hessenoordnatie.com:\repository_IBM_Integration_Bus_9001,ArchivingLibrary,ArchivingLibrary"/>
-<project reference="1.0,:pserver:BEANR-EDITESB01.netwerk.hessenoordnatie.com:\repository_IBM_Integration_Bus_9001,LoggingLibrary,LoggingLibrary"/>
-<project reference="1.0,:pserver:BEANR-EDITESB01.netwerk.hessenoordnatie.com:\repository_IBM_Integration_Bus_9001,MQDeadLetterRescuer,MQDeadLetterRescuer"/>
-</provider>
-</psf>

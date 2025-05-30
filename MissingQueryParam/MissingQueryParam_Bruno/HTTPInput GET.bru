@@ -1,0 +1,16 @@
+meta {
+  name: HTTPInput GET
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:7801/mystery/v1/search?searchQuery=Random&index=1
+  body: none
+  auth: inherit
+}
+
+params:query {
+  searchQuery: Random
+  index: 1
+}
