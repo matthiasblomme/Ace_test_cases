@@ -1,10 +1,10 @@
 
 
-CREATE COMPUTE MODULE readQueue_Compute
+CREATE COMPUTE MODULE MissingQueryParam_RESTAPIInputFailureHandler_Compute
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
 		-- CALL CopyMessageHeaders();
-		CALL CopyEntireMessage();
+		-- CALL CopyEntireMessage();
 		RETURN TRUE;
 	END;
 
