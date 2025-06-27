@@ -4,8 +4,8 @@ CREATE COMPUTE MODULE RestArrayFrontendFlow_Compute
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
 		
-		CREATE FIELD Environment.variables.replies IDENTITY (JSON.Array) ;
-		SET Environment.variables.replies.Item[1] = 'start here';
+		--CREATE FIELD Environment.variables.replies IDENTITY (JSON.Array) ;
+		--SET Environment.variables.replies.Item[1] = 'start here';
 		SET Environment.variables.count = CARDINALITY(Environment.variables.replies.Item[]); 
 		
 		PROPAGATE TO TERMINAL 'out';
