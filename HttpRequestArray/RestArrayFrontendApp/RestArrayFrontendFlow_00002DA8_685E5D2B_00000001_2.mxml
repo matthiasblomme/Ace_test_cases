@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><MessageAssembly iib:parser="GENERICROOT" xmlns:iib="http://com.ibm.iib/lt/1.0">
+    <version xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">1</version>
+    <checkpoint>
+        <messageId xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">00002DA8-685E5D2B-00000001</messageId>
+        <propagationCount xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">2</propagationCount>
+        <nodeCallDepth xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">3</nodeCallDepth>
+        <timestamp xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="TIMESTAMP">2025-06-27 08:58:19.337</timestamp>
+        <source>
+            <name xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">HTTP Request</name>
+            <identifier xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">RestArrayFrontendFlow#FCMComposite_1_2</identifier>
+            <type xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">ComIbmWSRequestNode</type>
+            <terminal xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">out</terminal>
+            <nodePath>
+                <application xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">RestArrayFrontendApp</application>
+                <messageFlow xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">RestArrayFrontendFlow</messageFlow>
+                <node xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">HTTP Request</node>
+            </nodePath>
+            <inputNode xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="BOOLEAN">FALSE</inputNode>
+        </source>
+        <target>
+            <name xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">HTTP Reply</name>
+            <identifier xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">RestArrayFrontendFlow#FCMComposite_1_3</identifier>
+            <type xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">ComIbmWSReplyNode</type>
+            <terminal xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">in</terminal>
+            <nodePath>
+                <application xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">RestArrayFrontendApp</application>
+                <messageFlow xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">RestArrayFrontendFlow</messageFlow>
+                <node xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">HTTP Reply</node>
+            </nodePath>
+        </target>
+    </checkpoint>
+    <environment xmlns:iib="http://com.ibm.iib/lt/1.0" iib:parser="MQROOT">
+        <variables>
+            <replies iib:elementType="0x01001000">
+                <Item iib:valueType="CHARACTER">start here</Item>
+                <Item>
+                    <Data>
+                        <Reply iib:valueType="CHARACTER">hello</Reply>
+                    </Data>
+                </Item>
+            </replies>
+        </variables>
+    </environment>
+    <localEnvironment xmlns:iib="http://com.ibm.iib/lt/1.0" iib:parser="MQROOT">
+        <Destination>
+            <HTTP>
+                <RequestIdentifier iib:valueType="BLOB">45564854000000000100000049f19bb00ca5000000000000</RequestIdentifier>
+            </HTTP>
+        </Destination>
+        <WrittenDestination>
+            <HTTP>
+                <RequestURL iib:valueType="CHARACTER">http://localhost:7800/restarray/backend</RequestURL>
+                <StatusCode iib:valueType="CHARACTER">200</StatusCode>
+            </HTTP>
+        </WrittenDestination>
+    </localEnvironment>
+    <exceptionList/>
+    <message xmlns:iib="http://com.ibm.iib/lt/1.0" iib:parser="WSRoot">
+        <Properties iib:parser="WSPROPERTYPARSER">
+            <MessageSet iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <MessageType iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <MessageFormat iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <Encoding iib:valueType="INTEGER">546</Encoding>
+            <CodedCharSetId iib:valueType="INTEGER">1208</CodedCharSetId>
+            <Transactional iib:valueType="BOOLEAN">FALSE</Transactional>
+            <Persistence iib:valueType="BOOLEAN">FALSE</Persistence>
+            <CreationTime iib:valueType="GMTTIMESTAMP">2025-06-27 08:58:19.337</CreationTime>
+            <ExpirationTime iib:valueType="INTEGER">-1</ExpirationTime>
+            <Priority iib:valueType="INTEGER">0</Priority>
+            <ReplyIdentifier iib:valueType="BLOB">000000000000000000000000000000000000000000000000</ReplyIdentifier>
+            <ReplyProtocol iib:valueType="CHARACTER">SOAP-HTTP</ReplyProtocol>
+            <Topic iib:elementType="0x03000000"/>
+            <ContentType iib:valueType="CHARACTER">text/plain; charset=utf-8</ContentType>
+            <IdentitySourceType iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentitySourceToken iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentitySourcePassword iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentitySourceIssuedBy iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedType iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedToken iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedPassword iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedIssuedBy iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+        </Properties>
+        <HTTPResponseHeader iib:parser="WSRSPHDR">
+            <X-Original-HTTP-Status-Line iib:valueType="CHARACTER">HTTP/1.1 200 OK</X-Original-HTTP-Status-Line>
+            <X-Original-HTTP-Status-Code iib:valueType="INTEGER">200</X-Original-HTTP-Status-Code>
+            <Content-Type iib:valueType="CHARACTER">application/json</Content-Type>
+            <X-IBM-ACE-Message-Id iib:valueType="CHARACTER">(000058A8-685E5D2B-00000008)</X-IBM-ACE-Message-Id>
+            <Server iib:valueType="CHARACTER">IBM App Connect Enterprise</Server>
+            <Date iib:valueType="CHARACTER">Fri, 27 Jun 2025 08:58:19 GMT</Date>
+            <Content-Length iib:valueType="CHARACTER">17</Content-Length>
+        </HTTPResponseHeader>
+        <HTTPInputHeader iib:parser="WSINPHDR">
+            <Content-Type iib:valueType="CHARACTER">text/plain; charset=utf-8</Content-Type>
+            <User-Agent iib:valueType="CHARACTER">Java/17.0.15</User-Agent>
+            <Host iib:valueType="CHARACTER">localhost:7800</Host>
+            <Accept iib:valueType="CHARACTER">text/html, image/gif, image/jpeg, */*; q=0.2</Accept>
+            <Connection iib:valueType="CHARACTER">keep-alive</Connection>
+            <Content-Length iib:valueType="CHARACTER">2</Content-Length>
+            <X-Original-HTTP-Command iib:valueType="CHARACTER">POST http://localhost:7800/restarray/frontend HTTP/1.1</X-Original-HTTP-Command>
+            <X-Server-Name iib:valueType="CHARACTER">localhost</X-Server-Name>
+            <X-Server-Port iib:valueType="CHARACTER">7800</X-Server-Port>
+            <X-Remote-Addr iib:valueType="CHARACTER">::ffff:127.0.0.1</X-Remote-Addr>
+            <X-Remote-Host iib:valueType="CHARACTER">::ffff:127.0.0.1</X-Remote-Host>
+            <X-Scheme iib:valueType="CHARACTER">http</X-Scheme>
+        </HTTPInputHeader>
+        <BLOB iib:parser="none">
+            <UnknownParserName iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <BLOB iib:valueType="BLOB">7b7d</BLOB>
+        </BLOB>
+    </message>
+</MessageAssembly>
