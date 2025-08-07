@@ -22,7 +22,6 @@ CREATE COMPUTE MODULE JsonArrayFlow_CreateJsonArray
 		SET OutputRoot.JSON.Data.directAssign.Item[3] = 'valueF';
 		SET OutputRoot.JSON.Data.directAssign.Item[4] = 'valueZ';
 		SET OutputLocalEnvironment.Wildcard.WildcardMatch = '2-directAssign';
-		CREATE FIELD Environment.Variables.directAssign IDENTITY (JSON.Array)directAssign;
 		SET Environment.Variables.directAssign = OutputRoot.JSON.Data.directAssign;
 		PROPAGATE TO TERMINAL 'out1';
 
