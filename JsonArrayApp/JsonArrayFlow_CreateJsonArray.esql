@@ -1,0 +1,136 @@
+
+
+CREATE COMPUTE MODULE JsonArrayFlow_CreateJsonArray
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+
+		-- Create with lastchild call		
+		CALL CopyMessageHeaders();
+		CREATE FIELD OutputRoot.JSON.Data.lastChild IDENTITY (JSON.Array)lastchild;
+		CREATE LASTCHILD OF OutputRoot.JSON.Data.lastchild TYPE NameValue NAME 'Item' VALUE 'valueA';
+		CREATE LASTCHILD OF OutputRoot.JSON.Data.lastchild TYPE NameValue NAME 'Item' VALUE 'valueB';
+		CREATE LASTCHILD OF OutputRoot.JSON.Data.lastchild TYPE NameValue NAME 'Item' VALUE 'valueC';
+		SET OutputLocalEnvironment.Wildcard.WildcardMatch = '1-lastChild';
+		CREATE FIELD Environment.Variables.lastChild IDENTITY (JSON.Array)lastchild;
+		SET Environment.Variables.lastChild = OutputRoot.JSON.Data.lastChild;
+		PROPAGATE TO TERMINAL 'out1';
+
+		-- Create with direct item assign		
+		CALL CopyMessageHeaders();
+		CREATE FIELD OutputRoot.JSON.Data.directAssign IDENTITY (JSON.Array)directAssign;
+		SET OutputRoot.JSON.Data.directAssign.Item[1] = 'valueD';
+		SET OutputRoot.JSON.Data.directAssign.Item[2] = 'valueE';
+		SET OutputRoot.JSON.Data.directAssign.Item[3] = 'valueF';
+		SET OutputRoot.JSON.Data.directAssign.Item[4] = 'valueZ';
+		SET OutputLocalEnvironment.Wildcard.WildcardMatch = '2-directAssign';
+		CREATE FIELD Environment.Variables.directAssign IDENTITY (JSON.Array)directAssign;
+		SET Environment.Variables.directAssign = OutputRoot.JSON.Data.directAssign;
+		PROPAGATE TO TERMINAL 'out1';
+
+		-- Create with direct item but no item
+		CALL CopyMessageHeaders();
+		CREATE FIELD OutputRoot.JSON.Data.directAssignNoItem IDENTITY (JSON.Array)directAssignNoItem;
+		SET OutputRoot.JSON.Data.directAssignNoItem[1] = 'valueD';
+		SET OutputRoot.JSON.Data.directAssignNoItem[2] = 'valueE';
+		SET OutputRoot.JSON.Data.directAssignNoItem[3] = 'valueF';
+		SET OutputLocalEnvironment.Wildcard.WildcardMatch = '3-directAssignNoItem';
+		CREATE FIELD Environment.Variables.directAssignNoItem IDENTITY (JSON.Array)directAssignNoItem;
+		SET Environment.Variables.directAssignNoItem = OutputRoot.JSON.Data.directAssignNoItem;
+		PROPAGATE TO TERMINAL 'out1';
+
+		-- Create object array with lastchild call		
+		CALL CopyMessageHeaders();
+		CREATE FIELD OutputRoot.JSON.Data.objectArray IDENTITY (JSON.Array)objectArray;
+		CREATE LASTCHILD OF OutputRoot.JSON.Data.objectArray NAME 'Item';
+		CREATE LASTCHILD OF OutputRoot.JSON.Data.objectArray.Item[<] NAME 'key' VALUE 'value';
+		CREATE LASTCHILD OF OutputRoot.JSON.Data.objectArray NAME 'Item';
+		CREATE LASTCHILD OF OutputRoot.JSON.Data.objectArray.Item[<] NAME 'key' VALUE 'value';
+		CREATE LASTCHILD OF OutputRoot.JSON.Data.objectArray NAME 'Item';
+		CREATE LASTCHILD OF OutputRoot.JSON.Data.objectArray.Item[<] NAME 'key' VALUE 'value';
+		SET OutputLocalEnvironment.Wildcard.WildcardMatch = '4-objectArray';
+		CREATE FIELD Environment.Variables.objectArray IDENTITY (JSON.Array)objectArray;
+		SET Environment.Variables.objectArray = OutputRoot.JSON.Data.objectArray;
+		PROPAGATE TO TERMINAL 'out1';
+		
+		-- Create object array
+		CALL CopyMessageHeaders();
+		CREATE FIELD OutputRoot.JSON.Data.objectArrayDirect IDENTITY (JSON.Array)objectArrayDirect;
+		SET OutputRoot.JSON.Data.objectArrayDirect.Item[1]."Code" = 'valueG';
+		SET OutputRoot.JSON.Data.objectArrayDirect.Item[2]."Description" = 'valueH';
+		SET OutputRoot.JSON.Data.objectArrayDirect.Item[3]."Extra" = 'valueI';
+		SET OutputLocalEnvironment.Wildcard.WildcardMatch = '5-objectArrayDirect';
+		CREATE FIELD Environment.Variables.objectArrayDirect IDENTITY (JSON.Array)objectArrayDirect;
+		SET Environment.Variables.objectArrayDirect = OutputRoot.JSON.Data.objectArrayDirect;
+		PROPAGATE TO TERMINAL 'out1';
+		
+		-- create with loop and and 1 sub group
+		CALL CopyMessageHeaders();
+		CREATE FIELD OutputRoot.JSON.Data.forLoop IDENTITY (JSON.Array)forLoop;
+		DECLARE i INTEGER 1;
+		FOR source as Environment.Variables.directAssign.Item[] DO
+			SET OutputRoot.JSON.Data.forLoop.Item[1].{'entry' || CAST(i AS CHARACTER)} = 'value' || CAST(i AS CHARACTER);
+			set i = i + 1;
+		END FOR;
+		SET OutputLocalEnvironment.Wildcard.WildcardMatch = '6-forLoop';
+		CREATE FIELD Environment.Variables.forLoop IDENTITY (JSON.Array)forLoop;
+		SET Environment.Variables.forLoop = OutputRoot.JSON.Data.forLoop;
+		PROPAGATE TO TERMINAL 'out1';
+		
+		-- create with loop and sub groups		
+		CALL CopyMessageHeaders();
+		CREATE FIELD OutputRoot.JSON.Data.forloop2 IDENTITY (JSON.Array)forloop2;
+		DECLARE j INTEGER 1;
+		FOR source as Environment.Variables.directAssign.Item[] DO
+			SET OutputRoot.JSON.Data.forloop2.Item[j].{'entry' || CAST(j AS CHARACTER)} = 'value' || CAST(j AS CHARACTER);
+			set j = j + 1;
+		END FOR;
+		SET OutputLocalEnvironment.Wildcard.WildcardMatch = '7-forloop2';
+		CREATE FIELD Environment.Variables.forloop2 IDENTITY (JSON.Array)forloop2;
+		SET Environment.Variables.forloop2 = OutputRoot.JSON.Data.forloop2;
+		PROPAGATE TO TERMINAL 'out1';
+
+		-- create with loop and sub groups without Item		
+		CALL CopyMessageHeaders();
+		CREATE FIELD OutputRoot.JSON.Data.noItemList IDENTITY (JSON.Array)noItemList;
+		DECLARE k INTEGER 1;
+		FOR source as Environment.Variables.directAssign.Item[] DO
+			SET OutputRoot.JSON.Data.noItemList.someField[k].{'entry' || CAST(k AS CHARACTER)} = 'value' || CAST(k AS CHARACTER);
+			set k = k + 1;
+		END FOR;
+		SET OutputLocalEnvironment.Wildcard.WildcardMatch = '8-noItemList';
+		CREATE FIELD Environment.Variables.noItemList IDENTITY (JSON.Array)noItemList;
+		SET Environment.Variables.noItemList = OutputRoot.JSON.Data.noItemList;
+		PROPAGATE TO TERMINAL 'out1';
+
+		-- create with loop and sub groups without Item
+		CALL CopyMessageHeaders();
+		CREATE FIELD OutputRoot.JSON.Data.noItemList2 IDENTITY (JSON.Array)noItemList2;
+		DECLARE l INTEGER 1;
+		FOR source as Environment.Variables.directAssign.Item[] DO
+			SET OutputRoot.JSON.Data.noItemList2[l].{'entry' || CAST(l AS CHARACTER)} = 'value' || CAST(l AS CHARACTER);
+			set l = l + 1;
+		END FOR;
+		SET OutputLocalEnvironment.Wildcard.WildcardMatch = '9-noItemList2';
+		CREATE FIELD Environment.Variables.noItemList2 IDENTITY (JSON.Array)noItemList2;
+		SET Environment.Variables.noItemList2 = OutputRoot.JSON.Data.noItemList2;
+		PROPAGATE TO TERMINAL 'out1';
+
+		CALL CopyMessageHeaders();
+		Set OutputRoot.JSON.Data = Environment.Variables;
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
