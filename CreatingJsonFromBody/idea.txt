@@ -1,0 +1,19 @@
+// Add user code below
+
+			MbElement outputRootElement = outMessage.getRootElement();
+			MbElement inputRootElement = inMessage.getRootElement();
+			MbElement message = null;
+			MbElement dataElement = null;
+			byte[] messageByteArray = null;
+			MbElement body = inputRootElement.getFirstElementByPath("JSON/Data/body");
+			if(body!=null) {
+				String messageString = body.getValueAsString();
+				if(messageString != null) {
+					messageByteArray = messageString.getBytes();
+
+					//dataElement.copyElementTree(message);
+					outputRootElement.createElementAsLastChildFromBitstream(messageByteArray, MbJSON.PARSER_NAME, "", "", "", 0, 0, 0);
+				}
+			}
+
+			// End of user code
