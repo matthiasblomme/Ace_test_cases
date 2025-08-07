@@ -1,10 +1,9 @@
 
-
 CREATE COMPUTE MODULE JsonArrayFlow_CreateJsonArray
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
 
-		-- Create with lastchild call		
+		-- array 1: Create with lastchild call		
 		CALL CopyMessageHeaders();
 		CREATE FIELD OutputRoot.JSON.Data.lastChild IDENTITY (JSON.Array)lastchild;
 		CREATE LASTCHILD OF OutputRoot.JSON.Data.lastchild TYPE NameValue NAME 'Item' VALUE 'valueA';
@@ -15,7 +14,7 @@ CREATE COMPUTE MODULE JsonArrayFlow_CreateJsonArray
 		SET Environment.Variables.lastChild = OutputRoot.JSON.Data.lastChild;
 		PROPAGATE TO TERMINAL 'out1';
 
-		-- Create with direct item assign		
+		-- array 2: Create with direct item assign		
 		CALL CopyMessageHeaders();
 		CREATE FIELD OutputRoot.JSON.Data.directAssign IDENTITY (JSON.Array)directAssign;
 		SET OutputRoot.JSON.Data.directAssign.Item[1] = 'valueD';
@@ -27,7 +26,7 @@ CREATE COMPUTE MODULE JsonArrayFlow_CreateJsonArray
 		SET Environment.Variables.directAssign = OutputRoot.JSON.Data.directAssign;
 		PROPAGATE TO TERMINAL 'out1';
 
-		-- Create with direct item but no item
+		-- array 3: Create with direct item but no item
 		CALL CopyMessageHeaders();
 		CREATE FIELD OutputRoot.JSON.Data.directAssignNoItem IDENTITY (JSON.Array)directAssignNoItem;
 		SET OutputRoot.JSON.Data.directAssignNoItem[1] = 'valueD';
@@ -38,7 +37,7 @@ CREATE COMPUTE MODULE JsonArrayFlow_CreateJsonArray
 		SET Environment.Variables.directAssignNoItem = OutputRoot.JSON.Data.directAssignNoItem;
 		PROPAGATE TO TERMINAL 'out1';
 
-		-- Create object array with lastchild call		
+		-- array 4: Create object array with lastchild call		
 		CALL CopyMessageHeaders();
 		CREATE FIELD OutputRoot.JSON.Data.objectArray IDENTITY (JSON.Array)objectArray;
 		CREATE LASTCHILD OF OutputRoot.JSON.Data.objectArray NAME 'Item';
@@ -52,7 +51,7 @@ CREATE COMPUTE MODULE JsonArrayFlow_CreateJsonArray
 		SET Environment.Variables.objectArray = OutputRoot.JSON.Data.objectArray;
 		PROPAGATE TO TERMINAL 'out1';
 		
-		-- Create object array
+		-- array 5: Create object array
 		CALL CopyMessageHeaders();
 		CREATE FIELD OutputRoot.JSON.Data.objectArrayDirect IDENTITY (JSON.Array)objectArrayDirect;
 		SET OutputRoot.JSON.Data.objectArrayDirect.Item[1]."Code" = 'valueG';
@@ -63,7 +62,7 @@ CREATE COMPUTE MODULE JsonArrayFlow_CreateJsonArray
 		SET Environment.Variables.objectArrayDirect = OutputRoot.JSON.Data.objectArrayDirect;
 		PROPAGATE TO TERMINAL 'out1';
 		
-		-- create with loop and and 1 sub group
+		-- array 6: create with loop and and 1 sub group
 		CALL CopyMessageHeaders();
 		CREATE FIELD OutputRoot.JSON.Data.forLoop IDENTITY (JSON.Array)forLoop;
 		DECLARE i INTEGER 1;
@@ -76,7 +75,7 @@ CREATE COMPUTE MODULE JsonArrayFlow_CreateJsonArray
 		SET Environment.Variables.forLoop = OutputRoot.JSON.Data.forLoop;
 		PROPAGATE TO TERMINAL 'out1';
 		
-		-- create with loop and sub groups		
+		-- array 7: create with loop and sub groups		
 		CALL CopyMessageHeaders();
 		CREATE FIELD OutputRoot.JSON.Data.forloop2 IDENTITY (JSON.Array)forloop2;
 		DECLARE j INTEGER 1;
@@ -89,7 +88,7 @@ CREATE COMPUTE MODULE JsonArrayFlow_CreateJsonArray
 		SET Environment.Variables.forloop2 = OutputRoot.JSON.Data.forloop2;
 		PROPAGATE TO TERMINAL 'out1';
 
-		-- create with loop and sub groups without Item		
+		-- array 8: create with loop and sub groups without Item		
 		CALL CopyMessageHeaders();
 		CREATE FIELD OutputRoot.JSON.Data.noItemList IDENTITY (JSON.Array)noItemList;
 		DECLARE k INTEGER 1;
@@ -102,7 +101,7 @@ CREATE COMPUTE MODULE JsonArrayFlow_CreateJsonArray
 		SET Environment.Variables.noItemList = OutputRoot.JSON.Data.noItemList;
 		PROPAGATE TO TERMINAL 'out1';
 
-		-- create with loop and sub groups without Item
+		-- array 9: create with loop and sub groups without Item
 		CALL CopyMessageHeaders();
 		CREATE FIELD OutputRoot.JSON.Data.noItemList2 IDENTITY (JSON.Array)noItemList2;
 		DECLARE l INTEGER 1;
