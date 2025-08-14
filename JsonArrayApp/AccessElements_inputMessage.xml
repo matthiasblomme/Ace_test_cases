@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MessagePool xmlns="http://wwww.ibm.com/iib/test/1.0.0">
+    <InputMessage timestamp="1754556446689" nodeId="FCMComposite_1_3" name="InputArray" id="1754556446689-416">
+        <plainText>%7B%0D%0A%09%22List%22%3A%5B%0D%0A%09%09%22entry+1+-+the+first%22%2C%0D%0A%09%09%22entry+2+-+the+second%22%2C%0D%0A%09%09%22entry+3+-+the+middle%22%2C%0D%0A%09%09%22entry+4+-+the+middle%22%2C%0D%0A%09%09%22entry+5+-+the+second+to+last%22%2C%0D%0A%09%09%22entry+6+-+the+last%22%0D%0A%09%5D%0D%0A%7D</plainText>
+    </InputMessage>
+</MessagePool>
