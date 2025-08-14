@@ -1,0 +1,79 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Dummy API",
+    "version": "1.0.0",
+    "description": "A dummy API for an ACE template project. Includes a simple POST operation, test endpoints that return specific HTTP errors, basic input/output schemas defined as components, and OAuth 2.0 security using the client credentials flow.\n"
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com/world"
+    }
+  ],
+  "paths": {
+    "/hello": {
+      "get": {
+        "summary": "Retrieve a greeting",
+        "description": "Test endpoint that returns a greeting message.\n",
+        "responses": {
+          "200": {
+            "description": "Successful response with greeting message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "message": "Hello, Foo Bar!"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Send a greeting",
+        "description": "Accepts a name and responds with a greeting message.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response with greeting message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "message": "Hello, Foo Bar!"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request – invalid input."
+          }
+        },
+        "security": [
+          {
+            "oauth2": []
+          }
+        ]
+      }
+    }
+  },
+  "x-ibm-configuration": {}
+}

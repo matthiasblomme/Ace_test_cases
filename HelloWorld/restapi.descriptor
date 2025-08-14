@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:restapiDescriptor xmlns="http://com.ibm.etools.mft.descriptor.base" xmlns:ns2="http://com.ibm.etools.mft.descriptor.restapi" definitionType="openapi_3" definitionFile="hello.yaml" implementation="gen/HelloWorld.msgflow" https="false" definitionWithExtRef="false" faultFormat="JSON">
+    <ns2:operations>
+        <ns2:operation name="getHello" implementation="getHello.subflow"/>
+        <ns2:operation name="postHello" implementation="postHello.subflow"/>
+    </ns2:operations>
+    <ns2:errorHandlers>
+        <ns2:errorHandler type="CATCH" implementation="HelloWorldInputCatchHandler.subflow"/>
+        <ns2:errorHandler type="FAILURE" implementation="HelloWorldInputFailureHandler.subflow"/>
+        <ns2:errorHandler type="TIMEOUT" implementation="HelloWorldInputTimeoutHandler.subflow"/>
+    </ns2:errorHandlers>
+</ns2:restapiDescriptor>
