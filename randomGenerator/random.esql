@@ -1,0 +1,3 @@
+ECLARE minValue INTEGER 100000;
+		DECLARE maxValue INTEGER 1000000000;
+		SET OutputRoot.MQRFH2.usr.x_cus_document_parent_UUID = CAST(CAST(RAND() * (maxValue - minValue + 1) AS INTEGER) + minValue AS CHAR);
