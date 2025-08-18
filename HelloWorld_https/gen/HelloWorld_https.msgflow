@@ -9,7 +9,7 @@ nsPrefix="gen_HelloWorld_https.msgflow">
 <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/flowAPIgenerated/icons/full/obj16/HelloWorld_https.gif"/>
 <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/flowAPIgenerated/icons/full/obj30/HelloWorld_https.gif"/>
 <composition>
-<nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="25,150" URLSpecifier="/world*" useHTTPS="true" parseQueryString="true" messageDomainProperty="JSON" faultFormat="JSON">
+<nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="25,150" URLSpecifier="/world_https*" useHTTPS="true" parseQueryString="true" messageDomainProperty="JSON" faultFormat="JSON">
 <translation xmi:type="utility:ConstantString" string="HTTP Input"/>
 </nodes>
 <nodes xmi:type="ComIbmRouteToLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="275,150">
