@@ -3,6 +3,7 @@
 	<name>JsonArrayApp</name>
 	<comment></comment>
 	<projects>
+		<project>JsonArrayAppJava</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
