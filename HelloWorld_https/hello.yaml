@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://api.example.com/world"
+      "url": "https://api.example.com/world_https"
     }
   ],
   "paths": {
