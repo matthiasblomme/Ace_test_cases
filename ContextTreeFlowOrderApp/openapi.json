@@ -1,0 +1,39 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Dummy Token API",
+    "version": "1.0.0",
+    "description": "A simple mock API that returns a dummy token."
+  },
+  "servers": [
+    {
+      "url": "http://localhost/dummy"
+    }
+  ],
+  "paths": {
+    "/token": {
+      "get": {
+        "summary": "Get dummy token",
+        "description": "Returns a dummy token for testing purposes.",
+        "responses": {
+          "200": {
+            "description": "Successful response with a dummy token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "dummy-token-12345"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

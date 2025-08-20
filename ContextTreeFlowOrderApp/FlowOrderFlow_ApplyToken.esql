@@ -1,0 +1,25 @@
+
+
+CREATE COMPUTE MODULE FlowOrderFlow_ApplyToken
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- The input message is the entire message
+		CALL CopyEntireMessage();
+		
+		-- apply the token from the environment
+		SET OutputRoot.HTTPRequestHeader.Authorization = 'Bearer ' || Environment.Variables.Token;
+		
+		-- also set the token in the body, for flow exerciser readability
+		SET OutputRoot.JSON.Data.token = Environment.Variables.Token;
+		
+		-- set the reply
+		SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 200;
+		SET OutputRoot.HTTPReplyHeader."Content-Type" = 'application/json';
+		
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
