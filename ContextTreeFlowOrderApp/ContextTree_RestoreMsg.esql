@@ -19,6 +19,8 @@ CREATE COMPUTE MODULE ContextTree_RestoreMsg
 		SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 200;
 		SET OutputRoot.HTTPReplyHeader."Content-Type" = 'application/json';
 		
+		PROPAGATE TO TERMINAL 'out1' DELETE NONE;
+		
 		RETURN TRUE;
 	END;
 
