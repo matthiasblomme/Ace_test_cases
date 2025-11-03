@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?><MessageAssembly iib:parser="GENERICROOT" xmlns:iib="http://com.ibm.iib/lt/1.0">
+    <version xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">1</version>
+    <checkpoint>
+        <messageId xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">0024B478-6903615E-00000001</messageId>
+        <propagationCount xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">6</propagationCount>
+        <nodeCallDepth xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">5</nodeCallDepth>
+        <timestamp xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="TIMESTAMP">2025-10-30 13:00:14.444</timestamp>
+        <source>
+            <name xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">BuildReply</name>
+            <identifier xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">FlowWithLogging#FCMComposite_1_4</identifier>
+            <type xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">ComIbmComputeNode</type>
+            <terminal xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">out</terminal>
+            <nodePath>
+                <application xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">AppWithLogging</application>
+                <messageFlow xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">FlowWithLogging</messageFlow>
+                <node xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">BuildReply</node>
+            </nodePath>
+            <inputNode xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="BOOLEAN">FALSE</inputNode>
+        </source>
+        <target>
+            <name xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">ReplyLog</name>
+            <identifier xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">FlowWithLogging#FCMComposite_1_5</identifier>
+            <type xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">SubFlowNode</type>
+            <terminal xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">Input</terminal>
+            <nodePath>
+                <application xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">AppWithLogging</application>
+                <messageFlow xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">FlowWithLogging</messageFlow>
+                <node xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">ReplyLog</node>
+            </nodePath>
+            <resolved>
+                <name xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">ReplyLog.LoggingLibrary.LogEntry#InTerminal.Input</name>
+                <identifier xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">FlowWithLogging#FCMComposite_1_5.LoggingLibrary.LogEntry#InTerminal.Input</identifier>
+                <type xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">InputNode</type>
+                <terminal xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">in</terminal>
+                <nodePath>
+                    <application xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">AppWithLogging</application>
+                    <messageFlow xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">FlowWithLogging</messageFlow>
+                    <subflow>
+                        <index xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="INTEGER">0</index>
+                        <name xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">ReplyLog</name>
+                    </subflow>
+                    <node xmlns:iib="http://com.ibm.iib/lt/1.0" iib:valueType="CHARACTER">ReplyLog.LoggingLibrary.LogEntry#InTerminal.Input</node>
+                </nodePath>
+            </resolved>
+        </target>
+    </checkpoint>
+    <context xmlns:iib="http://com.ibm.iib/lt/1.0" iib:parser="MQROOT">
+        <FlowDetails>
+            <FlowName iib:valueType="CHARACTER">FlowWithLogging</FlowName>
+            <ApplicationName iib:valueType="CHARACTER">AppWithLogging</ApplicationName>
+            <LibraryName iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IntegrationServerName iib:valueType="CHARACTER">TEST_SERVER</IntegrationServerName>
+            <IntegrationNodeName iib:valueType="CHARACTER">integration_server</IntegrationNodeName>
+            <HostName iib:valueType="CHARACTER">Rocinante</HostName>
+            <ProcessId iib:valueType="INTEGER">2633436</ProcessId>
+        </FlowDetails>
+        <InvocationDetails>
+            <Timestamp iib:valueType="GMTTIMESTAMP">2025-10-30 13:00:14.444</Timestamp>
+            <ThreadId iib:valueType="INTEGER">2405496</ThreadId>
+            <NodeName iib:valueType="CHARACTER">HTTP Input</NodeName>
+        </InvocationDetails>
+        <Nodes>
+            <iib:element iib:name="HTTP Input">
+                <PayloadDetails>
+                    <Domain iib:valueType="CHARACTER">JSON</Domain>
+                    <Encoding iib:valueType="INTEGER">546</Encoding>
+                    <CodedCharSetId iib:valueType="INTEGER">1208</CodedCharSetId>
+                    <Model iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+                    <Message iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+                    <PhysicalFormat iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+                </PayloadDetails>
+                <Payload iib:parser="json">
+                    <Data>
+                        <some iib:valueType="CHARACTER">data</some>
+                    </Data>
+                </Payload>
+                <Headers>
+                    <HTTP>
+                        <HTTPInputHeader iib:parser="WSINPHDR">
+                            <Content-Type iib:valueType="CHARACTER">application/json; charset=utf-8</Content-Type>
+                            <Cache-Control iib:valueType="CHARACTER">no-cache</Cache-Control>
+                            <Pragma iib:valueType="CHARACTER">no-cache</Pragma>
+                            <User-Agent iib:valueType="CHARACTER">Java/17.0.16</User-Agent>
+                            <Host iib:valueType="CHARACTER">localhost:7800</Host>
+                            <Accept iib:valueType="CHARACTER">text/html, image/gif, image/jpeg, */*; q=0.2</Accept>
+                            <Connection iib:valueType="CHARACTER">keep-alive</Connection>
+                            <Content-Length iib:valueType="CHARACTER">15</Content-Length>
+                            <X-Original-HTTP-Command iib:valueType="CHARACTER">POST http://localhost:7800/LogBlog HTTP/1.1</X-Original-HTTP-Command>
+                            <X-Server-Name iib:valueType="CHARACTER">localhost</X-Server-Name>
+                            <X-Server-Port iib:valueType="CHARACTER">7800</X-Server-Port>
+                            <X-Remote-Addr iib:valueType="CHARACTER">::ffff:127.0.0.1</X-Remote-Addr>
+                            <X-Remote-Host iib:valueType="CHARACTER">::ffff:127.0.0.1</X-Remote-Host>
+                            <X-Scheme iib:valueType="CHARACTER">http</X-Scheme>
+                        </HTTPInputHeader>
+                    </HTTP>
+                </Headers>
+                <Metadata>
+                    <URL iib:valueType="CHARACTER">/LogBlog</URL>
+                </Metadata>
+                <NodeType iib:valueType="CHARACTER">ComIbmWSInputNode</NodeType>
+            </iib:element>
+            <InputLog>
+                <PayloadDetails>
+                    <Domain iib:valueType="CHARACTER">JSON</Domain>
+                    <Encoding iib:valueType="INTEGER">546</Encoding>
+                    <CodedCharSetId iib:valueType="INTEGER">1208</CodedCharSetId>
+                    <Model iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+                    <Message iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+                    <PhysicalFormat iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+                </PayloadDetails>
+                <Payload iib:parser="json">
+                    <Data>
+                        <some iib:valueType="CHARACTER">data</some>
+                    </Data>
+                </Payload>
+                <Headers>
+                    <HTTP>
+                        <HTTPInputHeader iib:parser="WSINPHDR">
+                            <Content-Type iib:valueType="CHARACTER">application/json; charset=utf-8</Content-Type>
+                            <Cache-Control iib:valueType="CHARACTER">no-cache</Cache-Control>
+                            <Pragma iib:valueType="CHARACTER">no-cache</Pragma>
+                            <User-Agent iib:valueType="CHARACTER">Java/17.0.16</User-Agent>
+                            <Host iib:valueType="CHARACTER">localhost:7800</Host>
+                            <Accept iib:valueType="CHARACTER">text/html, image/gif, image/jpeg, */*; q=0.2</Accept>
+                            <Connection iib:valueType="CHARACTER">keep-alive</Connection>
+                            <Content-Length iib:valueType="CHARACTER">15</Content-Length>
+                            <X-Original-HTTP-Command iib:valueType="CHARACTER">POST http://localhost:7800/LogBlog HTTP/1.1</X-Original-HTTP-Command>
+                            <X-Server-Name iib:valueType="CHARACTER">localhost</X-Server-Name>
+                            <X-Server-Port iib:valueType="CHARACTER">7800</X-Server-Port>
+                            <X-Remote-Addr iib:valueType="CHARACTER">::ffff:127.0.0.1</X-Remote-Addr>
+                            <X-Remote-Host iib:valueType="CHARACTER">::ffff:127.0.0.1</X-Remote-Host>
+                            <X-Scheme iib:valueType="CHARACTER">http</X-Scheme>
+                        </HTTPInputHeader>
+                    </HTTP>
+                </Headers>
+                <NodeType iib:valueType="CHARACTER">SubFlowNode</NodeType>
+            </InputLog>
+            <BuildReply>
+                <Payload iib:elementType="0x03000000"/>
+                <Headers>
+                    <HTTP>
+                        <HTTPInputHeader iib:parser="WSINPHDR">
+                            <Content-Type iib:valueType="CHARACTER">application/json; charset=utf-8</Content-Type>
+                            <Cache-Control iib:valueType="CHARACTER">no-cache</Cache-Control>
+                            <Pragma iib:valueType="CHARACTER">no-cache</Pragma>
+                            <User-Agent iib:valueType="CHARACTER">Java/17.0.16</User-Agent>
+                            <Host iib:valueType="CHARACTER">localhost:7800</Host>
+                            <Accept iib:valueType="CHARACTER">text/html, image/gif, image/jpeg, */*; q=0.2</Accept>
+                            <Connection iib:valueType="CHARACTER">keep-alive</Connection>
+                            <Content-Length iib:valueType="CHARACTER">15</Content-Length>
+                            <X-Original-HTTP-Command iib:valueType="CHARACTER">POST http://localhost:7800/LogBlog HTTP/1.1</X-Original-HTTP-Command>
+                            <X-Server-Name iib:valueType="CHARACTER">localhost</X-Server-Name>
+                            <X-Server-Port iib:valueType="CHARACTER">7800</X-Server-Port>
+                            <X-Remote-Addr iib:valueType="CHARACTER">::ffff:127.0.0.1</X-Remote-Addr>
+                            <X-Remote-Host iib:valueType="CHARACTER">::ffff:127.0.0.1</X-Remote-Host>
+                            <X-Scheme iib:valueType="CHARACTER">http</X-Scheme>
+                        </HTTPInputHeader>
+                        <HTTPReplyHeader iib:parser="WSREPHDR">
+                            <Content-Type iib:valueType="CHARACTER">application/json</Content-Type>
+                        </HTTPReplyHeader>
+                    </HTTP>
+                </Headers>
+                <NodeType iib:valueType="CHARACTER">ComIbmComputeNode</NodeType>
+            </BuildReply>
+        </Nodes>
+    </context>
+    <environment/>
+    <localEnvironment xmlns:iib="http://com.ibm.iib/lt/1.0" iib:parser="MQROOT">
+        <Destination>
+            <HTTP>
+                <ReplyStatusCode iib:valueType="INTEGER">202</ReplyStatusCode>
+            </HTTP>
+        </Destination>
+    </localEnvironment>
+    <exceptionList/>
+    <message xmlns:iib="http://com.ibm.iib/lt/1.0" iib:parser="WSRoot">
+        <Properties iib:parser="MQPROPERTYPARSER">
+            <MessageSet iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <MessageType iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <MessageFormat iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <Encoding iib:valueType="INTEGER">546</Encoding>
+            <CodedCharSetId iib:valueType="INTEGER">1208</CodedCharSetId>
+            <Transactional iib:valueType="BOOLEAN">FALSE</Transactional>
+            <Persistence iib:valueType="BOOLEAN">FALSE</Persistence>
+            <CreationTime iib:valueType="GMTTIMESTAMP">2025-10-30 13:00:14.444</CreationTime>
+            <ExpirationTime iib:valueType="INTEGER">-1</ExpirationTime>
+            <Priority iib:valueType="INTEGER">0</Priority>
+            <ReplyIdentifier iib:valueType="BLOB">000000000000000000000000000000000000000000000000</ReplyIdentifier>
+            <ReplyProtocol iib:valueType="CHARACTER">SOAP-HTTP</ReplyProtocol>
+            <Topic iib:elementType="0x03000000"/>
+            <ContentType iib:valueType="CHARACTER">application/json</ContentType>
+            <IdentitySourceType iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentitySourceToken iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentitySourcePassword iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentitySourceIssuedBy iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedType iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedToken iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedPassword iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+            <IdentityMappedIssuedBy iib:elementType="0x03000000" iib:valueType="CHARACTER"/>
+        </Properties>
+        <HTTPInputHeader iib:parser="WSINPHDR">
+            <Content-Type iib:valueType="CHARACTER">application/json; charset=utf-8</Content-Type>
+            <Cache-Control iib:valueType="CHARACTER">no-cache</Cache-Control>
+            <Pragma iib:valueType="CHARACTER">no-cache</Pragma>
+            <User-Agent iib:valueType="CHARACTER">Java/17.0.16</User-Agent>
+            <Host iib:valueType="CHARACTER">localhost:7800</Host>
+            <Accept iib:valueType="CHARACTER">text/html, image/gif, image/jpeg, */*; q=0.2</Accept>
+            <Connection iib:valueType="CHARACTER">keep-alive</Connection>
+            <Content-Length iib:valueType="CHARACTER">15</Content-Length>
+            <X-Original-HTTP-Command iib:valueType="CHARACTER">POST http://localhost:7800/LogBlog HTTP/1.1</X-Original-HTTP-Command>
+            <X-Server-Name iib:valueType="CHARACTER">localhost</X-Server-Name>
+            <X-Server-Port iib:valueType="CHARACTER">7800</X-Server-Port>
+            <X-Remote-Addr iib:valueType="CHARACTER">::ffff:127.0.0.1</X-Remote-Addr>
+            <X-Remote-Host iib:valueType="CHARACTER">::ffff:127.0.0.1</X-Remote-Host>
+            <X-Scheme iib:valueType="CHARACTER">http</X-Scheme>
+        </HTTPInputHeader>
+        <JSON iib:parser="json">
+            <Data>
+                <message iib:valueType="CHARACTER">accepted</message>
+            </Data>
+        </JSON>
+        <HTTPReplyHeader iib:parser="WSREPHDR">
+            <Content-Type iib:valueType="CHARACTER">application/json</Content-Type>
+        </HTTPReplyHeader>
+    </message>
+</MessageAssembly>
