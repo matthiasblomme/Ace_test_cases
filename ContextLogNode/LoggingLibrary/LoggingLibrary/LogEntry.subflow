@@ -21,7 +21,7 @@
       <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output" location="424,92">
         <translation xmi:type="utility:TranslatableString" key="OutTerminal.Output" bundleName="LoggingLibrary/LogEntry" pluginId="LoggingLibrary"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="629,20" computeExpression="esql://routine/LoggingLibrary#LogEntry_CreateLogMsg.Main">
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="642,20" computeExpression="esql://routine/LoggingLibrary#LogEntry_CreateLogMsg.Main">
         <translation xmi:type="utility:ConstantString" string="CreateLogMsg"/>
       </nodes>
       <nodes xmi:type="ComIbmFileOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="839,20" outputDirectory="C:\temp\log_folder" outputFilename="generic.log" writeMode="writeInPlace" recordDefinition="delimited">
