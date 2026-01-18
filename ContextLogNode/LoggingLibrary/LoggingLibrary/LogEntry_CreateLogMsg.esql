@@ -16,7 +16,7 @@ CREATE COMPUTE MODULE LogEntry_CreateLogMsg
 		-- move the context tree to the node group
 		MOVE nodeRef PARENT;
 		
-		-- get the previous node info
+		-- get the previous nodes from mainflow
 		DECLARE previousNodeName CHARACTER FIELDNAME(nodeRef.*[<]);
 		DECLARE previousNodeType CHARACTER nodeRef.*[<].NodeType;
 		DECLARE previousNodeCount INTEGER CARDINALITY(nodeRef.*[]);
@@ -29,6 +29,22 @@ CREATE COMPUTE MODULE LogEntry_CreateLogMsg
 			MOVE nodeRef NEXTSIBLING;
 		END WHILE;
 		SET flowPath = TRIM(LEADING ' - ' FROM flowPath);
+		
+		-- get previous nodes from subflow
+		DECLARE mySubFlow CHARACTER 'LogEntryNode';
+		DECLARE mySubFlowInput CHARACTER 'Input';
+		DECLARE contextRefSubFlow REFERENCE TO CONTEXTREFERENCE(NODENAME mySubFlowInput LEVELNAME mySubFlow);
+		
+		-- move the context tree to the node group
+		MOVE contextRefSubFlow PARENT;
+		MOVE contextRefSubFlow PARENT;
+		MOVE contextRefSubFlow FIRSTCHILD;
+		WHILE LASTMOVE(nodeRef) DO
+			SET flowPath = flowPath || ' - ' || FIELDNAME(nodeRef);
+			MOVE contextRefSubFlow NEXTSIBLING;
+		END WHILE;
+		SET flowPath = TRIM(LEADING ' - ' FROM flowPath);
+
 		
 		-- log flow path structure
 		CREATE LASTCHILD OF OutputRoot DOMAIN 'JSON';
