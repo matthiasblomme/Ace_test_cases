@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmWSInput.msgnode="ComIbmWSInput.msgnode" xmlns:ComIbmWSReply.msgnode="ComIbmWSReply.msgnode" xmlns:LoggingLibrary_LogEntry.subflow="LoggingLibrary/LogEntry.subflow" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:endSubFlow.subflow="endSubFlow.subflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="FlowWithLogging.msgflow" nsPrefix="FlowWithLogging.msgflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" nodeLayoutStyle="RECTANGLE">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <translation xmi:type="utility:TranslatableString" key="FlowWithLogging" bundleName="FlowWithLogging" pluginId="AppWithLogging"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/AppWithLogging/icons/full/obj16/FlowWithLogging.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/AppWithLogging/icons/full/obj30/FlowWithLogging.gif"/>
+    <composition>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="10,20" URLSpecifier="/LogBlog" messageDomainProperty="JSON">
+        <translation xmi:type="utility:ConstantString" string="HTTP Input"/>
+      </nodes>
+      <nodes xmi:type="LoggingLibrary_LogEntry.subflow:FCMComposite_1" xmi:id="FCMComposite_1_2" location="209,92" Message="Message Received" Uuid="$InputRoot.JSON.Data.uuid">
+        <translation xmi:type="utility:ConstantString" string="InputLog"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="839,92">
+        <translation xmi:type="utility:ConstantString" string="HTTP Reply"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4" location="419,92" computeExpression="esql://routine/#FlowWithLogging_BuildReply.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="BuildReply"/>
+      </nodes>
+      <nodes xmi:type="LoggingLibrary_LogEntry.subflow:FCMComposite_1" xmi:id="FCMComposite_1_5" location="629,92" Message="Reply build" Uuid="$Environment.variables.UUID">
+        <translation xmi:type="utility:ConstantString" string="ReplyLogPath1"/>
+      </nodes>
+      <nodes xmi:type="LoggingLibrary_LogEntry.subflow:FCMComposite_1" xmi:id="FCMComposite_1_6" location="1049,20" Status="ERROR" Message="Error occured" Uuid="$InputRoot.JSON.Data.uuid">
+        <translation xmi:type="utility:ConstantString" string="ErrorLog"/>
+      </nodes>
+      <nodes xmi:type="LoggingLibrary_LogEntry.subflow:FCMComposite_1" xmi:id="FCMComposite_1_9" location="629,164" Message="Reply build" Uuid="$Environment.variables.UUID">
+        <translation xmi:type="utility:ConstantString" string="ReplyLogPath2"/>
+      </nodes>
+      <nodes xmi:type="LoggingLibrary_LogEntry.subflow:FCMComposite_1" xmi:id="FCMComposite_1_11" location="1049,92" Message="Reply send" Uuid="$Environment.variables.UUID">
+        <translation xmi:type="utility:ConstantString" string="PostReply"/>
+      </nodes>
+      <nodes xmi:type="endSubFlow.subflow:FCMComposite_1" xmi:id="FCMComposite_1_7" location="1340,187">
+        <translation xmi:type="utility:ConstantString" string="endSubFlow"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_7" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.timeout" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_8" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.catch" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_9" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_9" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_10" targetNode="FCMComposite_1_9" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.out1" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_12" targetNode="FCMComposite_1_11" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_13" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_7" sourceNode="FCMComposite_1_11" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.Input"/>
+    </composition>
+    <propertyOrganizer/>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>
