@@ -5,7 +5,7 @@ CREATE COMPUTE MODULE getToken_Compute
 	BEGIN
 		CALL CopyMessageHeaders();
 		CREATE LASTCHILD OF OutputRoot DOMAIN 'JSON';
-		SET OutputRoot.JSON.Data.Token = 'm0Z9jmMxoJuAXyGugBTfxCQFHvUMYJyg0eOtWzvhMHQwV5OK2u1vGWbTROBsLi7J';
+		SET OutputRoot.JSON.Data.Token = 'xxx';
 		SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 200;
 		SET OutputRoot.HTTPReplyHeader."Content-Type" = 'application/json';
 		RETURN TRUE;
