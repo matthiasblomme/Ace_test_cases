@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class UsageExamples {
 	/**
-	 * Main class to demo the classes of psa.util
+	 * Main class to demo the classes of util
 	 * @param args standard main class arguments, not used
 	 * @throws IOException exception thrown from the streamGobblerExample method
 	 * @throws InterruptedException exception thrown from the streamGobblerExample method
