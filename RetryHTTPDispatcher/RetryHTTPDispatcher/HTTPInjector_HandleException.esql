@@ -1,0 +1,36 @@
+BROKER SCHEMA RetryHTTPDispatcher
+
+CREATE COMPUTE MODULE HTTPInjector_HandleException
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        DECLARE messageNumber INTEGER;
+        DECLARE messageText   CHARACTER;
+        CALL GetLastExceptionDetail(InputExceptionList, messageNumber, messageText);
+
+        SET OutputRoot.Properties = InputRoot.Properties;
+
+        SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 500;
+        SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json';
+
+        CREATE FIELD OutputRoot.JSON.Data;
+        DECLARE outRef REFERENCE TO OutputRoot.JSON.Data;
+        SET outRef.status         = 'rejected';
+        SET outRef.errorNumber    = messageNumber;
+        SET outRef.errorText      = COALESCE(messageText, 'unknown');
+        SET outRef.timestamp      = CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'IU');
+
+        RETURN TRUE;
+    END;
+
+    CREATE PROCEDURE GetLastExceptionDetail(IN InputTree REFERENCE, OUT messageNumber INTEGER, OUT messageText CHARACTER)
+    BEGIN
+        DECLARE ptrException REFERENCE TO InputTree.*[1];
+        WHILE LASTMOVE(ptrException) DO
+            IF ptrException.Number IS NOT NULL THEN
+                SET messageNumber = ptrException.Number;
+                SET messageText   = ptrException.Text;
+            END IF;
+            MOVE ptrException LASTCHILD;
+        END WHILE;
+    END;
+END MODULE;

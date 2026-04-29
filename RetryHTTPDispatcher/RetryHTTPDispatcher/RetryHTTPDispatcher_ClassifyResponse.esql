@@ -1,0 +1,78 @@
+BROKER SCHEMA RetryHTTPDispatcher
+
+CREATE COMPUTE MODULE RetryHTTPDispatcher_ClassifyResponse
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        SET OutputRoot             = InputRoot;
+        SET OutputLocalEnvironment = InputLocalEnvironment;
+
+        DECLARE source     CHARACTER 'unknown';
+        DECLARE statusCode INTEGER 0;
+        DECLARE reason     CHARACTER 'unknown';
+        DECLARE retryable  BOOLEAN FALSE;
+
+        IF CARDINALITY(InputExceptionList.*[]) > 0 THEN
+            -- HTTPRequest 'failure' terminal: connection-level error
+            -- (refused, DNS, timeout). No HTTP response. Always retryable.
+            SET source    = 'failure';
+            SET retryable = TRUE;
+
+            DECLARE excNumber INTEGER;
+            DECLARE excText   CHARACTER;
+            CALL GetLastExceptionDetail(InputExceptionList, excNumber, excText);
+            SET reason = 'Connection failure (' || COALESCE(CAST(excNumber AS CHARACTER), '?')
+                         || '): ' || COALESCE(excText, 'unknown');
+
+        ELSEIF InputLocalEnvironment.Destination.HTTP.ReplyStatusCode IS NOT NULL
+               OR InputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" IS NOT NULL THEN
+            -- HTTPRequest 'error' terminal: HTTP error response (4xx/5xx).
+            -- Retryable only for transient statuses.
+            SET source = 'error';
+            IF InputLocalEnvironment.Destination.HTTP.ReplyStatusCode IS NOT NULL THEN
+                SET statusCode = InputLocalEnvironment.Destination.HTTP.ReplyStatusCode;
+            ELSE
+                SET statusCode = CAST(InputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" AS INTEGER);
+            END IF;
+
+            IF statusCode IN (408, 429, 502, 503, 504) THEN
+                SET retryable = TRUE;
+                SET reason    = 'Retryable HTTP ' || CAST(statusCode AS CHARACTER);
+            ELSE
+                SET retryable = FALSE;
+                SET reason    = 'Fatal HTTP ' || CAST(statusCode AS CHARACTER);
+            END IF;
+
+        ELSE
+            -- Defensive: neither exception list nor HTTP status. Treat as fatal.
+            SET source    = 'unknown';
+            SET retryable = FALSE;
+            SET reason    = 'No exception list and no HTTP status code on input';
+        END IF;
+
+        SET Environment.Variables.Retry.Source     = source;
+        SET Environment.Variables.Retry.StatusCode = statusCode;
+        SET Environment.Variables.Retry.Reason     = reason;
+
+        IF retryable THEN
+            SET Environment.Variables.Retry.Decision = 'retry';
+            PROPAGATE TO TERMINAL 'out';
+        ELSE
+            SET Environment.Variables.Retry.Decision = 'fatal';
+            PROPAGATE TO TERMINAL 'out1';
+        END IF;
+
+        RETURN FALSE;
+    END;
+
+    CREATE PROCEDURE GetLastExceptionDetail(IN InputTree REFERENCE, OUT messageNumber INTEGER, OUT messageText CHARACTER)
+    BEGIN
+        DECLARE ptrException REFERENCE TO InputTree.*[1];
+        WHILE LASTMOVE(ptrException) DO
+            IF ptrException.Number IS NOT NULL THEN
+                SET messageNumber = ptrException.Number;
+                SET messageText   = ptrException.Text;
+            END IF;
+            MOVE ptrException LASTCHILD;
+        END WHILE;
+    END;
+END MODULE;
