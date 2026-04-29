@@ -1,0 +1,32 @@
+BROKER SCHEMA RetryHTTPDispatcher
+
+CREATE COMPUTE MODULE RetryHTTPDispatcher_HandleFailure
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        SET OutputRoot = InputRoot;
+
+        DECLARE rfh2Ref REFERENCE TO OutputRoot.MQRFH2;
+        IF NOT LASTMOVE(rfh2Ref) THEN
+            SET OutputRoot.MQMD.Format = MQFMT_RF_HEADER_2;
+            CREATE NEXTSIBLING OF OutputRoot.MQMD DOMAIN 'MQRFH2';
+            SET OutputRoot.MQRFH2.(MQRFH2.Field)Version        = 2;
+            SET OutputRoot.MQRFH2.(MQRFH2.Field)Format         = MQFMT_STRING;
+            SET OutputRoot.MQRFH2.(MQRFH2.Field)NameValueCCSID = 1208;
+        END IF;
+
+        SET OutputRoot.MQRFH2.usr.FailureDecision = COALESCE(Environment.Variables.Retry.Decision, 'fatal');
+        SET OutputRoot.MQRFH2.usr.FailureReason   = COALESCE(Environment.Variables.Retry.Reason, 'unknown');
+        SET OutputRoot.MQRFH2.usr.FailureAttempt  = COALESCE(Environment.Variables.Retry.Attempt, 0);
+        SET OutputRoot.MQRFH2.usr.FailureTimestamp = CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'IU');
+
+        SET OutputRoot.MQMD.Persistence = MQPER_PERSISTENT;
+
+        LOG EVENT VALUES(
+            'RetryHTTPDispatcher: dead-lettering message. decision=' ||
+            COALESCE(Environment.Variables.Retry.Decision, 'fatal') ||
+            ' reason=' || COALESCE(Environment.Variables.Retry.Reason, 'unknown') ||
+            ' attempt=' || CAST(COALESCE(Environment.Variables.Retry.Attempt, 0) AS CHARACTER));
+
+        RETURN TRUE;
+    END;
+END MODULE;

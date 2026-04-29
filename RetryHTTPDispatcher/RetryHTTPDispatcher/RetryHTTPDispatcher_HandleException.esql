@@ -1,0 +1,50 @@
+BROKER SCHEMA RetryHTTPDispatcher
+
+CREATE COMPUTE MODULE RetryHTTPDispatcher_HandleException
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        DECLARE messageNumber INTEGER;
+        DECLARE messageText   CHARACTER;
+        CALL GetLastExceptionDetail(InputExceptionList, messageNumber, messageText);
+        CALL CopyMessageHeaders();
+
+        DECLARE rfh2Ref REFERENCE TO OutputRoot.MQRFH2;
+        IF NOT LASTMOVE(rfh2Ref) THEN
+            SET OutputRoot.MQMD.Format = MQFMT_RF_HEADER_2;
+            CREATE NEXTSIBLING OF OutputRoot.MQMD DOMAIN 'MQRFH2';
+            SET OutputRoot.MQRFH2.(MQRFH2.Field)Version        = 2;
+            SET OutputRoot.MQRFH2.(MQRFH2.Field)Format         = MQFMT_STRING;
+            SET OutputRoot.MQRFH2.(MQRFH2.Field)NameValueCCSID = 1208;
+        END IF;
+
+        SET OutputRoot.MQRFH2.usr.ExceptionNumber = messageNumber;
+        SET OutputRoot.MQRFH2.usr.ExceptionText   = messageText;
+        SET OutputRoot.MQRFH2.usr.ExceptionAt     = CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'IU');
+
+        SET OutputRoot.BLOB.BLOB = COALESCE(InputRoot.BLOB.BLOB, CAST(messageText AS BLOB CCSID 1208));
+
+        RETURN TRUE;
+    END;
+
+    CREATE PROCEDURE CopyMessageHeaders() BEGIN
+        DECLARE I INTEGER 1;
+        DECLARE J INTEGER;
+        SET J = CARDINALITY(InputRoot.*[]);
+        WHILE I < J DO
+            SET OutputRoot.*[I] = InputRoot.*[I];
+            SET I = I + 1;
+        END WHILE;
+    END;
+
+    CREATE PROCEDURE GetLastExceptionDetail(IN InputTree REFERENCE, OUT messageNumber INTEGER, OUT messageText CHARACTER)
+    BEGIN
+        DECLARE ptrException REFERENCE TO InputTree.*[1];
+        WHILE LASTMOVE(ptrException) DO
+            IF ptrException.Number IS NOT NULL THEN
+                SET messageNumber = ptrException.Number;
+                SET messageText   = ptrException.Text;
+            END IF;
+            MOVE ptrException LASTCHILD;
+        END WHILE;
+    END;
+END MODULE;

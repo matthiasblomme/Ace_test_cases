@@ -1,0 +1,26 @@
+BROKER SCHEMA RetryHTTPDispatcher
+
+CREATE COMPUTE MODULE HTTPInjector_BuildResponse
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        SET OutputRoot.Properties = InputRoot.Properties;
+
+        SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 202;
+        SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json';
+
+        DECLARE writtenMsgId BLOB;
+        IF InputLocalEnvironment.WrittenDestination.MQ.DestinationData[1].msgId IS NOT NULL THEN
+            SET writtenMsgId = InputLocalEnvironment.WrittenDestination.MQ.DestinationData[1].msgId;
+        END IF;
+
+        CREATE FIELD OutputRoot.JSON.Data;
+        DECLARE outRef REFERENCE TO OutputRoot.JSON.Data;
+        SET outRef.status      = 'accepted';
+        SET outRef.queue       = 'APP.IN';
+        SET outRef.msgId       = COALESCE(CAST(writtenMsgId AS CHARACTER), 'unknown');
+        SET outRef.bytesPut    = COALESCE(LENGTH(InputRoot.BLOB.BLOB), 0);
+        SET outRef.timestamp   = CAST(CURRENT_TIMESTAMP AS CHARACTER FORMAT 'IU');
+
+        RETURN TRUE;
+    END;
+END MODULE;
