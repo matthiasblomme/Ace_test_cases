@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  DemoSchema.dfdl.xsd
+
+  Two root elements that describe different record formats:
+
+    PersonRecord  (comma-separated, 2 fields)   <- auto-detected doc root
+    AddressRecord (pipe-separated,  3 fields)
+
+  Sample data in sample.txt is a PersonRecord.
+  Parsing with -Root AddressRecord will fail, showing the error path.
+  Adding -Trace will show IBM DFDL's full service trace.
+
+  Run:
+    .\validate.ps1 -Schema .\demo\DemoSchema.dfdl.xsd -Data .\demo\sample.txt
+    .\validate.ps1 -Schema .\demo\DemoSchema.dfdl.xsd -Data .\demo\sample.txt -Root AddressRecord
+    .\validate.ps1 -Schema .\demo\DemoSchema.dfdl.xsd -Data .\demo\sample.txt -Root AddressRecord -Trace
+-->
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/"
+    xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions">
+
+  <xs:annotation>
+    <xs:appinfo source="http://www.ogf.org/dfdl/">
+      <!--
+        Format defaults derived from IBM's RecordSeparatedFieldFormat.xsd.
+        All properties required by IBM DFDL are supplied explicitly.
+      -->
+      <dfdl:format
+          encoding="UTF-8"
+          byteOrder="bigEndian"
+          alignment="1"
+          alignmentUnits="bytes"
+          leadingSkip="0"
+          trailingSkip="0"
+          fillByte="%SP;"
+          representation="text"
+          lengthKind="delimited"
+          lengthUnits="characters"
+          occursCountKind="implicit"
+          sequenceKind="ordered"
+          choiceLengthKind="implicit"
+          separator=""
+          separatorPosition="infix"
+          separatorPolicy="suppressed"
+          initiator=""
+          terminator=""
+          initiatedContent="no"
+          textPadKind="none"
+          textTrimKind="none"
+          textStringJustification="left"
+          textStringPadCharacter="%SP;"
+          textNumberJustification="right"
+          textNumberPadCharacter="%SP;"
+          textNumberRep="standard"
+          textNumberCheckPolicy="lax"
+          textNumberRoundingMode="roundUp"
+          textNumberRounding="pattern"
+          textBooleanJustification="left"
+          textBooleanPadCharacter="%SP;"
+          textBooleanTrueRep="true"
+          textBooleanFalseRep="false"
+          textCalendarJustification="left"
+          textCalendarPadCharacter="%SP;"
+          textStandardDecimalSeparator="."
+          textStandardGroupingSeparator=","
+          textStandardExponentCharacter="E"
+          textStandardZeroRep=""
+          textStandardInfinityRep="Inf"
+          textStandardNaNRep="NaN"
+          textStandardBase="10"
+          textZonedSignStyle="asciiStandard"
+          textBidi="no"
+          truncateSpecifiedLengthString="no"
+          decimalSigned="yes"
+          ignoreCase="no"
+          floating="no"
+          binaryFloatRep="ieee"
+          nilKind="literalValue"
+          nilValue="%ES;"
+          nilValueDelimiterPolicy="initiator"
+          emptyValueDelimiterPolicy="none"
+          documentFinalTerminatorCanBeMissing="yes"
+          outputNewLine="%CR;%LF;"
+          escapeSchemeRef=""
+          calendarPatternKind="implicit"
+          calendarPattern="yyyy-MM-dd'T'HH:mm:ss"
+          calendarCheckPolicy="lax"
+          calendarTimeZone="UTC"
+          calendarObserveDST="yes"
+          calendarFirstDayOfWeek="Monday"
+          calendarDaysInFirstWeek="4"
+          calendarCenturyStart="53"
+          calendarLanguage="en-US"
+      />
+    </xs:appinfo>
+  </xs:annotation>
+
+  <!--
+    Root element 1: PersonRecord
+    Format: FirstName,LastName
+    Example: John,Doe
+
+    Marked ibmSchExtn:docRoot="true" so validate.ps1 auto-detects this element.
+  -->
+  <xs:element name="PersonRecord"
+      ibmSchExtn:docRoot="true"
+      dfdl:terminator="%CR;%LF;">
+    <xs:complexType>
+      <xs:sequence dfdl:separator="," dfdl:separatorPosition="infix">
+        <xs:element name="FirstName" type="xs:string"/>
+        <xs:element name="LastName"  type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!--
+    Root element 2: AddressRecord
+    Format: Street|City|PostalCode
+    Example: Main Street 1|Brussels|1000
+
+    sample.txt is comma-separated, so parsing as AddressRecord will fail.
+    Use -Root AddressRecord to select this element explicitly.
+    Use -Trace to see IBM DFDL's full parse trace for the failure.
+  -->
+  <xs:element name="AddressRecord"
+      dfdl:terminator="%CR;%LF;">
+    <xs:complexType>
+      <xs:sequence dfdl:separator="|" dfdl:separatorPosition="infix">
+        <xs:element name="Street"     type="xs:string"/>
+        <xs:element name="City"       type="xs:string"/>
+        <xs:element name="PostalCode" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

@@ -1,0 +1,4 @@
+.idea/amazonq.xml
+.idea/awsToolkit.xml
+MQDeadLetterRescuer/*
+ReprocessBackoutMessages/*

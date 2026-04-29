@@ -1,0 +1,17 @@
+BROKER SCHEMA RetryHTTPDispatcher
+
+CREATE COMPUTE MODULE RetryHTTPDispatcher_RestoreMessage
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        SET OutputRoot           = InputRoot;
+        SET OutputLocalEnvironment = InputLocalEnvironment;
+
+        SET Environment.Variables.Retry.IsRetry = TRUE;
+        IF InputRoot.MQRFH2.usr.RetryAttempt IS NOT NULL THEN
+            SET Environment.Variables.Retry.Attempt =
+                CAST(InputRoot.MQRFH2.usr.RetryAttempt AS INTEGER);
+        END IF;
+
+        RETURN TRUE;
+    END;
+END MODULE;
