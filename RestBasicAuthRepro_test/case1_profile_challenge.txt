@@ -1,0 +1,13 @@
+Case 1 - Security Profile (reactive), mock issues 401 challenge
+===============================================================
+
+1. POST /token
+     auth_present = False
+     (no Authorization header sent)
+     -> mock responded 401  (WWW-Authenticate: Basic)
+
+2. POST /token
+     auth_present = True
+     Authorization: Basic bXl1c2VyOm15cGFzcw==
+     decoded:       myuser:mypass
+     -> mock responded 200

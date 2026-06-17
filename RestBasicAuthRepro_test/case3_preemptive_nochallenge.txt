@@ -1,0 +1,8 @@
+Case 3 - Security Profile + preemptiveAuthType=Basic, mock returns 200 (no challenge)
+=====================================================================================
+
+1. POST /token
+     auth_present = True
+     Authorization: Basic bXl1c2VyOm15cGFzcw==
+     decoded:       myuser:mypass
+     -> mock responded 200
