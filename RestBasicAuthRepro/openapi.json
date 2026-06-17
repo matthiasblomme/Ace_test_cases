@@ -1,0 +1,67 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "SWIFT OAuth2 Token API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    { "url": "http://localhost:7801" }
+  ],
+  "paths": {
+    "/token": {
+      "post": {
+        "summary": "Retrieve OAuth2 Token",
+        "description": "Get an access token using Basic Authentication (username & password).",
+        "operationId": "postToken",
+        "tags": ["Authentication"],
+        "security": [
+          { "basicAuth": [] }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "grant_type": {
+                    "type": "string",
+                    "example": "client_credentials"
+                  }
+                },
+                "required": ["grant_type"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful token retrieval",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "refresh_token_expires_in": { "type": "string", "example": "86399" },
+                    "token_type": { "type": "string", "example": "Bearer" },
+                    "access_token": { "type": "string", "example": "dGIwXNmUA7k7PL10U9KdldEm1z6b" },
+                    "refresh_token": { "type": "string", "example": "U9gb2OCO29LaSUGz2EYUTNULCK26qhkl" },
+                    "expires_in": { "type": "string", "example": "1799" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  }
+}

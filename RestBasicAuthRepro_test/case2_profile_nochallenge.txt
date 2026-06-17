@@ -1,0 +1,7 @@
+Case 2 - Security Profile (reactive), mock returns 200 (no challenge)
+=====================================================================
+
+1. POST /token
+     auth_present = False
+     (no Authorization header sent)
+     -> mock responded 200
