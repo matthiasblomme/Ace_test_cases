@@ -1,0 +1,54 @@
+BROKER SCHEMA ActivityLogLib
+
+-- Iterates every child of Environment.Variables.Log.Line and builds a single
+-- "key=value" string per entry, separated by newlines.
+-- The result is stored in Environment.Variables.Log.ActivityMessage so the
+-- downstream Log node can forward it to the activity log as a custom field.
+CREATE COMPUTE MODULE ActivityLog_FormatLogLine
+
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        -- Preserve headers and body unchanged; this subflow only touches Environment.
+        SET OutputRoot = InputRoot;
+
+        -- Nothing to log - pass through silently.
+        IF CARDINALITY(Environment.Variables.Log.Line[]) = 0 THEN
+            RETURN TRUE;
+        END IF;
+
+        -- Build one "key=value" line per repeating Log.Line element.
+        DECLARE formattedLines CHARACTER '';
+        DECLARE entryRef REFERENCE TO Environment.Variables.Log.Line[1];
+        WHILE LASTMOVE(entryRef) DO
+            SET formattedLines = formattedLines
+                || FIELDNAME(entryRef) || '=' || CAST(entryRef AS CHARACTER)
+                || '\n';
+            MOVE entryRef NEXTSIBLING REPEAT TYPE NAME;
+        END WHILE;
+
+        -- Store formatted string for the Log node's JSONata mapping.
+        SET Environment.Variables.Log.ActivityMessage =
+            TRIM(TRAILING '\n' FROM formattedLines);
+
+        RETURN TRUE;
+    END;
+
+END MODULE;
+
+
+-- Cleans up Environment.Variables.Log after the Log node has written to the
+-- activity log, so log fields don't leak into the rest of the calling flow.
+CREATE COMPUTE MODULE ActivityLog_Cleanup
+
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        SET OutputRoot = InputRoot;
+
+        -- Remove the log scratch space written by ActivityLog_FormatLogLine.
+        DELETE FIELD Environment.Variables.Log.Line;
+        DELETE FIELD Environment.Variables.Log.ActivityMessage;
+
+        RETURN TRUE;
+    END;
+
+END MODULE;
