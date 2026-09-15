@@ -1,0 +1,76 @@
+BROKER SCHEMA com.mbl.test
+
+CREATE COMPUTE MODULE RowOverrideTest_BuildResponse
+
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        -- WHY: three ROW assignment shapes side by side, each with a before/after
+        -- snapshot, to show which second assignment merges into the existing tree
+        -- and which one replaces it. All three cases start from the same first
+        -- assignment: a ROW(...) of five attrs onto parent.child.
+        SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 200;
+        SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json';
+
+        -- Hardcoded source values; the request body is ignored, all test data lives here.
+        SET Environment.Variables.source.value1 = 'v1';
+        SET Environment.Variables.source.value2 = 'v2';
+        SET Environment.Variables.source.value3 = 'v3';
+        SET Environment.Variables.source.value4 = 'v4';
+        SET Environment.Variables.source.value5 = 'v5';
+        SET Environment.Variables.source.value6 = 'v6';
+        SET Environment.Variables.source.value7 = 'v7';
+        DECLARE refSource REFERENCE TO Environment.Variables.source;
+
+        -- Case 1: second ROW(...) constructor onto the PARENT of the assigned child.
+        SET Environment.Variables.case1.parent.child = ROW(
+            refSource.value1 AS attr1
+        ,   refSource.value2 AS attr2
+        ,   refSource.value3 AS attr3
+        ,   refSource.value4 AS attr4
+        ,   refSource.value5 AS attr5
+        );
+        SET OutputRoot.JSON.Data.case1_rowOntoParent.afterFirstAssign = Environment.Variables.case1;
+        SET Environment.Variables.case1.parent = ROW(
+            refSource.value6 AS attr6
+        ,   refSource.value7 AS attr7
+        );
+        SET OutputRoot.JSON.Data.case1_rowOntoParent.afterSecondAssign = Environment.Variables.case1;
+
+        -- Case 2: second ROW(...) constructor onto the SAME child as the first.
+        SET Environment.Variables.case2.parent.child = ROW(
+            refSource.value1 AS attr1
+        ,   refSource.value2 AS attr2
+        ,   refSource.value3 AS attr3
+        ,   refSource.value4 AS attr4
+        ,   refSource.value5 AS attr5
+        );
+        SET OutputRoot.JSON.Data.case2_rowOntoSameChild.afterFirstAssign = Environment.Variables.case2;
+        SET Environment.Variables.case2.parent.child = ROW(
+            refSource.value6 AS attr6
+        ,   refSource.value7 AS attr7
+        );
+        SET OutputRoot.JSON.Data.case2_rowOntoSameChild.afterSecondAssign = Environment.Variables.case2;
+
+        -- Case 3: second assignment staged through a declared ROW variable, then
+        -- assigned onto the PARENT - same target and same two attrs as case 1,
+        -- only the right-hand side differs (variable instead of constructor).
+        SET Environment.Variables.case3.parent.child = ROW(
+            refSource.value1 AS attr1
+        ,   refSource.value2 AS attr2
+        ,   refSource.value3 AS attr3
+        ,   refSource.value4 AS attr4
+        ,   refSource.value5 AS attr5
+        );
+        SET OutputRoot.JSON.Data.case3_rowVariableOntoParent.afterFirstAssign = Environment.Variables.case3;
+        DECLARE rowVar ROW;
+        SET rowVar = ROW(
+            refSource.value6 AS attr6
+        ,   refSource.value7 AS attr7
+        );
+        SET Environment.Variables.case3.parent = rowVar;
+        SET OutputRoot.JSON.Data.case3_rowVariableOntoParent.afterSecondAssign = Environment.Variables.case3;
+
+        RETURN TRUE;
+    END;
+
+END MODULE;
