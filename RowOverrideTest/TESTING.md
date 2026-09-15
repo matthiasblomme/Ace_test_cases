@@ -16,7 +16,7 @@ The response answers, per case, whether the second assignment merges into the ex
 
 | Component | Detail |
 |---|---|
-| Standalone integration server `RowOverrideTestSrv` | ACE 13.0.8.1, work dir `C:\temp/RowOverrideTest_sis`, admin REST 7602, HTTP listener 7800. |
+| Standalone integration server `RowOverrideTestSrv` | ACE 13.0.8.1, work dir `C:/temp/RowOverrideTest_sis`, admin REST 7602, HTTP listener 7800. |
 | `RowOverrideTest.bar` | Packaged from `d:/GIT/Ace_test_cases/RowOverrideTest`, deployed into the work dir with `ibmint deploy --output-work-directory` before server start. |
 
 No MQ, no PolicyProject, no mock, no `_LOCAL.properties` overrides, no vault - the flow has no external dependencies and no credentials. No `overrides/server.conf.yaml` was needed either: both ports come from the `IntegrationServer` command line, and the generated base `server.conf.yaml` is left untouched (verified byte-identical to a fresh `mqsicreateworkdir` output).
