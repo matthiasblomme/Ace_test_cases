@@ -2,3 +2,5 @@
 .idea/awsToolkit.xml
 MQDeadLetterRescuer/*
 ReprocessBackoutMessages/*
+.vscode/settings.json
+CUSTOMER_CHECK.md
