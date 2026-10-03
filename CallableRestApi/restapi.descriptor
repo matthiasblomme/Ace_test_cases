@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:restapiDescriptor xmlns="http://com.ibm.etools.mft.descriptor.base" xmlns:ns2="http://com.ibm.etools.mft.descriptor.restapi" definitionType="openapi_3" definitionFile="rest-api.yaml" implementation="gen/CallableRestApi.msgflow" https="false" securityProfileName="{OAuthPolicies}:OauthIncoming" definitionWithExtRef="false" faultFormat="JSON">
+    <ns2:operations>
+        <ns2:operation name="getHello" implementation="getHello.subflow"/>
+    </ns2:operations>
+    <ns2:errorHandlers>
+        <ns2:errorHandler type="CATCH" implementation="CallableRestApiInputCatchHandler.subflow"/>
+        <ns2:errorHandler type="FAILURE" implementation="CallableRestApiInputFailureHandler.subflow"/>
+        <ns2:errorHandler type="TIMEOUT" implementation="CallableRestApiInputTimeoutHandler.subflow"/>
+    </ns2:errorHandlers>
+</ns2:restapiDescriptor>

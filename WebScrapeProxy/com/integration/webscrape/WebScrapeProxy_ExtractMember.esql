@@ -1,0 +1,61 @@
+BROKER SCHEMA com.integration.webscrape
+
+CREATE COMPUTE MODULE WebScrapeProxy_ExtractMember
+
+    -- Used to absolutise the member link extracted from the results table.
+    DECLARE govSearchUrl EXTERNAL CHARACTER 'https://www.recc.org.uk/scheme/members';
+
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        -- The site response arrived in the BLOB domain; render it as text.
+        DECLARE htmlBody CHARACTER CAST(InputRoot.BLOB.BLOB AS CHARACTER CCSID 1208);
+
+        -- First results row: the markup between the first <table> and the
+        -- first </tr>. Empty when the search returned no members.
+        DECLARE firstRow CHARACTER
+            SUBSTRING(SUBSTRING(htmlBody AFTER '<table>') BEFORE '</tr>');
+
+        SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json';
+        SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 200;
+        CREATE FIELD OutputRoot.JSON.Data;
+        DECLARE reply REFERENCE TO OutputRoot.JSON.Data;
+        SET reply.jobNumber = COALESCE(Environment.Variables.Scrape.JobNumber, '');
+        SET reply.status = 'OK';
+
+        -- No anchor in the first row means no member matched.
+        IF firstRow = '' OR POSITION('href="' IN firstRow) = 0 THEN
+            SET reply.found = FALSE;
+            RETURN TRUE;
+        END IF;
+
+        DECLARE memberPath CHARACTER SUBSTRING(SUBSTRING(firstRow AFTER 'href="') BEFORE '"');
+        -- The company name is the anchor text: after the opening <a ...> tag's
+        -- closing '>', up to '</a>'.
+        DECLARE companyName CHARACTER
+            TRIM(SUBSTRING(SUBSTRING(SUBSTRING(firstRow AFTER 'href="') AFTER '>') BEFORE '</a>'));
+        -- The postcode is the cell tagged class="nowrap".
+        DECLARE postcode CHARACTER
+            TRIM(SUBSTRING(SUBSTRING(firstRow AFTER 'class="nowrap">') BEFORE '</td>'));
+
+        SET reply.found = TRUE;
+        SET reply.member.name = companyName;
+        SET reply.member.postcode = postcode;
+        SET reply.member.link = absoluteUrl(govSearchUrl, memberPath);
+        RETURN TRUE;
+    END;
+
+    -- Resolve a relative path against the scheme+host of the configured URL.
+    CREATE FUNCTION absoluteUrl(IN baseUrl CHARACTER, IN path CHARACTER) RETURNS CHARACTER
+    BEGIN
+        IF path LIKE 'http%' THEN
+            RETURN path;
+        END IF;
+        DECLARE origin CHARACTER
+            SUBSTRING(baseUrl BEFORE '://') || '://' || SUBSTRING(SUBSTRING(baseUrl AFTER '://') BEFORE '/');
+        IF path LIKE '/%' THEN
+            RETURN origin || path;
+        END IF;
+        RETURN origin || '/' || path;
+    END;
+
+END MODULE;

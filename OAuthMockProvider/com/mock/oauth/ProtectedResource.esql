@@ -1,0 +1,54 @@
+BROKER SCHEMA com.mock.oauth
+
+/*
+ * Mock OAuth-protected resource.
+ *
+ * Unauthenticated callers are challenged with 401 + WWW-Authenticate: Bearer.
+ * That challenge is not decoration - the ACE REST Request node never sends
+ * credentials pre-emptively, so without it the OAuth handshake is never started
+ * and the call just returns unauthenticated with no error raised anywhere.
+ */
+CREATE COMPUTE MODULE ProtectedResource_HandleRequest
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- The complete inbound header set, Authorization included, is what this
+		-- mock exists to expose. Deliberate here; never do it on a real endpoint.
+		SET Environment.MockResource.Headers = InputRoot.HTTPInputHeader;
+
+		DECLARE authHeader CHARACTER InputRoot.HTTPInputHeader."Authorization";
+
+		SET OutputRoot.Properties.ContentType = 'application/json';
+		SET OutputRoot.HTTPReplyHeader."Content-Type" = 'application/json';
+
+		IF authHeader IS NULL OR authHeader = '' THEN
+			SET OutputRoot.HTTPReplyHeader."WWW-Authenticate" = 'Bearer realm="warehouse", scope="read:stock"';
+			SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 401;
+			SET OutputRoot.JSON.Data.error = 'unauthorized';
+			SET OutputRoot.JSON.Data.error_description = 'Bearer token required';
+			SET Environment.MockResource.Outcome = 'CHALLENGED-401';
+		ELSE
+			SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 200;
+			SET OutputRoot.JSON.Data.message = 'authenticated call reached the protected resource';
+			SET OutputRoot.JSON.Data.authorizationReceived = authHeader;
+			CALL CopyReceivedHeaders();
+			SET Environment.MockResource.Outcome = 'SERVED-200';
+		END IF;
+
+		RETURN TRUE;
+	END;
+
+	/*
+	 * Echoes every inbound header into the response body so the caller, and the
+	 * end-to-end test, can see exactly what arrived without reading server logs.
+	 */
+	CREATE PROCEDURE CopyReceivedHeaders()
+	BEGIN
+		DECLARE inHeader REFERENCE TO InputRoot.HTTPInputHeader.*[1];
+		WHILE LASTMOVE(inHeader) DO
+			SET OutputRoot.JSON.Data.receivedHeaders.{FIELDNAME(inHeader)} = inHeader;
+			MOVE inHeader NEXTSIBLING;
+		END WHILE;
+	END;
+
+END MODULE;

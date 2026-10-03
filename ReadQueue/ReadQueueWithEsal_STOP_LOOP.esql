@@ -1,0 +1,10 @@
+
+
+CREATE COMPUTE MODULE ReadQueueWithEsal_STOP_LOOP
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET Environment.Variables.loop = false;
+		RETURN TRUE;
+	END;
+
+END MODULE;

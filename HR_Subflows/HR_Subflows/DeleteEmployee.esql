@@ -1,0 +1,75 @@
+BROKER SCHEMA HR_Subflows
+
+
+CREATE COMPUTE MODULE DeleteEmployee
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		-- CALL CopyEntireMessage();
+		
+	Set OutputRoot.JSON.Data.RowsRetrieved = 0;
+	Set OutputRoot.JSON.Data.RowsAdded = 0;
+	Set OutputRoot.JSON.Data.RowsUpdated = 0;
+	Set OutputRoot.JSON.Data.RowsDeleted = 0;
+	Set OutputRoot.JSON.Data.SQLCODE_Errorcode = 0;
+	Set OutputRoot.JSON.Data.SQLSTATE_SQLState = '';
+	Set OutputRoot.JSON.Data.SQL_Error_Message = '';
+	Set OutputRoot.JSON.Data.UserReturnCode = 204;
+	
+	IF InputLocalEnvironment.REST.Input.Parameters.EMPNO <> '' THEN 
+        -- assume called from REST API 
+		
+		IF EXISTS(SELECT R.* FROM Database.HRDB.IIBADMIN.EMPLOYEE AS R
+		   WHERE R.EMPNO = InputLocalEnvironment.REST.Input.Parameters.EMPNO) THEN
+		
+		   DELETE FROM Database.HRDB.IIBADMIN.EMPLOYEE AS DEL_EMP
+		     WHERE DEL_EMP.EMPNO=InputLocalEnvironment.REST.Input.Parameters.EMPNO;
+			
+		   IF SQLCODE = 0 THEN 
+		    	-- Set number deleted
+             	Set OutputRoot.JSON.Data.RowsDeleted = 1;
+            	Set OutputRoot.JSON.Data.UserReturnCode = SQLCODE;
+		   END IF; -- SQLCODE 0
+		   
+		ELSE 
+			Set OutputRoot.JSON.Data.UserReturnCode = 205;
+		END IF; --exists
+	ELSE 
+	  -- assume NOT called from REST API use Data sent in Body of request
+	  -- How many records? 
+	  IF EXISTS(SELECT R.* FROM Database.HRDB.IIBADMIN.EMPLOYEE AS R
+		   WHERE R.EMPNO = InputRoot.JSON.Data.EMPNO) THEN
+	     -- something to delete 
+	     DELETE FROM Database.HRDB.IIBADMIN.EMPLOYEE AS DEL_EMP
+	    	WHERE DEL_EMP.EMPNO=InputRoot.JSON.Data.EMPNO;
+		
+	      IF SQLCODE = 0 THEN 
+		    	-- Set number deleted
+           	Set OutputRoot.JSON.Data.RowsDeleted = 1;
+          	Set OutputRoot.JSON.Data.UserReturnCode = SQLCODE;	
+	      END IF; --SQLCODE
+	      
+	     ELSE 
+			Set OutputRoot.JSON.Data.UserReturnCode = 206;
+	  END IF; --exists 
+	    	 
+	END IF; --REST param
+		
+	RETURN TRUE;
+	
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

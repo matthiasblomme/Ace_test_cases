@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8"?><ord:OrderMessage xmlns:ord="http://example.org/repro/order"><ord:Body><ord:Description>ABCDEF</ord:Description><ord:Bogus>UNDECLARED ELEMENT</ord:Bogus></ord:Body></ord:OrderMessage>

@@ -1,0 +1,29 @@
+BROKER SCHEMA com.example.repro
+
+CREATE COMPUTE MODULE ReadBogus
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        DECLARE ord NAMESPACE 'http://example.org/repro/order';
+
+        -- Path J: the probe that separates two explanations for path I's 200.
+        --
+        -- ForceParse reads Description, which sits BEFORE the undeclared Bogus in
+        -- the document, so an on-demand parse can stop before ever reaching the
+        -- violation. That leaves two mechanisms both consistent with I:
+        --   (a) the RCD's validation options are dropped on a deferred parse
+        --   (b) on-demand validation is live but lazy: it validates exactly the
+        --       fields the parse reaches, and nothing referenced Bogus
+        --
+        -- This module reads Bogus ITSELF, so the deferred parse must parse the
+        -- undeclared element. If (b) is true this throws BIP5025 here; if (a) is
+        -- true the value comes back and the reply returns 200.
+        DECLARE bogusValue CHARACTER
+            InputRoot.XMLNSC.ord:OrderMessage.ord:Body.ord:Bogus;
+
+        SET OutputRoot = InputRoot;
+        SET OutputLocalEnvironment.Variables.BogusValue =
+            COALESCE(bogusValue, '<null>');
+
+        RETURN TRUE;
+    END;
+END MODULE;

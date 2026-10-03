@@ -1,0 +1,25 @@
+BROKER SCHEMA com.example.repro
+
+CREATE COMPUTE MODULE BuildOrder
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        DECLARE ord NAMESPACE 'http://example.org/repro/order';
+
+        -- Reproduce the case: build a schema-VALID order message whose description
+        -- carries the invalid XML control character SUB (U+001A / 0x1A) - the same
+        -- codepoint the downstream manifest flow later rejected with BIP5004. ESQL
+        -- has no codepoint literal, so inject the raw byte via a UTF-8 BLOB->CHAR
+        -- cast.
+        --
+        -- The tree is left in OutputRoot.XMLNSC and propagated to the downstream
+        -- ResetContentDescriptor node. This Compute does NOT serialize or validate
+        -- anything itself - the RCD node owns the tree-to-bitstream validation.
+        DECLARE invalidChar CHARACTER CAST(X'1A' AS CHARACTER CCSID 1208);
+
+        CREATE LASTCHILD OF OutputRoot DOMAIN('XMLNSC');
+        SET OutputRoot.XMLNSC.ord:OrderMessage.ord:Body.ord:Description =
+            'ABC' || invalidChar || 'DEF';
+
+        RETURN TRUE;
+    END;
+END MODULE;

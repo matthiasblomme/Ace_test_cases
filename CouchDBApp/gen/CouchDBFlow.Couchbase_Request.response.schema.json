@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "items": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "description": "The name of the bucket",
+        "type": "string",
+        "displayOrder": 1
+      },
+      "flushEnabled": {
+        "title": "Flush enabled",
+        "description": "Indicates whether the flush operation (truncating all data in the bucket) is enabled",
+        "type": "boolean",
+        "displayOrder": 2
+      },
+      "ramQuotaMB": {
+        "title": "RAM quota",
+        "description": "The amount of memory (RAM) to be allocated to the bucket per-node in megabytes (MB)",
+        "type": "number",
+        "displayOrder": 3
+      },
+      "numReplicas": {
+        "title": "Number of replicas",
+        "description": "The number of replicas that should exist for the bucket",
+        "type": "number",
+        "displayOrder": 4
+      },
+      "replicaIndexes": {
+        "title": "Replica indexes",
+        "description": "Indicates whether the indexes on the bucket should be replicated",
+        "type": "boolean",
+        "displayOrder": 5
+      },
+      "bucketType": {
+        "title": "Bucket type",
+        "description": "The type of bucket that should be used",
+        "type": "string",
+        "displayOrder": 6
+      },
+      "storageBackend": {
+        "title": "Storage backend",
+        "description": "The storage backend to be used for the bucket",
+        "type": "string",
+        "displayOrder": 7
+      },
+      "evictionPolicy": {
+        "title": "Eviction policy",
+        "description": "The ejection method that should be used",
+        "type": "string",
+        "displayOrder": 8
+      },
+      "maxExpiry": {
+        "title": "Max expiry",
+        "description": "The maximum expiry time that should be allowed for any document",
+        "type": "number",
+        "displayOrder": 9
+      },
+      "compressionMode": {
+        "title": "Compression mode",
+        "description": "The compression mode that should be used",
+        "type": "string",
+        "displayOrder": 10
+      },
+      "minimumDurabilityLevel": {
+        "title": "Minimum durability level",
+        "description": "The minimum durability level that should be used for any write operations that are performed against the bucket",
+        "type": "number",
+        "displayOrder": 11
+      }
+    },
+    "title": "Bucket",
+    "additionalProperties": false
+  },
+  "type": "array",
+  "title": "Bucket"
+}

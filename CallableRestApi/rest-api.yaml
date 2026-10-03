@@ -1,0 +1,40 @@
+{
+  "openapi": "3.0.3",
+  "servers": [
+    {
+      "url": "https://localhost:8401/callableRest/v1"
+    }
+  ],
+  "info": {
+    "title": "Callable Flow REST API",
+    "version": "1.0.0",
+    "description": "REST front door that invokes the CallableApp callable flow (endpoint /cf1) and returns its reply, so the callable flow can be exposed as an MCP tool via MCP.Runtime."
+  },
+  "paths": {
+    "/hello": {
+      "get": {
+        "operationId": "getHello",
+        "summary": "Invoke the callable flow and return its reply",
+        "responses": {
+          "200": {
+            "description": "Reply from the callable flow",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Hello": {
+                      "type": "string",
+                      "example": "World"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-ibm-configuration": {}
+}

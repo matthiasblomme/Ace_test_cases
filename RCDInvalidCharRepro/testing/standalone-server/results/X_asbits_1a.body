@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<SOAP-ENV:Body>
+<SOAP-ENV:Fault>
+<faultcode>SOAP-ENV:Server</faultcode>
+<faultstring>BIP3113E: Exception detected in message flow com.example.repro.RCDRepro (integration node integration_server) </faultstring>
+<faultactor>http://localhost:7801/asbitstream</faultactor>
+<detail><text>Exception. BIP2230E: Error detected whilst processing a message in node &apos;com.example.repro.RCDRepro.asbitstream validate&apos;. : C:\ci\product-build\WMB\src\DataFlowEngine\SQLNodeLibrary\ImbComputeNode.cpp: 426: ImbComputeNode::evaluate: ComIbmComputeNode: com.example.repro.RCDRepro#FCMComposite_1_60
+BIP2488E:  (com.example.repro.ValidateViaAsbitstream.Main, 9.9) Error detected whilst executing the SQL statement &apos;DECLARE serialized BLOB ASBITSTREAM(InputRoot.XMLNSC CCSID 1208 OPTIONS options);&apos;. : C:\ci\product-build\WMB\src\DataFlowEngine\ImbRdl\ImbRdlStatementGroup.cpp: 784: SqlStatementGroup::execute: : 
+BIP5010E: XML Writing Errors have occurred. : C:\ci\product-build\WMB\src\MTI\MTIforBroker\GenXmlParser4\ImbXMLNSCParser.cpp: 955: ImbXMLNSCParser::refreshBitStreamFromElementsCommon: ComIbmWSInputNode: com.example.repro.RCDRepro#FCMComposite_1_58
+BIP5004E: An XML parsing error &apos;An invalid XML character (Unicode: 0x1a) was found in the element content of the document.&apos; occurred on line 1 column 92 when parsing element &apos;/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body/{http://example.org/repro/order}:Description&apos;.  Internal error codes are &apos;1502&apos; and &apos;2&apos;. : C:\ci\product-build\WMB\src\MTI\MTIforBroker\GenXmlParser4\ImbXMLNSCDocHandler.cpp: 784: ImbXMLNSCDocHandler::handleParseErrors: ComIbmWSInputNode: com.example.repro.RCDRepro#FCMComposite_1_58</text></detail>
+</SOAP-ENV:Fault>
+</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

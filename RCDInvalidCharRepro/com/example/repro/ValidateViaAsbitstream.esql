@@ -1,0 +1,17 @@
+BROKER SCHEMA com.example.repro
+
+CREATE COMPUTE MODULE ValidateViaAsbitstream
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        -- Path X: mid-flow validation by explicit serialization. ASBITSTREAM with
+        -- validate options writes the tree to a bit stream the same way an output
+        -- node with validation does. If that write-validation path rejects 0x1A
+        -- (as it does at a reply node, path A), this statement throws here, inside
+        -- the Compute, without the message ever reaching a wire.
+        DECLARE options INTEGER BITOR(RootBitStream, ValidateContentAndValue, ValidateException);
+        DECLARE serialized BLOB ASBITSTREAM(InputRoot.XMLNSC OPTIONS options CCSID 1208);
+
+        SET OutputRoot.BLOB.BLOB = serialized;
+        RETURN TRUE;
+    END;
+END MODULE;
