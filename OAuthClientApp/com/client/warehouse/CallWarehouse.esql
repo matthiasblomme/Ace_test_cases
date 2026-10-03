@@ -1,0 +1,78 @@
+BROKER SCHEMA com.client.warehouse
+
+/*
+ * Client side of the OAuth demo.
+ *
+ * There is deliberately no token handling and no Authorization header set
+ * anywhere in this ESQL. The REST Request node performs the whole
+ * client_credentials handshake itself, driven by the RESTRequest policy
+ * (which names the credential) and the vault credential (which carries the
+ * client id, secret and scope).
+ */
+CREATE COMPUTE MODULE CallWarehouse_PrepareRequest
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- getStock is a GET with no request body. An empty JSON object keeps the
+		-- REST Request node's dataLocation ($Body) valid without sending content.
+		CREATE FIELD OutputRoot.JSON.Data IDENTITY (JSON.Object);
+		RETURN TRUE;
+	END;
+
+END MODULE;
+
+
+CREATE COMPUTE MODULE CallWarehouse_BuildResponse
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET OutputRoot.Properties.ContentType = 'application/json';
+		SET OutputRoot.HTTPReplyHeader."Content-Type" = 'application/json';
+		SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 200;
+
+		SET OutputRoot.JSON.Data.result = 'ok';
+		-- The mock echoes back every header it received, so this subtree is the
+		-- end-to-end proof that the bearer token arrived downstream.
+		SET OutputRoot.JSON.Data.downstream = InputRoot.JSON.Data;
+
+		RETURN TRUE;
+	END;
+
+END MODULE;
+
+
+CREATE COMPUTE MODULE CallWarehouse_ReportFailure
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET OutputRoot.Properties.ContentType = 'application/json';
+		SET OutputRoot.HTTPReplyHeader."Content-Type" = 'application/json';
+		SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 500;
+
+		SET OutputRoot.JSON.Data.result = 'failed';
+		SET OutputRoot.JSON.Data.error = DeepestExceptionText();
+
+		RETURN TRUE;
+	END;
+
+	/*
+	 * The innermost exception text is the useful one - the outer entries just say
+	 * "a node threw". Without this an OAuth misconfiguration surfaces as an empty
+	 * 500 and gets misdiagnosed as a network problem.
+	 */
+	CREATE FUNCTION DeepestExceptionText() RETURNS CHARACTER
+	BEGIN
+		DECLARE deepestText CHARACTER NULL;
+		DECLARE ex REFERENCE TO InputExceptionList.*[1];
+
+		WHILE LASTMOVE(ex) DO
+			IF ex.Text IS NOT NULL THEN
+				SET deepestText = ex.Text;
+			END IF;
+			MOVE ex LASTCHILD;
+		END WHILE;
+
+		RETURN COALESCE(deepestText, 'no exception text available; see the integration server console log');
+	END;
+
+END MODULE;

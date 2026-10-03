@@ -1,0 +1,398 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "HR Employee and Department Services",
+    "description": "HR REST OpenAPI  document for the Employee and Department Services used by the ACE eXp (early eXperience program) REST API labs for ACE v12. It contains base components used by the Labs.",
+    "contact": {
+      "name": "Terry Hudson",
+      "email": "terry_hudson@uk.ibm.com"
+    },
+    "version": "3.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:7800/HR_Services_openAPI_complete"
+    }
+  ],
+  "tags": [
+    {
+      "name": "employees",
+      "description": "Lists all of the employees at ACME"
+    },
+    {
+      "name": "departments",
+      "description": "Lists all of the departments at ACME"
+    }
+  ],
+  "paths": {
+    "/employees": {
+      "summary": "handle request related to EMPLOYEE table ",
+      "get": {
+        "summary": "Retrieve row from EMPLOYEE table ",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/EMPNO"
+          }
+        ],
+        "operationId": "viewEmployees"
+      },
+      "post": {
+        "summary": "Update or Insert row in EMPLOYEE table",
+        "description": "Operation will Insert an EMPLOYEE record into the EMPLOYEE table if the EMPNO key does not exist. If a record does exist it will Update the existing record.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EMPLOYEE",
+                "title": "refUpsertEmployee"
+              }
+            }
+          }
+        },
+        "operationId": "upsertEmployees"
+      },
+      "put": {
+        "summary": "Insert row into EMPLOYEE table",
+        "description": "Adds a record to the EMPLOYEE table. Request will fail if EMPNO key exists.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeResponse",
+                  "title": "refInsertEmployeeResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EMPLOYEE",
+                "title": "ResInsertEmployee"
+              }
+            }
+          }
+        },
+        "operationId": "insertEmployees"
+      },
+      "delete": {
+        "summary": "Delete row from EMPLOYEE table ",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/EMPNO"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DBRESP",
+                  "title": "refDeleteEmployeeResponse"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "deleteEmployees"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EMPLOYEE": {
+        "required": [
+          "EMPNO"
+        ],
+        "type": "object",
+        "properties": {
+          "EMPNO": {
+            "type": "string",
+            "description": "Employee number"
+          },
+          "FIRSTNME": {
+            "type": "string",
+            "description": "First name"
+          },
+          "MIDINIT": {
+            "type": "string",
+            "description": "Middle initial"
+          },
+          "LASTNAME": {
+            "type": "string",
+            "description": "Last name"
+          },
+          "WORKDEPT": {
+            "type": "string",
+            "description": "Work department"
+          },
+          "PHONENO": {
+            "type": "string",
+            "description": "Phone number"
+          },
+          "HIREDATE": {
+            "type": "string",
+            "description": "Hire date",
+            "format": "date"
+          },
+          "JOB": {
+            "type": "string",
+            "description": "Job"
+          },
+          "EDLEVEL": {
+            "type": "integer",
+            "description": "Employee number"
+          },
+          "SEX": {
+            "type": "string",
+            "description": "Gender (M or F)"
+          },
+          "BIRTHDATE": {
+            "type": "string",
+            "description": "Date of birth",
+            "format": "date"
+          },
+          "SALARY": {
+            "type": "number",
+            "description": "Salary",
+            "format": "double"
+          },
+          "BONUS": {
+            "type": "number",
+            "description": "Bonus",
+            "format": "double"
+          },
+          "COMM": {
+            "type": "number",
+            "description": "Commission",
+            "format": "double"
+          }
+        },
+        "description": "Employee resource representation",
+        "example": {
+          "EMPNO": "000010",
+          "FIRSTNME": "CHRISTINE",
+          "MIDINIT": "I",
+          "LASTNAME": "HAAS",
+          "WORKDEPT": "A00",
+          "PHONENO": "3978",
+          "HIREDATE": "1995-01-01",
+          "JOB": "ABCDEFGH",
+          "EDLEVEL": 18,
+          "SEX": "F",
+          "BIRTHDATE": "1963-08-24",
+          "SALARY": 152750,
+          "BONUS": 1000,
+          "COMM": 4220
+        }
+      },
+      "DEPARTMENT": {
+        "type": "object",
+        "properties": {
+          "DEPTNO": {
+            "type": "string"
+          },
+          "DEPTNAME": {
+            "type": "string"
+          },
+          "MGRNO": {
+            "type": "string"
+          },
+          "ADMRDEPT": {
+            "type": "string"
+          },
+          "LOCATION": {
+            "type": "string"
+          }
+        }
+      },
+      "DBRESP": {
+        "type": "object",
+        "properties": {
+          "UserReturnCode": {
+            "type": "integer"
+          },
+          "RowsRetrieved": {
+            "type": "integer"
+          },
+          "RowsAdded": {
+            "type": "integer"
+          },
+          "RowsUpdated": {
+            "type": "integer"
+          },
+          "RowsDeleted": {
+            "type": "integer"
+          },
+          "SQLCODE_Errorcode": {
+            "type": "integer"
+          },
+          "SQLSTATE_SQLState": {
+            "type": "string"
+          },
+          "SQL_Error_Message": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "RowsRetrieved": 1,
+          "RowsAdded": 0,
+          "RowsUpdated": 0,
+          "RowsDeleted": 0,
+          "SQLCODE_Errorcode": 0,
+          "SQLSTATE_SQLState": "",
+          "SQL_Error_Message": "",
+          "UserReturnCode": 0
+        }
+      },
+      "EmployeeResponse": {
+        "type": "object",
+        "properties": {
+          "refDBRESP": {
+            "$ref": "#/components/schemas/DBRESP"
+          },
+          "refEMPLOYEE": {
+            "$ref": "#/components/schemas/EMPLOYEE"
+          }
+        },
+        "required": [
+          ""
+        ]
+      },
+      "DepartmentResponse": {
+        "type": "object",
+        "properties": {
+          "DBResp": {
+            "$ref": "#/components/schemas/DBRESP"
+          },
+          "Department": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DEPARTMENT"
+            }
+          }
+        }
+      },
+      "DetailedResponse": {
+        "type": "object",
+        "properties": {
+          "DBResp_employee": {
+            "$ref": "#/components/schemas/DBRESP"
+          },
+          "Employee": {
+            "$ref": "#/components/schemas/EMPLOYEE"
+          },
+          "DBResp_department": {
+            "$ref": "#/components/schemas/DBRESP"
+          },
+          "Department": {
+            "$ref": "#/components/schemas/DEPARTMENT"
+          }
+        }
+      },
+      "EmployeeInputSchema": {
+        "type": "object",
+        "properties": {
+          "Employee": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EMPLOYEE"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "EMPNO": {
+        "name": "EMPNO",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "title": "EMPNO",
+          "type": "string",
+          "description": "Employee Number",
+          "minLength": 1,
+          "maxLength": 6
+        },
+        "example": "000012"
+      }
+    },
+    "requestBodies": {
+      "EMPLOYEE": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/EMPLOYEE"
+            },
+            "examples": {
+              "Employee Example": {
+                "value": {
+                  "Employee": [
+                    {
+                      "INSTRUCTION": "Upsert",
+                      "EMPNO": "000012",
+                      "FIRSTNME": "Terry",
+                      "MIDINIT": "w",
+                      "LASTNAME": "Hudson",
+                      "WORKDEPT": "A00",
+                      "PHONENO": "7238",
+                      "HIREDATE": "01-01-2010",
+                      "JOB": "any",
+                      "EDLEVEL": 0,
+                      "SEX": "M",
+                      "BIRTHDATE": "02-01-2010",
+                      "SALARY": 12120,
+                      "BONUS": 550,
+                      "COMM": 0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "ok",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/EmployeeResponse"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,404 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Dummy API",
+    "version": "1.0.0",
+    "description": "A dummy API for an ACE template project. Includes a simple POST operation, a GET greeting, test endpoints that return specific HTTP errors (GET + POST), basic input/output schemas defined as components, and OAuth 2.0 security using the client credentials flow.\n"
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com/dummyapi/v1"
+    }
+  ],
+  "paths": {
+    "/hello": {
+      "get": {
+        "summary": "Retrieve a greeting",
+        "description": "Test endpoint that returns a greeting message.\n",
+        "responses": {
+          "200": {
+            "description": "Successful response with greeting message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelloResponse"
+                },
+                "example": {
+                  "message": "Hello, Foo Bar!"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Send a greeting",
+        "description": "Accepts a name and responds with a greeting message.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HelloRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response with greeting message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelloResponse"
+                },
+                "example": {
+                  "message": "Hello, Foo Bar!"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request – invalid input."
+          }
+        },
+        "security": [
+          {
+            "oauth2": []
+          }
+        ]
+      }
+    },
+    "/400": {
+      "get": {
+        "summary": "Return HTTP 400 Bad Request",
+        "description": "Test endpoint that always returns 400.",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "400"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Return HTTP 400 Bad Request via POST",
+        "description": "Test endpoint that always returns 400.",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "400"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/401": {
+      "get": {
+        "summary": "Return HTTP 401 Unauthorized",
+        "description": "Test endpoint that always returns 401.",
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "401"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Return HTTP 401 Unauthorized via POST",
+        "description": "Test endpoint that always returns 401.",
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "401"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/403": {
+      "get": {
+        "summary": "Return HTTP 403 Forbidden via GET",
+        "description": "Test endpoint that always returns 403.",
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "403"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Return HTTP 403 Forbidden via POST",
+        "description": "Test endpoint that always returns 403.",
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "403"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/404": {
+      "get": {
+        "summary": "Return HTTP 404 Not Found",
+        "description": "Test endpoint that always returns 404.",
+        "responses": {
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "404"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Return HTTP 404 Not Found via POST",
+        "description": "Test endpoint that always returns 404.",
+        "responses": {
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "404"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/500": {
+      "get": {
+        "summary": "Return HTTP 500 Internal Server Error",
+        "description": "Test endpoint that always returns 500.",
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "500"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Return HTTP 500 Internal Server Error via POST",
+        "description": "Test endpoint that always returns 500.",
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "500"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Return status ok if the API si running via GET",
+        "description": "Test endpoint that returns status ok.",
+        "responses": {
+          "200": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "400"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Return status ok if the API si running via GET",
+        "description": "Test endpoint that returns status ok.",
+        "responses": {
+          "200": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "400"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://adfs.netwerk.hessenoordnatie.com/adfs/oauth2/token",
+            "scopes": {
+              "dummy.all": "Access everything"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "HelloRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "example": {
+          "name": "Foo Bar"
+        }
+      },
+      "HelloResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "message": "Hello, Foo Bar!"
+        }
+      },
+      "AwakeResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "example": {
+          "status": "ok"
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "example": {
+          "error": "500"
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2": []
+    }
+  ]
+}

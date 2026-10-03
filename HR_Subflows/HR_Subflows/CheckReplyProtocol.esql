@@ -1,0 +1,20 @@
+BROKER SCHEMA HR_Subflows
+
+
+CREATE FILTER MODULE CheckReplyProtocol
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		CASE Properties.ReplyProtocol
+		WHEN 'SOAP-HTTP' THEN
+			RETURN FALSE; 	 		
+		
+		WHEN 'MQ' THEN
+			RETURN TRUE;
+    
+		END CASE;  		
+		
+		RETURN TRUE;
+	END;
+
+END MODULE;

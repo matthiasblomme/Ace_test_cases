@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<SOAP-ENV:Body>
+<SOAP-ENV:Fault>
+<faultcode>SOAP-ENV:Server</faultcode>
+<faultstring>BIP3113E: Exception detected in message flow com.example.repro.RCDRepro (integration node integration_server) </faultstring>
+<faultactor>http://localhost:7801/rcdblobroundtripbad</faultactor>
+<detail><text>Exception. BIP2230E: Error detected whilst processing a message in node &apos;com.example.repro.RCDRepro.RCD BLOB-&gt;XMLNSC C+V (blobroundbad)&apos;. : C:\ci\product-build\WMB\src\DataFlowEngine\BasicNodes\lib\ImbResetContentDescNode.cpp: 475: ImbResetContentDescNode::evaluate: ComIbmResetContentDescriptorNode: com.example.repro.RCDRepro#FCMComposite_1_56
+BIP5009E: XML Parsing Errors have occurred. : C:\ci\product-build\WMB\src\MTI\MTIforBroker\GenXmlParser4\ImbXMLNSCParser.cpp: 1096: ImbXMLNSCParser::parseLastChild: : 
+BIP5025E: XML schema validation error &apos;cvc-complex-type.2.4.d: Expecting an end tag. Invalid content was found starting with element &quot;NS1:Bogus&quot;. No child element is expected at this point.&apos; on line &apos;1&apos; column &apos;135&apos; when parsing element &apos;/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body&apos;.  Internal error codes: 5007, 2. : C:\ci\product-build\WMB\src\MTI\MTIforBroker\GenXmlParser4\ImbXMLNSCDocHandler.cpp: 784: ImbXMLNSCDocHandler::handleParseErrors: ComIbmWSInputNode: com.example.repro.RCDRepro#FCMComposite_1_53</text></detail>
+</SOAP-ENV:Fault>
+</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

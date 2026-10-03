@@ -1,0 +1,63 @@
+BROKER SCHEMA HR_Subflows
+
+
+CREATE COMPUTE MODULE ViewEmployee
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+	  -- CALL CopyMessageHeaders();
+	  -- CALL CopyEntireMessage();
+      Set OutputRoot.JSON.Data.refDBRESP.RowsRetrieved = 0;
+	  Set OutputRoot.JSON.Data.refDBRESP.RowsAdded = 0;
+	  Set OutputRoot.JSON.Data.refDBRESP.RowsUpdated = 0;
+	  Set OutputRoot.JSON.Data.refDBRESP.RowsDeleted = 0;
+	  Set OutputRoot.JSON.Data.refDBRESP.SQLCODE_Errorcode = 0;
+	  Set OutputRoot.JSON.Data.refDBRESP.SQLSTATE_SQLState = '';
+	  Set OutputRoot.JSON.Data.refDBRESP.SQL_Error_Message = '';
+	  Set OutputRoot.JSON.Data.refDBRESP.UserReturnCode = 0;
+		 
+      IF InputLocalEnvironment.REST.Input.Parameters.EMPNO <> '' THEN 
+        	-- assume called from REST API use Input Parameters (as Junit test will also use these !
+        SET OutputRoot.JSON.Data.refEMPLOYEE[] = (SELECT
+           E.*
+           FROM Database.IIBADMIN.EMPLOYEE AS E
+           WHERE E.EMPNO LIKE '%'||InputLocalEnvironment.REST.Input.Parameters.EMPNO||'%');
+           -- For Exact Match 
+           --WHERE E.EMPNO = InputLocalEnvironment.REST.Input.Parameters.employeeNumber);
+       
+        ELSE 	
+		  SET OutputRoot.JSON.Data.refEMPLOYEE[] = (SELECT
+           E.*
+           FROM Database.IIBADMIN.EMPLOYEE AS E
+           WHERE E.EMPNO LIKE '%'||InputRoot.JSON.Data.refEMPLOYEE.Item.EMPNO||'%');
+           
+           -- For Exact Match 
+           --WHERE E.EMPNO = InputLocalEnvironment.REST.Input.Parameters.employeeNumber);
+       END IF; 
+         
+         IF SQLCODE = 0 THEN 
+          Set OutputRoot.JSON.Data.refDBRESP.RowsRetrieved = CARDINALITY(OutputRoot.JSON.Data.refEMPLOYEE[]);
+ 
+          Set OutputRoot.JSON.Data.refDBRESP.SQLCODE_Errorcode = SQLCODE;
+		  Set OutputRoot.JSON.Data.refDBRESP.SQLSTATE_SQLState = SQLSTATE;
+		  Set OutputRoot.JSON.Data.refDBRESP.SQL_Error_Message = SQLERRORTEXT;
+		  
+	  END IF;
+	
+	RETURN TRUE;
+
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

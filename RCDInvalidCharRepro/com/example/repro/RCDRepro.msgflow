@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmJavaCompute.msgnode="ComIbmJavaCompute.msgnode" xmlns:ComIbmResetContentDescriptor.msgnode="ComIbmResetContentDescriptor.msgnode" xmlns:ComIbmValidate.msgnode="ComIbmValidate.msgnode" xmlns:ComIbmWSInput.msgnode="ComIbmWSInput.msgnode" xmlns:ComIbmWSReply.msgnode="ComIbmWSReply.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow"
+    xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="com/example/repro/RCDRepro.msgflow" nsPrefix="com_example_repro_RCDRepro.msgflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" nodeLayoutStyle="RECTANGLE">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <translation xmi:type="utility:TranslatableString" key="RCDRepro" bundleName="com/example/repro/RCDRepro" pluginId="RCDInvalidCharRepro"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/RCDInvalidCharRepro/icons/full/obj16/RCDRepro.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/RCDInvalidCharRepro/icons/full/obj30/RCDRepro.gif"/>
+    <composition>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="10,20" URLSpecifier="/build" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="build in"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="209,20" computeExpression="esql://routine/com.example.repro#BuildOrder.Main">
+        <translation xmi:type="utility:ConstantString" string="build 0x1A tree"/>
+      </nodes>
+      <nodes xmi:type="ComIbmResetContentDescriptor.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="419,20" messageDomain="XMLNSC" resetMessageDomain="true" validateMaster="contentAndValue">
+        <translation xmi:type="utility:ConstantString" string="RCD validate C+V"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4" location="629,20">
+        <translation xmi:type="utility:ConstantString" string="build reply"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5" location="10,82" URLSpecifier="/badschema" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="badschema in"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_6" location="209,82" computeExpression="esql://routine/com.example.repro#BuildSchemaViolation.Main">
+        <translation xmi:type="utility:ConstantString" string="build invalid tree"/>
+      </nodes>
+      <nodes xmi:type="ComIbmResetContentDescriptor.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_7" location="419,82" messageDomain="XMLNSC" resetMessageDomain="true" validateMaster="contentAndValue">
+        <translation xmi:type="utility:ConstantString" string="RCD validate C+V (badschema)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_8" location="629,82">
+        <translation xmi:type="utility:ConstantString" string="badschema reply"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_9" location="10,144" URLSpecifier="/parse" messageDomainProperty="XMLNSC" validateTiming="complete">
+        <translation xmi:type="utility:ConstantString" string="parse in"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_10" location="209,144" computeExpression="esql://routine/com.example.repro#Manifest.Main">
+        <translation xmi:type="utility:ConstantString" string="manifest"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_11" location="419,144">
+        <translation xmi:type="utility:ConstantString" string="parse reply"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_12" location="10,206" URLSpecifier="/noval" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="noval in"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_13" location="209,206" computeExpression="esql://routine/com.example.repro#BuildOrder.Main">
+        <translation xmi:type="utility:ConstantString" string="build 0x1A tree (noval)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_14" location="419,206">
+        <translation xmi:type="utility:ConstantString" string="noval reply"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_15" location="10,268" URLSpecifier="/roundtrip" messageDomainProperty="XMLNSC" validateTiming="complete" validateMaster="contentAndValue">
+        <translation xmi:type="utility:ConstantString" string="roundtrip in (parse+validate)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_16" location="209,268" computeExpression="esql://routine/com.example.repro#InjectInvalidChar.Main">
+        <translation xmi:type="utility:ConstantString" string="inject 0x1A"/>
+      </nodes>
+      <nodes xmi:type="ComIbmResetContentDescriptor.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_17" location="419,268" messageDomain="XMLNSC" resetMessageDomain="true" validateMaster="contentAndValue">
+        <translation xmi:type="utility:ConstantString" string="RCD same schema, validate C+V"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_18" location="629,268" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="roundtrip reply (no validation)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_19" location="10,330" URLSpecifier="/roundtripbad" messageDomainProperty="XMLNSC" validateTiming="complete" validateMaster="contentAndValue">
+        <translation xmi:type="utility:ConstantString" string="roundtripbad in (parse+validate)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_20" location="209,330" computeExpression="esql://routine/com.example.repro#InjectSchemaViolation.Main">
+        <translation xmi:type="utility:ConstantString" string="inject Bogus element"/>
+      </nodes>
+      <nodes xmi:type="ComIbmResetContentDescriptor.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_21" location="419,330" messageDomain="XMLNSC" resetMessageDomain="true" validateMaster="contentAndValue">
+        <translation xmi:type="utility:ConstantString" string="RCD same schema, validate C+V (bad)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_22" location="629,330" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="roundtripbad reply (no validation)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_23" location="10,392" URLSpecifier="/reparse" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="reparse in (BLOB)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmResetContentDescriptor.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_24" location="209,392" messageDomain="XMLNSC" resetMessageDomain="true" validateTiming="complete" validateMaster="contentAndValue">
+        <translation xmi:type="utility:ConstantString" string="RCD BLOB->XMLNSC validate C+V"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_25" location="419,392" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="reparse reply (no validation)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_26" location="10,454" URLSpecifier="/reparseondemand" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="reparse ondemand in (BLOB)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmResetContentDescriptor.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_27" location="209,454" messageDomain="XMLNSC" resetMessageDomain="true" validateMaster="contentAndValue">
+        <translation xmi:type="utility:ConstantString" string="RCD BLOB->XMLNSC C+V (on demand)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_28" location="419,454" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="reparse ondemand reply (no validation)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_29" location="10,516" URLSpecifier="/reparsetouched" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="reparse touched in (BLOB)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmResetContentDescriptor.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_30" location="209,516" messageDomain="XMLNSC" resetMessageDomain="true" validateMaster="contentAndValue">
+        <translation xmi:type="utility:ConstantString" string="RCD BLOB->XMLNSC C+V (on demand, touched)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_31" location="419,516" computeExpression="esql://routine/com.example.repro#ForceParse.Main">
+        <translation xmi:type="utility:ConstantString" string="touch tree (forces parse)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_32" location="629,516" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="reparse touched reply (no validation)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_33" location="10,578" URLSpecifier="/reparsereadbad" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="reparse readbad in (BLOB)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmResetContentDescriptor.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_34" location="209,578" messageDomain="XMLNSC" resetMessageDomain="true" validateMaster="contentAndValue">
+        <translation xmi:type="utility:ConstantString" string="RCD BLOB->XMLNSC C+V (on demand, read bogus)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_35" location="419,578" computeExpression="esql://routine/com.example.repro#ReadBogus.Main">
+        <translation xmi:type="utility:ConstantString" string="read bogus element"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_36" location="629,578" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="reparse readbad reply (no validation)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_37" location="10,640" URLSpecifier="/reparseimmediate" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="reparse immediate in (BLOB)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmResetContentDescriptor.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_38" location="209,640" messageDomain="XMLNSC" resetMessageDomain="true" validateTiming="immediate" validateMaster="contentAndValue">
+        <translation xmi:type="utility:ConstantString" string="RCD BLOB->XMLNSC C+V (immediate)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_39" location="419,640" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="reparse immediate reply (no validation)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_40" location="10,702" URLSpecifier="/validatenode" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="valnode in"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_41" location="209,702" computeExpression="esql://routine/com.example.repro#BuildOrder.Main">
+        <translation xmi:type="utility:ConstantString" string="build 0x1A tree (valnode)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmValidate.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_42" location="419,702" validateMaster="contentAndValue">
+        <translation xmi:type="utility:ConstantString" string="validate node C+V"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_43" location="629,702" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="valnode reply (no validation)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_44" location="10,764" URLSpecifier="/validatenodebad" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="valnodebad in"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_45" location="209,764" computeExpression="esql://routine/com.example.repro#BuildSchemaViolation.Main">
+        <translation xmi:type="utility:ConstantString" string="build invalid tree (valnode)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmValidate.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_46" location="419,764" validateMaster="contentAndValue">
+        <translation xmi:type="utility:ConstantString" string="validate node C+V (bad)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_47" location="629,764" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="valnodebad reply (no validation)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_48" location="10,826" URLSpecifier="/rcdblobroundtrip" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="blobround in"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_49" location="209,826" computeExpression="esql://routine/com.example.repro#BuildOrder.Main">
+        <translation xmi:type="utility:ConstantString" string="build 0x1A tree (blobround)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmResetContentDescriptor.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_50" location="419,826" messageDomain="BLOB" resetMessageDomain="true">
+        <translation xmi:type="utility:ConstantString" string="RCD XMLNSC->BLOB"/>
+      </nodes>
+      <nodes xmi:type="ComIbmResetContentDescriptor.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_51" location="629,826" messageDomain="XMLNSC" resetMessageDomain="true" validateTiming="complete" validateMaster="contentAndValue">
+        <translation xmi:type="utility:ConstantString" string="RCD BLOB->XMLNSC C+V (blobround)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_52" location="839,826" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="blobround reply (no validation)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_53" location="10,888" URLSpecifier="/rcdblobroundtripbad" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="blobroundbad in"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_54" location="209,888" computeExpression="esql://routine/com.example.repro#BuildSchemaViolation.Main">
+        <translation xmi:type="utility:ConstantString" string="build invalid tree (blobround)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmResetContentDescriptor.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_55" location="419,888" messageDomain="BLOB" resetMessageDomain="true">
+        <translation xmi:type="utility:ConstantString" string="RCD XMLNSC->BLOB (bad)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmResetContentDescriptor.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_56" location="629,888" messageDomain="XMLNSC" resetMessageDomain="true" validateTiming="complete" validateMaster="contentAndValue">
+        <translation xmi:type="utility:ConstantString" string="RCD BLOB->XMLNSC C+V (blobroundbad)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_57" location="839,888" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="blobroundbad reply (no validation)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_58" location="10,950" URLSpecifier="/asbitstream" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="asbits in"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_59" location="209,950" computeExpression="esql://routine/com.example.repro#BuildOrder.Main">
+        <translation xmi:type="utility:ConstantString" string="build 0x1A tree (asbits)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_60" location="419,950" computeExpression="esql://routine/com.example.repro#ValidateViaAsbitstream.Main">
+        <translation xmi:type="utility:ConstantString" string="asbitstream validate"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_61" location="629,950" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="asbits reply (no validation)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_62" location="10,1012" URLSpecifier="/asbitstreambad" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="asbitsbad in"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_63" location="209,1012" computeExpression="esql://routine/com.example.repro#BuildSchemaViolation.Main">
+        <translation xmi:type="utility:ConstantString" string="build invalid tree (asbits)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_64" location="419,1012" computeExpression="esql://routine/com.example.repro#ValidateViaAsbitstream.Main">
+        <translation xmi:type="utility:ConstantString" string="asbitstream validate (bad)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_65" location="629,1012" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="asbitsbad reply (no validation)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_66" location="10,1074" URLSpecifier="/jcn" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="jcn in"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_67" location="209,1074" computeExpression="esql://routine/com.example.repro#BuildOrder.Main">
+        <translation xmi:type="utility:ConstantString" string="build 0x1A tree (jcn)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmJavaCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_68" location="419,1074" javaClass="com.example.repro.ValidateViaToBitstream">
+        <translation xmi:type="utility:ConstantString" string="jcn toBitstream validate"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_69" location="629,1074" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="jcn reply (no validation)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_70" location="10,1136" URLSpecifier="/jcnbad" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="jcnbad in"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_71" location="209,1136" computeExpression="esql://routine/com.example.repro#BuildSchemaViolation.Main">
+        <translation xmi:type="utility:ConstantString" string="build invalid tree (jcn)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmJavaCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_72" location="419,1136" javaClass="com.example.repro.ValidateViaToBitstream">
+        <translation xmi:type="utility:ConstantString" string="jcn toBitstream validate (bad)"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_73" location="629,1136" validateMaster="none">
+        <translation xmi:type="utility:ConstantString" string="jcnbad reply (no validation)"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_49" targetNode="FCMComposite_1_67" sourceNode="FCMComposite_1_66" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_50" targetNode="FCMComposite_1_68" sourceNode="FCMComposite_1_67" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_51" targetNode="FCMComposite_1_69" sourceNode="FCMComposite_1_68" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_52" targetNode="FCMComposite_1_71" sourceNode="FCMComposite_1_70" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_53" targetNode="FCMComposite_1_72" sourceNode="FCMComposite_1_71" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_54" targetNode="FCMComposite_1_73" sourceNode="FCMComposite_1_72" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_29" targetNode="FCMComposite_1_41" sourceNode="FCMComposite_1_40" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_30" targetNode="FCMComposite_1_42" sourceNode="FCMComposite_1_41" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_31" targetNode="FCMComposite_1_43" sourceNode="FCMComposite_1_42" sourceTerminalName="OutTerminal.match" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_32" targetNode="FCMComposite_1_45" sourceNode="FCMComposite_1_44" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_33" targetNode="FCMComposite_1_46" sourceNode="FCMComposite_1_45" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_34" targetNode="FCMComposite_1_47" sourceNode="FCMComposite_1_46" sourceTerminalName="OutTerminal.match" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_35" targetNode="FCMComposite_1_49" sourceNode="FCMComposite_1_48" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_36" targetNode="FCMComposite_1_50" sourceNode="FCMComposite_1_49" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_37" targetNode="FCMComposite_1_51" sourceNode="FCMComposite_1_50" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_38" targetNode="FCMComposite_1_52" sourceNode="FCMComposite_1_51" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_39" targetNode="FCMComposite_1_54" sourceNode="FCMComposite_1_53" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_40" targetNode="FCMComposite_1_55" sourceNode="FCMComposite_1_54" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_41" targetNode="FCMComposite_1_56" sourceNode="FCMComposite_1_55" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_42" targetNode="FCMComposite_1_57" sourceNode="FCMComposite_1_56" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_43" targetNode="FCMComposite_1_59" sourceNode="FCMComposite_1_58" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_44" targetNode="FCMComposite_1_60" sourceNode="FCMComposite_1_59" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_45" targetNode="FCMComposite_1_61" sourceNode="FCMComposite_1_60" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_46" targetNode="FCMComposite_1_63" sourceNode="FCMComposite_1_62" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_47" targetNode="FCMComposite_1_64" sourceNode="FCMComposite_1_63" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_48" targetNode="FCMComposite_1_65" sourceNode="FCMComposite_1_64" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_24" targetNode="FCMComposite_1_34" sourceNode="FCMComposite_1_33" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_25" targetNode="FCMComposite_1_35" sourceNode="FCMComposite_1_34" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_26" targetNode="FCMComposite_1_36" sourceNode="FCMComposite_1_35" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_27" targetNode="FCMComposite_1_38" sourceNode="FCMComposite_1_37" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_28" targetNode="FCMComposite_1_39" sourceNode="FCMComposite_1_38" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_19" targetNode="FCMComposite_1_27" sourceNode="FCMComposite_1_26" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_20" targetNode="FCMComposite_1_28" sourceNode="FCMComposite_1_27" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_21" targetNode="FCMComposite_1_30" sourceNode="FCMComposite_1_29" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_22" targetNode="FCMComposite_1_31" sourceNode="FCMComposite_1_30" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_23" targetNode="FCMComposite_1_32" sourceNode="FCMComposite_1_31" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_17" targetNode="FCMComposite_1_24" sourceNode="FCMComposite_1_23" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_18" targetNode="FCMComposite_1_25" sourceNode="FCMComposite_1_24" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_7" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_8" sourceNode="FCMComposite_1_7" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_7" targetNode="FCMComposite_1_10" sourceNode="FCMComposite_1_9" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_8" targetNode="FCMComposite_1_11" sourceNode="FCMComposite_1_10" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_9" targetNode="FCMComposite_1_13" sourceNode="FCMComposite_1_12" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_10" targetNode="FCMComposite_1_14" sourceNode="FCMComposite_1_13" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_11" targetNode="FCMComposite_1_16" sourceNode="FCMComposite_1_15" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_12" targetNode="FCMComposite_1_17" sourceNode="FCMComposite_1_16" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_13" targetNode="FCMComposite_1_18" sourceNode="FCMComposite_1_17" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_14" targetNode="FCMComposite_1_20" sourceNode="FCMComposite_1_19" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_15" targetNode="FCMComposite_1_21" sourceNode="FCMComposite_1_20" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_16" targetNode="FCMComposite_1_22" sourceNode="FCMComposite_1_21" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer/>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

@@ -1,0 +1,20 @@
+BROKER SCHEMA com.example.repro
+
+CREATE COMPUTE MODULE InjectInvalidChar
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        DECLARE ord NAMESPACE 'http://example.org/repro/order';
+        DECLARE invalidChar CHARACTER CAST(X'1A' AS CHARACTER CCSID 1208);
+
+        -- Reproduce the exact real-flow scenario. The input has already been
+        -- PARSED and VALIDATED against the order schema at the input node (clean
+        -- data, passes). We copy that already-typed tree, then INJECT the 0x1A into
+        -- a field - modifying an already-schema-associated message, exactly like
+        -- the original flow did before its ResetContentDescriptor.
+        SET OutputRoot = InputRoot;
+        SET OutputRoot.XMLNSC.ord:OrderMessage.ord:Body.ord:Description =
+            'ABC' || invalidChar || 'DEF';
+
+        RETURN TRUE;
+    END;
+END MODULE;

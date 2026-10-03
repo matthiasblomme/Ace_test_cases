@@ -1,0 +1,79 @@
+BROKER SCHEMA HR_Subflows
+
+
+CREATE COMPUTE MODULE UpsertEmployee
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		-- CALL CopyEntireMessage();
+		Set OutputRoot.JSON.Data.refDBRESP.RowsRetrieved = 0;
+		Set OutputRoot.JSON.Data.refDBRESP.RowsAdded = 0;
+		Set OutputRoot.JSON.Data.refDBRESP.RowsUpdated = 0;
+		Set OutputRoot.JSON.Data.refDBRESP.RowsDeleted = 0;
+		Set OutputRoot.JSON.Data.refDBRESP.SQLCODE_Errorcode = 0;
+		Set OutputRoot.JSON.Data.refDBRESP.SQLSTATE_SQLState = '';
+		Set OutputRoot.JSON.Data.refDBRESP.SQL_Error_Message = '';
+		
+		INSERT INTO Database.HRDB.IIBADMIN.EMPLOYEE (EMPNO,FIRSTNME,MIDINIT,LASTNAME,WORKDEPT,PHONENO,HIREDATE,JOB,EDLEVEL,SEX,BIRTHDATE,SALARY,BONUS,COMM)
+                  VALUES (InputRoot.JSON.Data.EMPNO,
+                          InputRoot.JSON.Data.FIRSTNME,
+                          InputRoot.JSON.Data.MIDINIT,
+                          InputRoot.JSON.Data.LASTNAME,
+                          InputRoot.JSON.Data.WORKDEPT,
+                          InputRoot.JSON.Data.PHONENO,
+                          InputRoot.JSON.Data.HIREDATE,
+                          InputRoot.JSON.Data.JOB,
+                          InputRoot.JSON.Data.EDLEVEL,
+                          InputRoot.JSON.Data.SEX,
+                          InputRoot.JSON.Data.BIRTHDATE,
+                          InputRoot.JSON.Data.SALARY,
+                          InputRoot.JSON.Data.BONUS,
+                          InputRoot.JSON.Data.COMM);
+		
+		IF SQLCODE = 0 THEN 
+         	Set OutputRoot.JSON.Data.refDBRESP.RowsAdded = 1;
+         ELSE
+         	UPDATE Database.HRDB.IIBADMIN.EMPLOYEE AS UPDATE_EMP 
+         	       SET FIRSTNME = InputRoot.JSON.Data.FIRSTNME,
+                       MIDINIT = InputRoot.JSON.Data.MIDINIT,
+                       LASTNAME = InputRoot.JSON.Data.LASTNAME,
+                       WORKDEPT = InputRoot.JSON.Data.WORKDEPT,
+                       PHONENO = InputRoot.JSON.Data.PHONENO,
+                       HIREDATE = InputRoot.JSON.Data.HIREDATE,
+                       JOB = InputRoot.JSON.Data.JOB,
+                       EDLEVEL = InputRoot.JSON.Data.EDLEVEL,
+                       SEX = InputRoot.JSON.Data.SEX,
+                       BIRTHDATE = InputRoot.JSON.Data.BIRTHDATE,
+                       SALARY = InputRoot.JSON.Data.SALARY,
+                       BONUS = InputRoot.JSON.Data.BONUS,
+                       COMM = InputRoot.JSON.Data.COMM
+                   WHERE UPDATE_EMP.EMPNO=InputRoot.JSON.Data.EMPNO; 
+             IF SQLCODE = 0 THEN 
+                Set OutputRoot.JSON.Data.refDBRESP.RowsUpdated = 1;
+             END IF;
+         END IF;
+		  
+        Set OutputRoot.JSON.Data.refDBRESP.SQLCODE_Errorcode = SQLCODE;
+		Set OutputRoot.JSON.Data.refDBRESP.SQLSTATE_SQLState = SQLSTATE;
+		Set OutputRoot.JSON.Data.refDBRESP.SQL_Error_Message = SQLERRORTEXT;
+		Set OutputRoot.JSON.Data.refDBRESP.UserReturnCode = 0;
+			
+		SET OutputRoot.JSON.Data.refEMPLOYEE = InputRoot.JSON.Data;
+			
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
