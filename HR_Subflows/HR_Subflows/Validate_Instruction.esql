@@ -1,0 +1,33 @@
+BROKER SCHEMA HR_Subflows
+
+
+CREATE FILTER MODULE Validate_Instruction
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+	  SET LocalEnvironment.Destination.RouterList.DestinationData.LabelName = Root.JSON.Data.Employee.Item.INSTRUCTION;
+					 
+		IF Root.JSON.Data.Employee.Item.INSTRUCTION = 'ViewALL' THEN 
+		 RETURN TRUE;
+		END IF; 
+		
+		IF Root.JSON.Data.Employee.Item.INSTRUCTION = 'View' THEN 
+		 RETURN TRUE;
+		END IF; 	 
+		
+		IF Root.JSON.Data.Employee.Item.INSTRUCTION = 'Upsert' THEN 
+		  RETURN TRUE;
+		END IF; 
+		
+		IF Root.JSON.Data.Employee.Item.INSTRUCTION = 'Insert' THEN 
+		  RETURN TRUE;
+		END IF; 
+		
+		IF Root.JSON.Data.Employee.Item.INSTRUCTION = 'Delete' THEN 
+		 RETURN TRUE;
+		END IF; 
+		
+		RETURN FALSE;
+		
+	END;
+
+END MODULE;

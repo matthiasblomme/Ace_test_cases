@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmApplicationConnectorRequest_couchbase.msgnode="ComIbmApplicationConnectorRequest_couchbase.msgnode" xmlns:ComIbmLog.msgnode="ComIbmLog.msgnode" xmlns:ComIbmTimeoutNotification.msgnode="ComIbmTimeoutNotification.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="CouchDBFlow.msgflow" nsPrefix="CouchDBFlow.msgflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" nodeLayoutStyle="RECTANGLE">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <translation xmi:type="utility:TranslatableString" key="CouchDBFlow" bundleName="CouchDBFlow" pluginId="CouchDBApp"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/CouchDBApp/icons/full/obj16/CouchDBFlow.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/CouchDBApp/icons/full/obj30/CouchDBFlow.gif"/>
+    <composition>
+      <nodes xmi:type="ComIbmApplicationConnectorRequest_couchbase.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="209,92" applicationConnectorType="couchbase" action="RETRIEVEALL" businessObject="Bucket" displayName="undefined" schemaPrefix="gen/CouchDBFlow.Couchbase_Request" policyUrl="{CouchDBPolicyProj}:Couchbase1" mappingMode="jsonmap" messageSetProperty="gen/CouchDBFlow.Couchbase_Request.response.schema.json">
+        <filter>
+          <filterElementObject type="where">
+            <filterProperty propertyName="name" displayName="Name" propertyValue="beer-sample" compareAction=""/>
+          </filterElementObject>
+          <queryProperties allowTruncation="true"/>
+        </filter>
+        <translation xmi:type="utility:ConstantString" string="Couchbase Request"/>
+        <contextReference nodeName="Timeout Notification" nodeType="ComIbmTimeoutNotification.msgnode" nodeProps="" terminalName="OutTerminal.out" messageDomain="" schemaLocation="" schemaRoot="" resultDataLocation="" flowName=""/>
+        <connectorServiceOptions optionName="httpMethod" optionValue="get"/>
+        <connectorServiceOptions optionName="path" optionValue="resources/Bucket"/>
+        <connectorServiceOptions optionName="action" optionValue="retrievewithwhere"/>
+      </nodes>
+      <nodes xmi:type="ComIbmTimeoutNotification.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="10,20" uniqueIdentifier="time01" transactionMode="automatic" operationMode="controlled" timeoutInterval="3000">
+        <translation xmi:type="utility:ConstantString" string="Timeout Notification"/>
+      </nodes>
+      <nodes xmi:type="ComIbmLog.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="419,20" logLevel="Info" logMessage="trace">
+        <translation xmi:type="utility:ConstantString" string="Log"/>
+        <contextReference nodeName="Couchbase Request" nodeType="ComIbmApplicationConnectorRequest_couchbase.msgnode" nodeProps="" terminalName="OutTerminal.out" messageDomain="JSON" schemaLocation="gen/CouchDBFlow.Couchbase_Request.response.schema.json" schemaRoot="" resultDataLocation="$ResultRoot" flowName=""/>
+        <requestMap map="{&quot;mappings&quot;:[{&quot;customMessages&quot;:{&quot;mappings&quot;:[{&quot;Couchbase&quot;:{&quot;expression&quot;:&quot;$context_2f6e6f64654e616d652f436f756368626173652052657175657374 &quot;}},{&quot;Exception&quot;:{&quot;expression&quot;:&quot;$mappingInput_ExceptionList &quot;}},{&quot;Input&quot;:{&quot;expression&quot;:&quot;$mappingInput_InputRoot &quot;}}]}}],&quot;$map&quot;:&quot;http://ibm.com/appconnect/map/v1&quot;,&quot;input&quot;:[{&quot;variable&quot;:&quot;context_2f6e6f64654e616d652f436f756368626173652052657175657374&quot;,&quot;$ref&quot;:&quot;#/contextReferences/context_2f6e6f64654e616d652f436f756368626173652052657175657374&quot;},{&quot;variable&quot;:&quot;context_2f6e6f64654e616d652f54696d656f7574204e6f74696669636174696f6e&quot;,&quot;$ref&quot;:&quot;#/contextReferences/context_2f6e6f64654e616d652f54696d656f7574204e6f74696669636174696f6e&quot;},{&quot;variable&quot;:&quot;FlowDetails&quot;,&quot;$ref&quot;:&quot;#/FlowDetails&quot;},{&quot;variable&quot;:&quot;InvocationDetails&quot;,&quot;$ref&quot;:&quot;#/InvocationDetails&quot;},{&quot;variable&quot;:&quot;mappingInput_InputRoot&quot;,&quot;$ref&quot;:&quot;#/mappingInputs/InputRoot&quot;},{&quot;variable&quot;:&quot;mappingInput_Couchbase_Request&quot;,&quot;$ref&quot;:&quot;#/mappingInputs/Couchbase_Request&quot;},{&quot;variable&quot;:&quot;mappingInput_ExceptionList&quot;,&quot;$ref&quot;:&quot;#/mappingInputs/ExceptionList&quot;}],&quot;customSchemas&quot;:{&quot;properties.`customMessages`&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;Input&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{}},&quot;Couchbase&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{}},&quot;Exception&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{}}}}}}"/>
+        <mappingInput inputName="InputRoot" inputLocation="$InputRoot" messageDomain="" schemaLocation="" schemaRoot=""/>
+        <mappingInput inputName="Couchbase_Request" inputLocation="$InputRoot/JSON/Data" messageDomain="JSON" schemaLocation="gen/CouchDBFlow.Couchbase_Request.response.schema.json" schemaRoot=""/>
+        <mappingInput inputName="ExceptionList" inputLocation="$ExceptionList" messageDomain="" schemaLocation="" schemaRoot=""/>
+      </nodes>
+      <nodes xmi:type="ComIbmApplicationConnectorRequest_couchbase.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4" location="204,181" applicationConnectorType="couchbase" action="RETRIEVEALL" businessObject="Document" displayName="Retrieve documents" schemaPrefix="gen/CouchDBFlow.Couchbase_Request1" policyUrl="{CouchDBPolicyProj}:Couchbase1" mappingMode="jsonmap" messageSetProperty="gen/CouchDBFlow.Couchbase_Request1.response.schema.json">
+        <filter>
+          <filterElementObject type="where">
+            <filterElementArray type="and">
+              <connectorPropertyRef propertyName="BucketNameVal" compareAction=""/>
+              <connectorPropertyRef propertyName="CollectionNameVal" compareAction=""/>
+              <connectorPropertyRef propertyName="ScopeNameVal" compareAction=""/>
+            </filterElementArray>
+          </filterElementObject>
+        </filter>
+        <translation xmi:type="utility:ConstantString" string="Couchbase Request1"/>
+        <connectorProperty propertyName="CollectionNameVal" displayName="Collection" propertyValue="_default" displayValue="_default"/>
+        <connectorProperty propertyName="ScopeNameVal" displayName="Scope" propertyValue="_default" displayValue="_default"/>
+        <connectorProperty propertyName="BucketNameVal" displayName="Bucket" propertyValue="beer-sample" displayValue="beer-sample"/>
+        <connectorServiceOptions optionName="httpMethod" optionValue="get"/>
+        <connectorServiceOptions optionName="path" optionValue="resources/Bucket/{BucketNameVal}/Scope/{ScopeNameVal}/Collection/{CollectionNameVal}/Document"/>
+        <connectorServiceOptions optionName="action" optionValue="retrievewithwhere"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_1" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.catch" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.noData" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer/>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

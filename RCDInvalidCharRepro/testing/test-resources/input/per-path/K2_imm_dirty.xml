@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ord:OrderMessage xmlns:ord="http://example.org/repro/order">
+  <ord:Body>
+    <ord:Description>ABCDEF</ord:Description>
+  </ord:Body>
+</ord:OrderMessage>

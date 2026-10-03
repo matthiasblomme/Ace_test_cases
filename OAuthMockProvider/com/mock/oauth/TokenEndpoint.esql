@@ -1,0 +1,50 @@
+BROKER SCHEMA com.mock.oauth
+
+/*
+ * Mock OAuth 2.0 token endpoint - client_credentials grant.
+ *
+ * It accepts anything and always issues the same token. The point is to prove
+ * that the ACE REST Request node performs the handshake, not to enforce security.
+ */
+CREATE COMPUTE MODULE TokenEndpoint_IssueToken
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- Kept so the Trace node can show what ACE actually sent here: the Basic
+		-- client credentials, the grant_type and the requested scope.
+		SET Environment.MockToken.Headers = InputRoot.HTTPInputHeader;
+		IF EXISTS(InputRoot.BLOB.BLOB[]) THEN
+			SET Environment.MockToken.FormBody = CAST(InputRoot.BLOB.BLOB AS CHARACTER CCSID 1208);
+		END IF;
+
+		DECLARE clientAuth CHARACTER InputRoot.HTTPInputHeader."Authorization";
+
+		SET OutputRoot.Properties.ContentType = 'application/json';
+		SET OutputRoot.HTTPReplyHeader."Content-Type" = 'application/json';
+		SET OutputRoot.HTTPReplyHeader."Cache-Control" = 'no-store';
+
+		-- ACE does not authenticate pre-emptively against the authorization server
+		-- either, not just against the resource server. Without this challenge the
+		-- client id and secret are never put on the wire at all, and the demo would
+		-- report success while never exercising the client credentials.
+		IF clientAuth IS NULL OR clientAuth = '' THEN
+			SET OutputRoot.HTTPReplyHeader."WWW-Authenticate" = 'Basic realm="oauth"';
+			SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 401;
+			SET OutputRoot.JSON.Data.error = 'invalid_client';
+			SET Environment.MockToken.Outcome = 'CHALLENGED-401';
+			RETURN TRUE;
+		END IF;
+
+		SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 200;
+		SET OutputRoot.JSON.Data.access_token = 'mock-access-token-0001';
+		SET OutputRoot.JSON.Data.token_type = 'Bearer';
+		SET OutputRoot.JSON.Data.expires_in = 3600;
+		SET OutputRoot.JSON.Data.scope = 'read:stock write:stock';
+
+		SET Environment.MockToken.Outcome = 'TOKEN-ISSUED';
+		SET Environment.MockToken.ClientAuthReceived = clientAuth;
+
+		RETURN TRUE;
+	END;
+
+END MODULE;

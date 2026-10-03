@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+  xmlns:xmi="http://www.omg.org/XMI"
+  xmlns:ComIbmWSInput.msgnode="ComIbmWSInput.msgnode"
+  xmlns:ComIbmWSReply.msgnode="ComIbmWSReply.msgnode"
+  xmlns:ComIbmWSRequest.msgnode="ComIbmWSRequest.msgnode"
+  xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode"
+  xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+  xmlns:eflow="http://www.ibm.com/wbi/2005/eflow"
+  xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility"
+  nsURI="com/integration/webscrape/WebScrapeProxy.msgflow"
+  nsPrefix="com/integration/webscrape/WebScrapeProxy.msgflow">
+
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" nodeLayoutStyle="RECTANGLE">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <translation xmi:type="utility:TranslatableString" key="WebScrapeProxy" bundleName="WebScrapeProxy" pluginId="WebScrapeProxy"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/WebScrapeProxy/icons/full/obj16/WebScrapeProxy.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/WebScrapeProxy/icons/full/obj30/WebScrapeProxy.gif"/>
+
+    <!-- User Defined Properties (configure the target site per environment) -->
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.govSearchUrl"
+        name="govSearchUrl" lowerBound="1" defaultValueLiteral="https://www.recc.org.uk/scheme/members">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="Property.searchPostBody"
+        name="searchPostBody" lowerBound="1" defaultValueLiteral="companyname={ref}&amp;postcode=&amp;region=&amp;technology=&amp;submitbutton=submit">
+      <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+
+    <composition>
+
+      <!-- 1. Inbound REST listener -->
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1"
+        location="60,120" URLSpecifier="/scrape" messageDomainProperty="JSON"
+        faultFormat="JSON" useHTTPS="false">
+        <translation xmi:type="utility:ConstantString" string="Receive scrape request (POST /scrape)"/>
+      </nodes>
+
+      <!-- 2. Build the POST form body from the Job# / search term -->
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2"
+        location="270,120" computeMode="localEnvironmentAndMessage"
+        computeExpression="esql://routine/com.integration.webscrape#WebScrapeProxy_BuildRequest.Main">
+        <translation xmi:type="utility:ConstantString" string="Build search POST body"/>
+      </nodes>
+
+      <!-- 3. POST the search form to the target site -->
+      <nodes xmi:type="ComIbmWSRequest.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3"
+        location="480,120"
+        URLSpecifier="https://www.recc.org.uk/scheme/members"
+        httpMethod="POST"
+        httpVersion="1.1"
+        protocol="TLSv1.2"
+        messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="POST search to site"/>
+      </nodes>
+
+      <!-- 4. Extract the first results-table row and build the JSON reply -->
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4"
+        location="690,120"
+        computeExpression="esql://routine/com.integration.webscrape#WebScrapeProxy_ExtractMember.Main">
+        <translation xmi:type="utility:ConstantString" string="Extract first member"/>
+      </nodes>
+
+      <!-- 5. Reply to the caller -->
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5"
+        location="900,120">
+        <translation xmi:type="utility:ConstantString" string="Reply to caller"/>
+      </nodes>
+
+      <!-- 6. Error handler -->
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_6"
+        location="480,300"
+        computeExpression="esql://routine/com.integration.webscrape#WebScrapeProxy_HandleException.Main">
+        <translation xmi:type="utility:ConstantString" string="Build JSON error reply"/>
+      </nodes>
+
+      <!-- Happy path -->
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1"
+        sourceNode="FCMComposite_1_1" targetNode="FCMComposite_1_2"
+        sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2"
+        sourceNode="FCMComposite_1_2" targetNode="FCMComposite_1_3"
+        sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3"
+        sourceNode="FCMComposite_1_3" targetNode="FCMComposite_1_4"
+        sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4"
+        sourceNode="FCMComposite_1_4" targetNode="FCMComposite_1_5"
+        sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+
+      <!-- Error paths: input catch + request error/failure -> handler -> reply -->
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5"
+        sourceNode="FCMComposite_1_1" targetNode="FCMComposite_1_6"
+        sourceTerminalName="OutTerminal.catch" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6"
+        sourceNode="FCMComposite_1_3" targetNode="FCMComposite_1_6"
+        sourceTerminalName="OutTerminal.error" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_7"
+        sourceNode="FCMComposite_1_3" targetNode="FCMComposite_1_6"
+        sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_8"
+        sourceNode="FCMComposite_1_6" targetNode="FCMComposite_1_5"
+        sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+    </composition>
+
+    <propertyOrganizer>
+      <propertyDescriptor groupName="Group.UserDefined" configurable="true"
+          userDefined="true" describedAttribute="Property.govSearchUrl">
+        <propertyName xmi:type="utility:TranslatableString" key="Property.govSearchUrl"
+            bundleName="WebScrapeProxy" pluginId="WebScrapeProxy"/>
+      </propertyDescriptor>
+      <propertyDescriptor groupName="Group.UserDefined" configurable="true"
+          userDefined="true" describedAttribute="Property.searchPostBody">
+        <propertyName xmi:type="utility:TranslatableString" key="Property.searchPostBody"
+            bundleName="WebScrapeProxy" pluginId="WebScrapeProxy"/>
+      </propertyDescriptor>
+    </propertyOrganizer>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmApplicationConnectorRequest_couchbase.msgnode="ComIbmApplicationConnectorRequest_couchbase.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="CouchDBFlow2.msgflow" nsPrefix="CouchDBFlow2.msgflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" nodeLayoutStyle="RECTANGLE">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <translation xmi:type="utility:TranslatableString" key="CouchDBFlow2" bundleName="CouchDBFlow2" pluginId="CouchDBApp"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/CouchDBApp/icons/full/obj16/CouchDBFlow2.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/CouchDBApp/icons/full/obj30/CouchDBFlow2.gif"/>
+    <composition>
+      <nodes xmi:type="ComIbmApplicationConnectorRequest_couchbase.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="325,303" applicationConnectorType="couchbase" action="RETRIEVEALL" businessObject="Document" displayName="Retrieve documents" schemaPrefix="gen/CouchDBFlow2.Couchbase_Request" policyUrl="{cdbp}:Couchbase1" mappingMode="jsonmap" messageSetProperty="gen/CouchDBFlow2.Couchbase_Request.response.schema.json">
+        <filter>
+          <filterElementObject type="where">
+            <filterElementArray type="and">
+              <connectorPropertyRef propertyName="BucketNameVal" compareAction=""/>
+              <connectorPropertyRef propertyName="CollectionNameVal" compareAction=""/>
+              <connectorPropertyRef propertyName="ScopeNameVal" compareAction=""/>
+            </filterElementArray>
+          </filterElementObject>
+        </filter>
+        <translation xmi:type="utility:ConstantString" string="Couchbase Request"/>
+        <connectorProperty propertyName="CollectionNameVal" displayName="Collection" propertyValue="_default" displayValue="_default"/>
+        <connectorProperty propertyName="ScopeNameVal" displayName="Scope" propertyValue="_default" displayValue="_default"/>
+        <connectorProperty propertyName="BucketNameVal" displayName="Bucket" propertyValue="beer-sample" displayValue="beer-sample"/>
+        <connectorServiceOptions optionName="httpMethod" optionValue="get"/>
+        <connectorServiceOptions optionName="path" optionValue="resources/Bucket/{BucketNameVal}/Scope/{ScopeNameVal}/Collection/{CollectionNameVal}/Document"/>
+        <connectorServiceOptions optionName="action" optionValue="retrievewithwhere"/>
+      </nodes>
+    </composition>
+    <propertyOrganizer/>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

@@ -1,0 +1,150 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "items": {
+    "type": "object",
+    "properties": {
+      "documentId": {
+        "title": "Document ID",
+        "description": "The unique identifier of the document",
+        "type": "string",
+        "displayOrder": 1
+      },
+      "abv": {
+        "title": "abv",
+        "type": "number",
+        "displayOrder": 6
+      },
+      "brewery_id": {
+        "title": "brewery_id",
+        "type": "string",
+        "displayOrder": 7
+      },
+      "category": {
+        "title": "category",
+        "type": "string",
+        "displayOrder": 8
+      },
+      "description": {
+        "title": "description",
+        "type": "string",
+        "displayOrder": 9
+      },
+      "ibu": {
+        "title": "ibu",
+        "type": "number",
+        "displayOrder": 10
+      },
+      "name": {
+        "title": "name",
+        "type": "string",
+        "displayOrder": 11
+      },
+      "srm": {
+        "title": "srm",
+        "type": "number",
+        "displayOrder": 12
+      },
+      "style": {
+        "title": "style",
+        "type": "string",
+        "displayOrder": 13
+      },
+      "type": {
+        "title": "type",
+        "type": "string",
+        "displayOrder": 14
+      },
+      "upc": {
+        "title": "upc",
+        "type": "number",
+        "displayOrder": 15
+      },
+      "updated": {
+        "title": "updated",
+        "type": "string",
+        "displayOrder": 16
+      },
+      "~meta": {
+        "title": "~meta",
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "id",
+            "description": "id",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "displayOrder": 17
+      },
+      "address": {
+        "title": "address",
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "displayOrder": 18
+      },
+      "city": {
+        "title": "city",
+        "type": "string",
+        "displayOrder": 19
+      },
+      "code": {
+        "title": "code",
+        "type": "string",
+        "displayOrder": 20
+      },
+      "country": {
+        "title": "country",
+        "type": "string",
+        "displayOrder": 21
+      },
+      "geo": {
+        "title": "geo",
+        "type": "object",
+        "properties": {
+          "accuracy": {
+            "title": "accuracy",
+            "description": "accuracy",
+            "type": "string",
+            "displayOrder": 1
+          },
+          "lat": {
+            "title": "lat",
+            "description": "lat",
+            "type": "number",
+            "displayOrder": 2
+          },
+          "lon": {
+            "title": "lon",
+            "description": "lon",
+            "type": "number",
+            "displayOrder": 3
+          }
+        },
+        "additionalProperties": false,
+        "displayOrder": 22
+      },
+      "phone": {
+        "title": "phone",
+        "type": "string",
+        "displayOrder": 23
+      },
+      "state": {
+        "title": "state",
+        "type": "string",
+        "displayOrder": 24
+      },
+      "website": {
+        "title": "website",
+        "type": "string",
+        "displayOrder": 25
+      }
+    },
+    "title": "Document",
+    "additionalProperties": false
+  },
+  "type": "array",
+  "title": "Document"
+}

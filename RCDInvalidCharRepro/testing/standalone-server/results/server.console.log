@@ -1,0 +1,120 @@
+2026-08-24 14:40:22.423888: BIP1990I: Integration server 'RCD_TEST' starting initialization; version '13.0.8.1' (64-bit) 
+2026-08-24 14:40:22.461100: BIP9905I: Initializing resource managers. 
+2026-08-24 14:40:22.461218: BIP9985I: Using Java version 17. The following integration server components are unavailable with this Java version: FlowSecurityProviders/TFIM, GlobalCacheBackends/WXS, JavaNodes/CORBA, JavaNodes/WSRR, WSSecurityTokenTypes/LTPA. 
+2026-08-24 14:40:24.197630: BIP10112I: The resources from 'imbopentelemetry.lil' have not been loaded because the runtime component 'OpenTelemetry' has not been enabled. Reason: 'Integration Server Configuration'. Further detail: 'server.conf.yaml'. 
+2026-08-24 14:40:26.897344: BIP9906I: Reading deployed resources. 
+2026-08-24 14:40:26.913810: BIP9907I: Initializing deployed resources. 
+2026-08-24 14:40:26.915988: BIP2155I: About to 'Initialize' the deployed resource 'RCDInvalidCharRepro' of type 'Application'. 
+2026-08-24 14:40:27.322450: BIP2155I: About to 'Start' the deployed resource 'RCDInvalidCharRepro' of type 'Application'. 
+2026-08-24 14:40:27.579690: BIP3132I: The HTTP Listener has started listening on port '7801' for 'http' connections. 
+2026-08-24 14:40:27.579778: BIP1996I: Listening on HTTP URL '/build'. 
+Started native listener for HTTP input node on port 7801 for URL /build
+2026-08-24 14:40:27.580234: BIP1996I: Listening on HTTP URL '/noval'. 
+Started native listener for HTTP input node on port 7801 for URL /noval
+2026-08-24 14:40:27.580566: BIP1996I: Listening on HTTP URL '/roundtrip'. 
+Started native listener for HTTP input node on port 7801 for URL /roundtrip
+2026-08-24 14:40:27.580860: BIP1996I: Listening on HTTP URL '/roundtripbad'. 
+Started native listener for HTTP input node on port 7801 for URL /roundtripbad
+2026-08-24 14:40:27.581150: BIP1996I: Listening on HTTP URL '/reparse'. 
+Started native listener for HTTP input node on port 7801 for URL /reparse
+2026-08-24 14:40:27.581452: BIP1996I: Listening on HTTP URL '/reparseondemand'. 
+Started native listener for HTTP input node on port 7801 for URL /reparseondemand
+2026-08-24 14:40:27.581812: BIP1996I: Listening on HTTP URL '/reparsetouched'. 
+Started native listener for HTTP input node on port 7801 for URL /reparsetouched
+2026-08-24 14:40:27.582138: BIP1996I: Listening on HTTP URL '/reparsereadbad'. 
+Started native listener for HTTP input node on port 7801 for URL /reparsereadbad
+2026-08-24 14:40:27.582382: BIP1996I: Listening on HTTP URL '/reparseimmediate'. 
+Started native listener for HTTP input node on port 7801 for URL /reparseimmediate
+2026-08-24 14:40:27.582636: BIP1996I: Listening on HTTP URL '/validatenode'. 
+Started native listener for HTTP input node on port 7801 for URL /validatenode
+2026-08-24 14:40:27.582876: BIP1996I: Listening on HTTP URL '/validatenodebad'. 
+Started native listener for HTTP input node on port 7801 for URL /validatenodebad
+2026-08-24 14:40:27.583104: BIP1996I: Listening on HTTP URL '/rcdblobroundtrip'. 
+Started native listener for HTTP input node on port 7801 for URL /rcdblobroundtrip
+2026-08-24 14:40:27.583336: BIP1996I: Listening on HTTP URL '/badschema'. 
+Started native listener for HTTP input node on port 7801 for URL /badschema
+2026-08-24 14:40:27.583586: BIP1996I: Listening on HTTP URL '/rcdblobroundtripbad'. 
+Started native listener for HTTP input node on port 7801 for URL /rcdblobroundtripbad
+2026-08-24 14:40:27.583804: BIP1996I: Listening on HTTP URL '/asbitstream'. 
+Started native listener for HTTP input node on port 7801 for URL /asbitstream
+2026-08-24 14:40:27.584072: BIP1996I: Listening on HTTP URL '/asbitstreambad'. 
+Started native listener for HTTP input node on port 7801 for URL /asbitstreambad
+2026-08-24 14:40:27.584360: BIP1996I: Listening on HTTP URL '/jcn'. 
+Started native listener for HTTP input node on port 7801 for URL /jcn
+2026-08-24 14:40:27.584580: BIP1996I: Listening on HTTP URL '/jcnbad'. 
+Started native listener for HTTP input node on port 7801 for URL /jcnbad
+2026-08-24 14:40:27.584878: BIP1996I: Listening on HTTP URL '/parse'. 
+Started native listener for HTTP input node on port 7801 for URL /parse
+2026-08-24 14:40:27.585052: BIP2269I: Deployed resource 'com.example.repro.RCDRepro' (uuid='com.example.repro.RCDRepro',type='MessageFlow') started successfully. 
+2026-08-24 14:40:27.585112: BIP9332I: Application 'RCDInvalidCharRepro' has been reloaded successfully. 
+2026-08-24 14:40:28.194708: BIP2866I: IBM App Connect Enterprise administration security is inactive. 
+2026-08-24 14:40:28.210160: BIP3132I: The HTTP Listener has started listening on port '7601' for 'RestAdmin https' connections. 
+2026-08-24 14:40:28.213062: BIP1991I: Integration server has finished initialization. 
+2026-08-24 14:40:28.557834: BIP3120E: Exception condition detected on input node 'com.example.repro.RCDRepro.build in'. 
+2026-08-24 14:40:28.557884: BIP2230E: Error detected whilst processing a message in node 'com.example.repro.RCDRepro.build reply'. 
+2026-08-24 14:40:28.557914: BIP5010E: XML Writing Errors have occurred. 
+2026-08-24 14:40:28.557932: BIP5009E: XML Parsing Errors have occurred. 
+2026-08-24 14:40:28.557962: BIP5004E: An XML parsing error 'An invalid XML character (Unicode: 0x1a) was found in the element content of the document.' occurred on line 1 column 92 when parsing element '/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body/{http://example.org/repro/order}:Description'.  Internal error codes are '1502' and '2'. 
+2026-08-24 14:40:29.599038: BIP3120E: Exception condition detected on input node 'com.example.repro.RCDRepro.badschema in'. 
+2026-08-24 14:40:29.599084: BIP2230E: Error detected whilst processing a message in node 'com.example.repro.RCDRepro.badschema reply'. 
+2026-08-24 14:40:29.599106: BIP5010E: XML Writing Errors have occurred. 
+2026-08-24 14:40:29.599122: BIP5009E: XML Parsing Errors have occurred. 
+2026-08-24 14:40:29.599146: BIP5025E: XML schema validation error 'cvc-complex-type.2.4.d: Expecting an end tag. Invalid content was found starting with element "NS1:Bogus". No child element is expected at this point.' on line '1' column '135' when parsing element '/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body'.  Internal error codes: 5007, 2. 
+2026-08-24 14:40:34.823792: BIP3120E: Exception condition detected on input node 'com.example.repro.RCDRepro.reparse in (BLOB)'. 
+2026-08-24 14:40:34.823840: BIP2230E: Error detected whilst processing a message in node 'com.example.repro.RCDRepro.RCD BLOB->XMLNSC validate C+V'. 
+2026-08-24 14:40:34.823860: BIP5009E: XML Parsing Errors have occurred. 
+2026-08-24 14:40:34.823880: BIP5025E: XML schema validation error 'cvc-complex-type.2.4.d: Expecting an end tag. Invalid content was found starting with element "ord:Bogus". No child element is expected at this point.' on line '5' column '16' when parsing element '/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body'.  Internal error codes: 5007, 2. 
+2026-08-24 14:40:38.998472: BIP3120E: Exception condition detected on input node 'com.example.repro.RCDRepro.reparse touched in (BLOB)'. 
+2026-08-24 14:40:38.998520: BIP2230E: Error detected whilst processing a message in node 'com.example.repro.RCDRepro.touch tree (forces parse)'. 
+2026-08-24 14:40:38.998544: BIP2488E:  (com.example.repro.ForceParse.Main, 17.9) Error detected whilst executing the SQL statement 'DECLARE description CHARACTER InputRoot.XMLNSC.ord:OrderMessage.ord:Body.ord:Description;'. 
+2026-08-24 14:40:38.998560: BIP2498E: (com.example.repro.ForceParse.Main, 18.13) : An error occurred when navigating to path element '3' of the field reference at the given location. 
+2026-08-24 14:40:38.998576: BIP5009E: XML Parsing Errors have occurred. 
+2026-08-24 14:40:38.998608: BIP5004E: An XML parsing error 'An invalid XML character (Unicode: 0x1a) was found in the element content of the document.' occurred on line 4 column 25 when parsing element '/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body/{http://example.org/repro/order}:Description'.  Internal error codes are '1502' and '2'. 
+2026-08-24 14:40:40.054388: BIP3120E: Exception condition detected on input node 'com.example.repro.RCDRepro.reparse readbad in (BLOB)'. 
+2026-08-24 14:40:40.054504: BIP2230E: Error detected whilst processing a message in node 'com.example.repro.RCDRepro.read bogus element'. 
+2026-08-24 14:40:40.054532: BIP2488E:  (com.example.repro.ReadBogus.Main, 17.9) Error detected whilst executing the SQL statement 'DECLARE bogusValue CHARACTER InputRoot.XMLNSC.ord:OrderMessage.ord:Body.ord:Bogus;'. 
+2026-08-24 14:40:40.054552: BIP2498E: (com.example.repro.ReadBogus.Main, 18.13) : An error occurred when navigating to path element '5' of the field reference at the given location. 
+2026-08-24 14:40:40.054572: BIP5009E: XML Parsing Errors have occurred. 
+2026-08-24 14:40:40.054596: BIP5025E: XML schema validation error 'cvc-complex-type.2.4.d: Expecting an end tag. Invalid content was found starting with element "ord:Bogus". No child element is expected at this point.' on line '5' column '16' when parsing element '/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body'.  Internal error codes: 5007, 2. 
+2026-08-24 14:40:41.109176: BIP3120E: Exception condition detected on input node 'com.example.repro.RCDRepro.reparse immediate in (BLOB)'. 
+2026-08-24 14:40:41.109236: BIP2230E: Error detected whilst processing a message in node 'com.example.repro.RCDRepro.RCD BLOB->XMLNSC C+V (immediate)'. 
+2026-08-24 14:40:41.109260: BIP5009E: XML Parsing Errors have occurred. 
+2026-08-24 14:40:41.109284: BIP5025E: XML schema validation error 'cvc-complex-type.2.4.d: Expecting an end tag. Invalid content was found starting with element "ord:Bogus". No child element is expected at this point.' on line '5' column '16' when parsing element '/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body'.  Internal error codes: 5007, 2. 
+2026-08-24 14:40:42.153120: BIP3120E: Exception condition detected on input node 'com.example.repro.RCDRepro.reparse immediate in (BLOB)'. 
+2026-08-24 14:40:42.153172: BIP2230E: Error detected whilst processing a message in node 'com.example.repro.RCDRepro.RCD BLOB->XMLNSC C+V (immediate)'. 
+2026-08-24 14:40:42.153196: BIP5009E: XML Parsing Errors have occurred. 
+2026-08-24 14:40:42.153224: BIP5004E: An XML parsing error 'An invalid XML character (Unicode: 0x1a) was found in the element content of the document.' occurred on line 4 column 25 when parsing element '/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body/{http://example.org/repro/order}:Description'.  Internal error codes are '1502' and '2'. 
+2026-08-24 14:40:43.194012: BIP3120E: Exception condition detected on input node 'com.example.repro.RCDRepro.valnode in'. 
+2026-08-24 14:40:43.194064: BIP2230E: Error detected whilst processing a message in node 'com.example.repro.RCDRepro.validate node C+V'. 
+2026-08-24 14:40:43.194080: BIP5010E: XML Writing Errors have occurred. 
+2026-08-24 14:40:43.194120: BIP5004E: An XML parsing error 'An invalid XML character (Unicode: 0x1a) was found in the element content of the document.' occurred on line 1 column 92 when parsing element '/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body/{http://example.org/repro/order}:Description'.  Internal error codes are '1502' and '2'. 
+2026-08-24 14:40:44.233912: BIP3120E: Exception condition detected on input node 'com.example.repro.RCDRepro.valnodebad in'. 
+2026-08-24 14:40:44.233968: BIP2230E: Error detected whilst processing a message in node 'com.example.repro.RCDRepro.validate node C+V (bad)'. 
+2026-08-24 14:40:44.233988: BIP5010E: XML Writing Errors have occurred. 
+2026-08-24 14:40:44.234032: BIP5026E: XML schema validation error: cvc-complex-type.2.4.d: Expecting an end tag. Invalid content was found starting with element "NS1:Bogus". No child element is expected at this point.  Element: /Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body  Internal error codes: 5007, 2.  Line: 1, Column: 135 
+2026-08-24 14:40:45.276280: BIP3120E: Exception condition detected on input node 'com.example.repro.RCDRepro.blobround in'. 
+2026-08-24 14:40:45.276332: BIP2230E: Error detected whilst processing a message in node 'com.example.repro.RCDRepro.RCD BLOB->XMLNSC C+V (blobround)'. 
+2026-08-24 14:40:45.276348: BIP5009E: XML Parsing Errors have occurred. 
+2026-08-24 14:40:45.276392: BIP5004E: An XML parsing error 'An invalid XML character (Unicode: 0x1a) was found in the element content of the document.' occurred on line 1 column 92 when parsing element '/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body/{http://example.org/repro/order}:Description'.  Internal error codes are '1502' and '2'. 
+2026-08-24 14:40:46.328636: BIP3120E: Exception condition detected on input node 'com.example.repro.RCDRepro.blobroundbad in'. 
+2026-08-24 14:40:46.328692: BIP2230E: Error detected whilst processing a message in node 'com.example.repro.RCDRepro.RCD BLOB->XMLNSC C+V (blobroundbad)'. 
+2026-08-24 14:40:46.328716: BIP5009E: XML Parsing Errors have occurred. 
+2026-08-24 14:40:46.328748: BIP5025E: XML schema validation error 'cvc-complex-type.2.4.d: Expecting an end tag. Invalid content was found starting with element "NS1:Bogus". No child element is expected at this point.' on line '1' column '135' when parsing element '/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body'.  Internal error codes: 5007, 2. 
+2026-08-24 14:40:47.381400: BIP3120E: Exception condition detected on input node 'com.example.repro.RCDRepro.asbits in'. 
+2026-08-24 14:40:47.381452: BIP2230E: Error detected whilst processing a message in node 'com.example.repro.RCDRepro.asbitstream validate'. 
+2026-08-24 14:40:47.381464: BIP2488E:  (com.example.repro.ValidateViaAsbitstream.Main, 9.9) Error detected whilst executing the SQL statement 'DECLARE serialized BLOB ASBITSTREAM(InputRoot.XMLNSC CCSID 1208 OPTIONS options);'. 
+2026-08-24 14:40:47.381484: BIP5010E: XML Writing Errors have occurred. 
+2026-08-24 14:40:47.381520: BIP5004E: An XML parsing error 'An invalid XML character (Unicode: 0x1a) was found in the element content of the document.' occurred on line 1 column 92 when parsing element '/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body/{http://example.org/repro/order}:Description'.  Internal error codes are '1502' and '2'. 
+2026-08-24 14:40:48.422912: BIP3120E: Exception condition detected on input node 'com.example.repro.RCDRepro.asbitsbad in'. 
+2026-08-24 14:40:48.422968: BIP2230E: Error detected whilst processing a message in node 'com.example.repro.RCDRepro.asbitstream validate (bad)'. 
+2026-08-24 14:40:48.422992: BIP2488E:  (com.example.repro.ValidateViaAsbitstream.Main, 9.9) Error detected whilst executing the SQL statement 'DECLARE serialized BLOB ASBITSTREAM(InputRoot.XMLNSC CCSID 1208 OPTIONS options);'. 
+2026-08-24 14:40:48.423016: BIP5010E: XML Writing Errors have occurred. 
+2026-08-24 14:40:48.423048: BIP5026E: XML schema validation error: cvc-complex-type.2.4.d: Expecting an end tag. Invalid content was found starting with element "NS1:Bogus". No child element is expected at this point.  Element: /Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body  Internal error codes: 5007, 2.  Line: 1, Column: 135 
+2026-08-24 14:40:49.465124: BIP3120E: Exception condition detected on input node 'com.example.repro.RCDRepro.jcn in'. 
+2026-08-24 14:40:49.465172: BIP2230E: Error detected whilst processing a message in node 'com.example.repro.RCDRepro.jcn toBitstream validate'. 
+2026-08-24 14:40:49.465188: BIP5010E: XML Writing Errors have occurred. 
+2026-08-24 14:40:49.465224: BIP5004E: An XML parsing error 'An invalid XML character (Unicode: 0x1a) was found in the element content of the document.' occurred on line 1 column 92 when parsing element '/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body/{http://example.org/repro/order}:Description'.  Internal error codes are '1502' and '2'. 
+2026-08-24 14:40:50.509316: BIP3120E: Exception condition detected on input node 'com.example.repro.RCDRepro.jcnbad in'. 
+2026-08-24 14:40:50.509364: BIP2230E: Error detected whilst processing a message in node 'com.example.repro.RCDRepro.jcn toBitstream validate (bad)'. 
+2026-08-24 14:40:50.509384: BIP5010E: XML Writing Errors have occurred. 
+2026-08-24 14:40:50.509428: BIP5026E: XML schema validation error: cvc-complex-type.2.4.d: Expecting an end tag. Invalid content was found starting with element "NS1:Bogus". No child element is expected at this point.  Element: /Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body  Internal error codes: 5007, 2.  Line: 1, Column: 135 

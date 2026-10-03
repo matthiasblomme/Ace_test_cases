@@ -1,0 +1,16 @@
+
+ 
+
+CREATE COMPUTE MODULE RecoveryTestCompute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- ESQL_RECOVERY_CANARY_9F3A2B: grep for this string on the broker work path.
+		-- If it appears in a .esql file  -> ESQL is deployed as readable source.
+		-- If it appears inside a .cmf    -> ESQL was inlined at BAR build time.
+		-- If it appears nowhere          -> ESQL text does not survive deployment.
+		SET OutputRoot = InputRoot;
+		SET OutputRoot.XMLNSC.result.status = 'recovered';
+		SET OutputRoot.XMLNSC.result.marker = 'ESQL_RECOVERY_CANARY_9F3A2B';
+		RETURN TRUE;
+	END;
+END MODULE;

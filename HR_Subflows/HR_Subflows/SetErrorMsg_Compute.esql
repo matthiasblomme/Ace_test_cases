@@ -1,0 +1,32 @@
+BROKER SCHEMA HR_Subflows
+
+
+CREATE COMPUTE MODULE SetErrorMsg_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- CALL CopyMessageHeaders();
+		-- CALL CopyEntireMessage();
+		Set OutputRoot.JSON.Data.EmployeeResponse.DBResp.RowsRetrieved = 0;
+		Set OutputRoot.JSON.Data.EmployeeResponse.DBResp.RowsAdded = 0;
+		Set OutputRoot.JSON.Data.EmployeeResponse.DBResp.RowsUpdated = 0;
+		Set OutputRoot.JSON.Data.EmployeeResponse.DBResp.RowsDeleted = 0;
+		Set OutputRoot.JSON.Data.EmployeeResponse.DBResp.SQLCODE_Errorcode = 0;
+		Set OutputRoot.JSON.Data.EmployeeResponse.DBResp.SQLSTATE_SQLState = '';
+		Set OutputRoot.JSON.Data.EmployeeResponse.DBResp.SQL_Error_Message = 'Error: Can not find Instruction in input message';
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

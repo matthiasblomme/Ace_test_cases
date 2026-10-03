@@ -1,0 +1,24 @@
+BROKER SCHEMA com.example.repro
+
+CREATE COMPUTE MODULE BuildSchemaViolation
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        DECLARE ord NAMESPACE 'http://example.org/repro/order';
+
+        -- CONTROL CASE. Build a tree that genuinely BREAKS the order schema: an
+        -- element (Bogus) that the schema does not declare under Body. This goes
+        -- through the SAME ResetContentDescriptor node (same
+        -- validateMaster=contentAndValue) as the 0x1A case.
+        --
+        -- Purpose: prove the RCD's validation is actually running. If this path
+        -- throws BIP5025/BIP5026 (schema validation error) while the 0x1A path
+        -- passes, then RCD validation IS active and simply has no objection to an
+        -- invalid character - it is not being skipped because "the type already
+        -- matches".
+        CREATE LASTCHILD OF OutputRoot DOMAIN('XMLNSC');
+        SET OutputRoot.XMLNSC.ord:OrderMessage.ord:Body.ord:Description = 'VALID DESCRIPTION';
+        SET OutputRoot.XMLNSC.ord:OrderMessage.ord:Body.ord:Bogus = 'UNDECLARED ELEMENT';
+
+        RETURN TRUE;
+    END;
+END MODULE;

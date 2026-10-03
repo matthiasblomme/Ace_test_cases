@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MessagePool xmlns="http://wwww.ibm.com/iib/test/1.0.0">
+    <InputMessage timestamp="1717705498077" nodeId="FCMComposite_1_2" name="Trigger Flow" id="1717705498077-6">
+        <plainText></plainText>
+    </InputMessage>
+</MessagePool>
