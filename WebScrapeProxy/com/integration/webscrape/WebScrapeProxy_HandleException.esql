@@ -1,0 +1,40 @@
+BROKER SCHEMA com.integration.webscrape
+
+CREATE COMPUTE MODULE WebScrapeProxy_HandleException
+
+    -- Catches WSInput exceptions plus the WSRequest error (4xx/5xx) and
+    -- failure (connection-level) terminals, and returns a JSON error body.
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        DECLARE errorNumber INTEGER;
+        DECLARE errorText CHARACTER;
+        CALL GetLastExceptionDetail(InputExceptionList, errorNumber, errorText);
+
+        SET OutputRoot.HTTPResponseHeader."Content-Type" = 'application/json';
+        SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 502;
+
+        CREATE FIELD OutputRoot.JSON.Data;
+        DECLARE reply REFERENCE TO OutputRoot.JSON.Data;
+        SET reply.jobNumber = COALESCE(Environment.Variables.Scrape.JobNumber, '');
+        SET reply.status    = 'ERROR';
+        SET reply.errorCode = errorNumber;
+        SET reply.errorText = COALESCE(errorText, 'Scrape request failed');
+        RETURN TRUE;
+    END;
+
+    CREATE PROCEDURE GetLastExceptionDetail(
+        IN exceptionList REFERENCE,
+        OUT errorNumber INTEGER,
+        OUT errorText CHARACTER)
+    BEGIN
+        DECLARE refException REFERENCE TO exceptionList.*[1];
+        WHILE LASTMOVE(refException) DO
+            IF refException.Number IS NOT NULL THEN
+                SET errorNumber = refException.Number;
+                SET errorText = refException.Text;
+            END IF;
+            MOVE refException LASTCHILD;
+        END WHILE;
+    END;
+
+END MODULE;

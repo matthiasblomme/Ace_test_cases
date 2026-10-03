@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<SOAP-ENV:Body>
+<SOAP-ENV:Fault>
+<faultcode>SOAP-ENV:Server</faultcode>
+<faultstring>BIP3113E: Exception detected in message flow com.example.repro.RCDRepro (integration node integration_server) </faultstring>
+<faultactor>http://localhost:7801/reparsetouched</faultactor>
+<detail><text>Exception. BIP2230E: Error detected whilst processing a message in node &apos;com.example.repro.RCDRepro.touch tree (forces parse)&apos;. : C:\ci\product-build\WMB\src\DataFlowEngine\SQLNodeLibrary\ImbComputeNode.cpp: 426: ImbComputeNode::evaluate: ComIbmComputeNode: com.example.repro.RCDRepro#FCMComposite_1_31
+BIP2488E:  (com.example.repro.ForceParse.Main, 17.9) Error detected whilst executing the SQL statement &apos;DECLARE description CHARACTER InputRoot.XMLNSC.ord:OrderMessage.ord:Body.ord:Description;&apos;. : C:\ci\product-build\WMB\src\DataFlowEngine\ImbRdl\ImbRdlStatementGroup.cpp: 784: SqlStatementGroup::execute: : 
+BIP2498E: (com.example.repro.ForceParse.Main, 18.13) : An error occurred when navigating to path element &apos;3&apos; of the field reference at the given location. : C:\ci\product-build\WMB\src\DataFlowEngine\ImbRdl\ImbRdlFieldRef.cpp: 3030: SqlFieldReference::evaluate2: : 
+BIP5009E: XML Parsing Errors have occurred. : C:\ci\product-build\WMB\src\MTI\MTIforBroker\GenXmlParser4\ImbXMLNSCParser.cpp: 1063: ImbXMLNSCParser::parseFirstChild: : 
+BIP5004E: An XML parsing error &apos;An invalid XML character (Unicode: 0x1a) was found in the element content of the document.&apos; occurred on line 4 column 25 when parsing element &apos;/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body/{http://example.org/repro/order}:Description&apos;.  Internal error codes are &apos;1502&apos; and &apos;2&apos;. : C:\ci\product-build\WMB\src\MTI\MTIforBroker\GenXmlParser4\ImbXMLNSCDocHandler.cpp: 784: ImbXMLNSCDocHandler::handleParseErrors: ComIbmWSInputNode: com.example.repro.RCDRepro#FCMComposite_1_29</text></detail>
+</SOAP-ENV:Fault>
+</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

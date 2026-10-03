@@ -1,0 +1,18 @@
+BROKER SCHEMA com.example.repro
+
+CREATE COMPUTE MODULE InjectSchemaViolation
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        DECLARE ord NAMESPACE 'http://example.org/repro/order';
+
+        -- Same typed-message setup as InjectInvalidChar, but inject a STRUCTURAL
+        -- violation instead of an invalid char: an element (Bogus) the schema does
+        -- not declare under Body. This IS a content-and-value validation failure
+        -- (cvc-complex-type), so if the RCD's validation actually runs on this
+        -- already-typed tree, the RCD node itself must throw BIP5025 here.
+        SET OutputRoot = InputRoot;
+        SET OutputRoot.XMLNSC.ord:OrderMessage.ord:Body.ord:Bogus = 'UNDECLARED ELEMENT';
+
+        RETURN TRUE;
+    END;
+END MODULE;

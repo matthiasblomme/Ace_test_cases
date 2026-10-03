@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:restapiDescriptor xmlns="http://com.ibm.etools.mft.descriptor.base" xmlns:ns2="http://com.ibm.etools.mft.descriptor.restapi" definitionType="openapi_3" definitionFile="HR_Services_openAPIv3_COMPLETE.json" implementation="gen/HR_Services_openAPI_complete.msgflow" https="false" definitionWithExtRef="false" faultFormat="JSON">
+    <references>
+        <sharedLibraryReference>
+            <libraryName>HR_Subflows</libraryName>
+        </sharedLibraryReference>
+    </references>
+    <ns2:operations>
+        <ns2:operation name="deleteEmployees" implementation="deleteEmployees.subflow"/>
+        <ns2:operation name="insertEmployees" implementation="insertEmployees.subflow"/>
+        <ns2:operation name="upsertEmployees" implementation="upsertEmployees.subflow"/>
+        <ns2:operation name="viewEmployees" implementation="viewEmployees.subflow"/>
+    </ns2:operations>
+    <ns2:errorHandlers>
+        <ns2:errorHandler type="CATCH" implementation="HR_Services_openAPI_completeInputCatchHandler.subflow"/>
+        <ns2:errorHandler type="FAILURE" implementation="HR_Services_openAPI_completeInputFailureHandler.subflow"/>
+    </ns2:errorHandlers>
+    <ns2:validations>
+        <ns2:validation type="INPUT" allowUnexpectedBody="false" onlyValidate2xx="false"/>
+    </ns2:validations>
+</ns2:restapiDescriptor>

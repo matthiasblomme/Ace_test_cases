@@ -1,0 +1,38 @@
+BROKER SCHEMA com.integration.webscrape
+
+CREATE COMPUTE MODULE WebScrapeProxy_BuildRequest
+
+    -- The target site is configured here, not rebuilt. The WSRequest node
+    -- posts (httpMethod="POST" on the node); this module builds the form body.
+    DECLARE govSearchUrl   EXTERNAL CHARACTER 'https://www.recc.org.uk/scheme/members';
+    DECLARE searchPostBody EXTERNAL CHARACTER 'companyname={ref}&postcode=&region=&technology=&submitbutton=submit';
+
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        DECLARE inRequest REFERENCE TO InputRoot.JSON.Data;
+        DECLARE jobNumber CHARACTER TRIM(COALESCE(inRequest.jobNumber, ''));
+        DECLARE searchTerm CHARACTER TRIM(COALESCE(inRequest.topicReference, jobNumber));
+
+        -- Fail fast: a request with no Job# can't address the search.
+        IF jobNumber = '' THEN
+            THROW USER EXCEPTION MESSAGE 2949 VALUES('jobNumber is required in the request body');
+        END IF;
+
+        -- The reply builder reads the Job# from Environment (survives any compute mode).
+        SET Environment.Variables.Scrape.JobNumber = jobNumber;
+
+        -- Point the request at the configured URL and build the form-encoded body.
+        DECLARE encodedTerm CHARACTER REPLACE(searchTerm, ' ', '%20');
+        DECLARE formBody CHARACTER REPLACE(searchPostBody, '{ref}', encodedTerm);
+
+        SET OutputLocalEnvironment.Destination.HTTP.RequestURL = govSearchUrl;
+        SET OutputRoot.Properties = InputRoot.Properties;
+        SET OutputRoot.HTTPRequestHeader."Content-Type" = 'application/x-www-form-urlencoded';
+        -- A browser-like User-Agent stops the site returning a block page.
+        SET OutputRoot.HTTPRequestHeader."User-Agent" =
+            'Mozilla/5.0 (compatible; ACE-WebScrapeProxy/1.0)';
+        SET OutputRoot.BLOB.BLOB = CAST(formBody AS BLOB CCSID 1208);
+        RETURN TRUE;
+    END;
+
+END MODULE;

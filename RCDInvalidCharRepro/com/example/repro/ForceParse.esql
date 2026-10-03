@@ -1,0 +1,29 @@
+BROKER SCHEMA com.example.repro
+
+CREATE COMPUTE MODULE ForceParse
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        DECLARE ord NAMESPACE 'http://example.org/repro/order';
+
+        -- Path I. The upstream RCD is on the DEFAULT Parse Timing (On Demand), so
+        -- its reparse has not happened when this node runs.
+        --
+        -- "SET OutputRoot = InputRoot" is NOT enough to force it: the runtime can
+        -- satisfy a whole-tree copy from the bit stream without ever building the
+        -- tree, and the reply then echoes the input back byte for byte, indentation
+        -- and all. That looks identical to a successful parse in a status code.
+        --
+        -- READING an individual field cannot be satisfied that way. The parser has
+        -- to build the tree to answer it, which is what actually triggers the
+        -- deferred parse. The value is pushed into LocalEnvironment so the read
+        -- cannot be optimized away.
+        DECLARE description CHARACTER
+            InputRoot.XMLNSC.ord:OrderMessage.ord:Body.ord:Description;
+
+        SET OutputRoot = InputRoot;
+        SET OutputLocalEnvironment.Variables.ParsedDescription =
+            COALESCE(description, '<null>');
+
+        RETURN TRUE;
+    END;
+END MODULE;

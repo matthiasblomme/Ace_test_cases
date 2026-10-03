@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<SOAP-ENV:Body>
+<SOAP-ENV:Fault>
+<faultcode>SOAP-ENV:Server</faultcode>
+<faultstring>BIP3113E: Exception detected in message flow com.example.repro.RCDRepro (integration node integration_server) </faultstring>
+<faultactor>http://localhost:7801/reparsereadbad</faultactor>
+<detail><text>Exception. BIP2230E: Error detected whilst processing a message in node &apos;com.example.repro.RCDRepro.read bogus element&apos;. : C:\ci\product-build\WMB\src\DataFlowEngine\SQLNodeLibrary\ImbComputeNode.cpp: 426: ImbComputeNode::evaluate: ComIbmComputeNode: com.example.repro.RCDRepro#FCMComposite_1_35
+BIP2488E:  (com.example.repro.ReadBogus.Main, 17.9) Error detected whilst executing the SQL statement &apos;DECLARE bogusValue CHARACTER InputRoot.XMLNSC.ord:OrderMessage.ord:Body.ord:Bogus;&apos;. : C:\ci\product-build\WMB\src\DataFlowEngine\ImbRdl\ImbRdlStatementGroup.cpp: 784: SqlStatementGroup::execute: : 
+BIP2498E: (com.example.repro.ReadBogus.Main, 18.13) : An error occurred when navigating to path element &apos;5&apos; of the field reference at the given location. : C:\ci\product-build\WMB\src\DataFlowEngine\ImbRdl\ImbRdlFieldRef.cpp: 3030: SqlFieldReference::evaluate2: : 
+BIP5009E: XML Parsing Errors have occurred. : C:\ci\product-build\WMB\src\MTI\MTIforBroker\GenXmlParser4\ImbXMLNSCParser.cpp: 1124: ImbXMLNSCParser::parseRightSibling: : 
+BIP5025E: XML schema validation error &apos;cvc-complex-type.2.4.d: Expecting an end tag. Invalid content was found starting with element &quot;ord:Bogus&quot;. No child element is expected at this point.&apos; on line &apos;5&apos; column &apos;16&apos; when parsing element &apos;/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body&apos;.  Internal error codes: 5007, 2. : C:\ci\product-build\WMB\src\MTI\MTIforBroker\GenXmlParser4\ImbXMLNSCDocHandler.cpp: 784: ImbXMLNSCDocHandler::handleParseErrors: ComIbmWSInputNode: com.example.repro.RCDRepro#FCMComposite_1_33</text></detail>
+</SOAP-ENV:Fault>
+</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

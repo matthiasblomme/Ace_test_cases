@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<SOAP-ENV:Body>
+<SOAP-ENV:Fault>
+<faultcode>SOAP-ENV:Server</faultcode>
+<faultstring>BIP3113E: Exception detected in message flow com.example.repro.RCDRepro (integration node integration_server) </faultstring>
+<faultactor>http://localhost:7801/parse</faultactor>
+<detail><text>Exception. BIP5902W: An error occurred in parser &apos;Root&apos; while parsing the field named &apos;XMLNSC&apos; on behalf of the node or component &apos;com.example.repro.RCDRepro.parse in&apos;. The data being parsed was &apos;3c3f786d6c2076657273696f6e3d22312e302220656e636f64696e673d225554462d38223f3e0a3c6f72643a4f726465724d65737361676520786d6c6e733a6f72643d22687474703a2f2f6578616d706c652e6f72672f726570726f2f6f72646572223e0a20203c6f72643a426f64793e0a202020203c6f72643a4465736372697074696f6e3e4142431a4445463c2f6f72643a4465736372697074696f6e3e0a20203c2f6f72643a426f64793e0a3c2f6f72643a4f726465724d6573736167653e0a&apos;. : C:\ci\product-build\WMB\src\DataFlowEngine\MessageServices\ImbRootParser.cpp: 888: ImbRootParser::parseNextItem: ComIbmWSInputNode: com.example.repro.RCDRepro#FCMComposite_1_9
+BIP5009E: XML Parsing Errors have occurred. : C:\ci\product-build\WMB\src\MTI\MTIforBroker\GenXmlParser4\ImbXMLNSCParser.cpp: 1096: ImbXMLNSCParser::parseLastChild: : 
+BIP5004E: An XML parsing error &apos;An invalid XML character (Unicode: 0x1a) was found in the element content of the document.&apos; occurred on line 4 column 25 when parsing element &apos;/Root/XMLNSC/{http://example.org/repro/order}:OrderMessage/{http://example.org/repro/order}:Body/{http://example.org/repro/order}:Description&apos;.  Internal error codes are &apos;1502&apos; and &apos;2&apos;. : C:\ci\product-build\WMB\src\MTI\MTIforBroker\GenXmlParser4\ImbXMLNSCDocHandler.cpp: 784: ImbXMLNSCDocHandler::handleParseErrors: ComIbmWSInputNode: com.example.repro.RCDRepro#FCMComposite_1_9</text></detail>
+</SOAP-ENV:Fault>
+</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

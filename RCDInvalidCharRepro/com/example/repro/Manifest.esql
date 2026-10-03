@@ -1,0 +1,17 @@
+BROKER SCHEMA com.example.repro
+
+CREATE COMPUTE MODULE Manifest
+    CREATE FUNCTION Main() RETURNS BOOLEAN
+    BEGIN
+        -- The manifest side. The WSInput node has Parse Timing = Complete, so the
+        -- inbound bitstream is parsed before this node runs. The 0x1A in the element
+        -- content fails XML well-formedness and the parse throws BIP5004.
+        --
+        -- Note this copy is NOT what forces the parse: a whole-tree copy can be
+        -- satisfied straight from the bit stream. Parse Timing = Complete on the
+        -- input node is what guarantees it. See ForceParse.esql for the case where
+        -- the parse has to be triggered deliberately.
+        SET OutputRoot = InputRoot;
+        RETURN TRUE;
+    END;
+END MODULE;

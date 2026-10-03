@@ -1,0 +1,1 @@
+<NS1:OrderMessage xmlns:NS1="http://example.org/repro/order"><NS1:Body><NS1:Description>ABCDEF</NS1:Description></NS1:Body></NS1:OrderMessage>

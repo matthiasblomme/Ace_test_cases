@@ -1,0 +1,15 @@
+
+CREATE COMPUTE MODULE ReadQueueWithEsal_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+
+		SET Environment.Variables.loop = true;
+		
+		X: WHILE Environment.Variables.loop DO
+			PROPAGATE TO TERMINAL 'out1';
+		END WHILE X;			
+
+		RETURN TRUE;
+	END;
+
+END MODULE;
