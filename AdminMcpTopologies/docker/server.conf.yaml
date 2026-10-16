@@ -1,0 +1,5 @@
+MCP:
+  Admin:
+    enabled: true
+    port: 7650
+    readOnly: true

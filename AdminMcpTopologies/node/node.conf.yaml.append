@@ -1,0 +1,4 @@
+MCP:
+  Admin:
+    enabled: true
+    readOnly: true

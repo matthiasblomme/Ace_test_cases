@@ -1,0 +1,12 @@
+RestAdminListener:
+  port: 7611
+ResourceManagers:
+  HTTPConnector:
+    ListenerPort: 7811
+  HTTPSConnector:
+    ListenerPort: 7851
+MCP:
+  Admin:
+    enabled: true
+    port: 7651
+    readOnly: true
