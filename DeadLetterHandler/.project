@@ -3,8 +3,6 @@
 	<name>DLH</name>
 	<comment></comment>
 	<projects>
-		<project>DLHJava</project>
-		<project>AdapterLibrary</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
