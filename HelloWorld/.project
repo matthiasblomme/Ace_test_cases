@@ -3,7 +3,6 @@
 	<name>HelloWorld</name>
 	<comment></comment>
 	<projects>
-		<project>SchemaLib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
