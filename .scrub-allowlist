@@ -1,0 +1,19 @@
+# public-repo-scrub allowlist: generic values the gate flags in this repo.
+# Every entry was checked by hand on 2026-10-19; customer terms can never go here.
+
+# joke sample address in SelectTheRow test data
+baba@yaga.com
+# joke sample address in SelectTheRow test data
+john@wick.com
+# joke sample address in SelectTheRow test data
+shootemup@aol.com
+# vendor-style example token in the RestBasicAuthRepro OpenAPI document (decision D1)
+U9gb2OCO29LaSUGz2EYUTNULCK26qhkl
+# placeholder SharePoint tenant in SharepointFileUpload
+example.sharepoint.com
+# employer namespace in PackageTest (decision D4)
+pack.id.com
+# public site the WebScrapeProxy demo really targets (decision D5)
+recc.org.uk
+# public site the WebScrapeProxy demo really targets (decision D5)
+www.recc.org.uk
