@@ -3,8 +3,6 @@
 	<name>DummyAPI</name>
 	<comment></comment>
 	<projects>
-		<project>AdapterLibrary</project>
-		<project>AuthUtilsLib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
