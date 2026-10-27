@@ -215,3 +215,21 @@ to test and see the differences in behaviour.
 
 ### XmlFolderType
 Testing XMLNSC field type identification and reference types (Folder, Element, Attribute, Value) for XML tree navigation.
+
+### FieldValueTreeCopy
+What a bare field-to-field `SET` carries over (attributes, children) versus `FIELDVALUE()`, into an XMLNSC and a JSON target.
+
+### HttpReplyStatusCode
+The three documented ways to set an HTTP reply status (`ReplyStatusCode`, `HTTPReplyHeader`, `HTTPResponseHeader`), in `destinationAndMessage` and `message` compute mode.
+
+### NsPrefixForm
+Whether a slashed `nsPrefix` on a schema-qualified flow and subflow breaks the runtime or a headless `mqsicreatebar` build (the Toolkit writes underscores).
+
+### RestApiBrokerSchema
+A REST API whose operation and error-handler ESQL sits in a dotted broker schema instead of the wizard's default schema.
+
+### UnitTestCodeBuilt
+A NodeSpy unit test project written in code (no recorded messages) for the `UnitTestIgnoreFields` application, compiled by `ibmint deploy` and run with `IntegrationServer --test-project`.
+
+### XmlToJsonArrayLoop
+Repeating XML elements to a JSON array with an explicit `JSON.Array` and a REFERENCE / `LASTMOVE` walk, for 0, 1 and n items.

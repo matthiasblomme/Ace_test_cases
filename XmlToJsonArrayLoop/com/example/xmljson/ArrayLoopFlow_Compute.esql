@@ -1,0 +1,29 @@
+BROKER SCHEMA com.example.xmljson
+
+-- The ace-flow-builder repeating-element pattern (generation.md, decision W9 + W10):
+-- explicit JSON.Array, REFERENCE walk with LASTMOVE / MOVE NEXTSIBLING NAME.
+-- ?mode=fv   copies leaf values with FIELDVALUE (default)
+-- ?mode=bare copies with a bare field reference, to compare what each form carries over
+-- Input: <Items><Item><Name/><Value/></Item>...</Items>
+CREATE COMPUTE MODULE ArrayLoopFlow_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		DECLARE mode CHARACTER COALESCE(FIELDVALUE(InputLocalEnvironment.HTTP.Input.QueryString.mode), 'fv');
+		CREATE LASTCHILD OF OutputRoot DOMAIN('JSON');
+		CREATE FIELD OutputRoot.JSON.Data.items IDENTITY (JSON.Array)items;
+		DECLARE inRef  REFERENCE TO InputRoot.XMLNSC.Items.Item[1];
+		DECLARE outRef REFERENCE TO OutputRoot;
+		WHILE LASTMOVE(inRef) DO
+			CREATE LASTCHILD OF OutputRoot.JSON.Data.items AS outRef NAME 'Item';
+			IF mode = 'bare' THEN
+				SET outRef.name  = inRef.Name;
+				SET outRef.value = inRef.Value;
+			ELSE
+				SET outRef.name  = FIELDVALUE(inRef.Name);
+				SET outRef.value = FIELDVALUE(inRef.Value);
+			END IF;
+			MOVE inRef NEXTSIBLING NAME 'Item';
+		END WHILE;
+		RETURN TRUE;
+	END;
+END MODULE;

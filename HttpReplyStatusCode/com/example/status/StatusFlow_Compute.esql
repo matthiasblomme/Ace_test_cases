@@ -1,0 +1,26 @@
+BROKER SCHEMA com.example.status
+
+-- Sets reply status 202 in one of three documented ways, picked by ?v=
+--   rsc      : OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode
+--   replyhdr : OutputRoot.HTTPReplyHeader."X-Original-HTTP-Status-Code"
+--   resphdr  : OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code"
+--   none     : nothing set (control, expect 200)
+-- The node's computeMode is destinationAndMessage, so the LocalEnvironment write is kept.
+CREATE COMPUTE MODULE StatusFlow_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		DECLARE variant CHARACTER COALESCE(FIELDVALUE(InputLocalEnvironment.HTTP.Input.QueryString.v), 'none');
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputRoot.Properties = InputRoot.Properties;
+		IF variant = 'rsc' THEN
+			SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 202;
+		ELSEIF variant = 'replyhdr' THEN
+			SET OutputRoot.HTTPReplyHeader."X-Original-HTTP-Status-Code" = 202;
+		ELSEIF variant = 'resphdr' THEN
+			SET OutputRoot.HTTPResponseHeader."X-Original-HTTP-Status-Code" = 202;
+		END IF;
+		CREATE LASTCHILD OF OutputRoot DOMAIN('JSON');
+		SET OutputRoot.JSON.Data.variant = variant;
+		RETURN TRUE;
+	END;
+END MODULE;

@@ -1,0 +1,22 @@
+BROKER SCHEMA com.example.fvcopy
+
+-- What does a bare field-to-field SET carry over versus FIELDVALUE()?
+-- Input:  <In><Name ...>...</Name></In>
+-- ?out=xml  (default) writes <Out><bare/><fv/></Out> in XMLNSC
+-- ?out=json writes {"bare":..., "fv":...}
+CREATE COMPUTE MODULE FvCopyFlow_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		DECLARE outFmt CHARACTER COALESCE(FIELDVALUE(InputLocalEnvironment.HTTP.Input.QueryString.out), 'xml');
+		IF outFmt = 'json' THEN
+			CREATE LASTCHILD OF OutputRoot DOMAIN('JSON');
+			SET OutputRoot.JSON.Data.bare = InputRoot.XMLNSC.In.Name;
+			SET OutputRoot.JSON.Data.fv   = FIELDVALUE(InputRoot.XMLNSC.In.Name);
+		ELSE
+			CREATE LASTCHILD OF OutputRoot DOMAIN('XMLNSC');
+			SET OutputRoot.XMLNSC.Out.bare = InputRoot.XMLNSC.In.Name;
+			SET OutputRoot.XMLNSC.Out.fv   = FIELDVALUE(InputRoot.XMLNSC.In.Name);
+		END IF;
+		RETURN TRUE;
+	END;
+END MODULE;
