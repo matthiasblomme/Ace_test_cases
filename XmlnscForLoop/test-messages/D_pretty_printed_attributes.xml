@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Orders>
+  <Order status="open">
+    <id>1</id>
+  </Order>
+  <Order status="open">
+    <id>2</id>
+  </Order>
+  <Order status="closed">
+    <id>3</id>
+  </Order>
+</Orders>

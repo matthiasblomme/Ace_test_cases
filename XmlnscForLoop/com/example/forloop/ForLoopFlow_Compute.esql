@@ -1,0 +1,136 @@
+BROKER SCHEMA com.example.forloop
+
+-- Does FOR o AS path.Order[] walk XMLNSC repeating elements the same way as a
+-- REFERENCE + WHILE LASTMOVE walk?
+-- Input:  <Orders><Order><id>n</id></Order>...</Orders>
+--         ?ns=1 walks <o:Orders xmlns:o="urn:example:orders"> (prefixed or default namespace)
+-- Output: JSON with, per method, the iteration count and the ids seen in order, plus the
+--         first children of the Orders element as FIELDNAME:FIELDTYPE (what the parser built).
+-- Shared by ForLoopFlow (/forloop) and ForLoopMixedFlow (/forloopmixed, mixed content kept).
+CREATE COMPUTE MODULE ForLoopFlow_Compute
+	DECLARE ns NAMESPACE 'urn:example:orders';
+
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		CREATE LASTCHILD OF OutputRoot DOMAIN('JSON');
+		IF COALESCE(FIELDVALUE(InputLocalEnvironment.HTTP.Input.QueryString.ns), '0') = '1' THEN
+			CALL WalkNamespaced();
+		ELSE
+			CALL WalkPlain();
+		END IF;
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE WalkPlain()
+	BEGIN
+		DECLARE n INTEGER 0;
+		DECLARE ids CHARACTER '';
+		SET OutputRoot.JSON.Data.pathMode = 'plain';
+
+		-- Method FOR
+		FOR o AS InputRoot.XMLNSC.Orders.Order[] DO
+			SET n = n + 1;
+			SET ids = ids || ',' || COALESCE(FIELDVALUE(o.*:id), '?');
+		END FOR;
+		CALL PutResult('forLoop', n, ids);
+
+		-- Method WHILE, MOVE ... REPEAT TYPE NAME
+		SET n = 0;
+		SET ids = '';
+		DECLARE r1 REFERENCE TO InputRoot.XMLNSC.Orders.Order[1];
+		WHILE LASTMOVE(r1) DO
+			SET n = n + 1;
+			SET ids = ids || ',' || COALESCE(FIELDVALUE(r1.*:id), '?');
+			MOVE r1 NEXTSIBLING REPEAT TYPE NAME;
+		END WHILE;
+		CALL PutResult('whileRepeatTypeName', n, ids);
+
+		-- Method WHILE, MOVE ... NAME 'Order' (the Flow Pilot form)
+		SET n = 0;
+		SET ids = '';
+		DECLARE r2 REFERENCE TO InputRoot.XMLNSC.Orders.Order[1];
+		WHILE LASTMOVE(r2) DO
+			SET n = n + 1;
+			SET ids = ids || ',' || COALESCE(FIELDVALUE(r2.*:id), '?');
+			MOVE r2 NEXTSIBLING NAME 'Order';
+		END WHILE;
+		CALL PutResult('whileName', n, ids);
+
+		DECLARE p REFERENCE TO InputRoot.XMLNSC.Orders;
+		CALL PutChildren(p);
+	END;
+
+	CREATE PROCEDURE WalkNamespaced()
+	BEGIN
+		DECLARE n INTEGER 0;
+		DECLARE ids CHARACTER '';
+		SET OutputRoot.JSON.Data.pathMode = 'ns';
+
+		-- Method FOR
+		FOR o AS InputRoot.XMLNSC.ns:Orders.ns:Order[] DO
+			SET n = n + 1;
+			SET ids = ids || ',' || COALESCE(FIELDVALUE(o.*:id), '?');
+		END FOR;
+		CALL PutResult('forLoop', n, ids);
+
+		-- Method WHILE, MOVE ... REPEAT TYPE NAME
+		SET n = 0;
+		SET ids = '';
+		DECLARE r1 REFERENCE TO InputRoot.XMLNSC.ns:Orders.ns:Order[1];
+		WHILE LASTMOVE(r1) DO
+			SET n = n + 1;
+			SET ids = ids || ',' || COALESCE(FIELDVALUE(r1.*:id), '?');
+			MOVE r1 NEXTSIBLING REPEAT TYPE NAME;
+		END WHILE;
+		CALL PutResult('whileRepeatTypeName', n, ids);
+
+		-- Method WHILE, MOVE ... NAME 'Order' (the Flow Pilot form, no NAMESPACE clause)
+		SET n = 0;
+		SET ids = '';
+		DECLARE r2 REFERENCE TO InputRoot.XMLNSC.ns:Orders.ns:Order[1];
+		WHILE LASTMOVE(r2) DO
+			SET n = n + 1;
+			SET ids = ids || ',' || COALESCE(FIELDVALUE(r2.*:id), '?');
+			MOVE r2 NEXTSIBLING NAME 'Order';
+		END WHILE;
+		CALL PutResult('whileName', n, ids);
+
+		-- Method WHILE, MOVE ... NAMESPACE ns NAME 'Order'
+		SET n = 0;
+		SET ids = '';
+		DECLARE r3 REFERENCE TO InputRoot.XMLNSC.ns:Orders.ns:Order[1];
+		WHILE LASTMOVE(r3) DO
+			SET n = n + 1;
+			SET ids = ids || ',' || COALESCE(FIELDVALUE(r3.*:id), '?');
+			MOVE r3 NEXTSIBLING NAMESPACE ns NAME 'Order';
+		END WHILE;
+		CALL PutResult('whileNsName', n, ids);
+
+		DECLARE p REFERENCE TO InputRoot.XMLNSC.ns:Orders;
+		CALL PutChildren(p);
+	END;
+
+	CREATE PROCEDURE PutResult(IN method CHARACTER, IN n INTEGER, IN ids CHARACTER)
+	BEGIN
+		SET OutputRoot.JSON.Data.{method}.iterations = n;
+		SET OutputRoot.JSON.Data.{method}.ids = SUBSTRING(ids FROM 2);
+	END;
+
+	-- Every child of the Orders element, unfiltered: count, and the first 12 as FIELDNAME:FIELDTYPE
+	CREATE PROCEDURE PutChildren(IN parent REFERENCE)
+	BEGIN
+		DECLARE c REFERENCE TO parent;
+		DECLARE k INTEGER 0;
+		DECLARE kids CHARACTER '';
+		MOVE c FIRSTCHILD;
+		WHILE LASTMOVE(c) DO
+			SET k = k + 1;
+			IF k <= 12 THEN
+				SET kids = kids || ',' || COALESCE(FIELDNAME(c), '') || ':' || CAST(FIELDTYPE(c) AS CHARACTER);
+			END IF;
+			MOVE c NEXTSIBLING;
+		END WHILE;
+		SET OutputRoot.JSON.Data.parentChildren.total = k;
+		SET OutputRoot.JSON.Data.parentChildren.first12 = SUBSTRING(kids FROM 2);
+	END;
+END MODULE;

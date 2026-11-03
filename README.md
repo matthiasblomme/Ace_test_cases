@@ -233,3 +233,6 @@ A NodeSpy unit test project written in code (no recorded messages) for the `Unit
 
 ### XmlToJsonArrayLoop
 Repeating XML elements to a JSON array with an explicit `JSON.Array` and a REFERENCE / `LASTMOVE` walk, for 0, 1 and n items.
+
+### XmlnscForLoop
+Whether `FOR o AS path.Order[]` walks XMLNSC repeating elements like a REFERENCE / `LASTMOVE` walk (`REPEAT TYPE NAME`, `NAME 'Order'`), with interleaved siblings, namespaces, mixed content and 0, 1, 3 and 1000 items.
