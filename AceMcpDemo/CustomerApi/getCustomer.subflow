@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmMQOutput.msgnode="ComIbmMQOutput.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="getCustomer.subflow" nsPrefix="getCustomer.subflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" nodeLayoutStyle="RECTANGLE">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <translation xmi:type="utility:TranslatableString" key="getCustomer" bundleName="getCustomer" pluginId="CustomerApi"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/CustomerApi/icons/full/obj16/getCustomer.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/CustomerApi/icons/full/obj30/getCustomer.gif"/>
+    <composition>
+      <nodes xmi:type="eflow:FCMSource" xmi:id="InTerminal.Input_1" location="25,25">
+        <translation xmi:type="utility:TranslatableString" key="Input" bundleName="getCustomer" pluginId="CustomerApi"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output_1" location="775,25">
+        <translation xmi:type="utility:TranslatableString" key="Output" bundleName="getCustomer" pluginId="CustomerApi"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="175,98" computeExpression="esql://routine/com.demo.customers#getCustomer_Audit.Main">
+        <translation xmi:type="utility:ConstantString" string="Build audit record"/>
+      </nodes>
+      <!-- The audit write sits BEFORE the database read on purpose: when the ODBC
+           credential is wrong, MQ still succeeds and the audit record lands on the
+           queue, so only the read fails. The node carries queueName only - the client
+           connection comes from the DEMO_MQ MQEndpoint policy, applied server-wide
+           through remoteDefaultQueueManager in overrides/server.conf.yaml (see
+           ../CustomerApi.server-overrides/server.conf.yaml and DEPLOY.md). -->
+      <nodes xmi:type="ComIbmMQOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="375,98" queueName="DEV.MCP.AUDIT" messageContext="default">
+        <translation xmi:type="utility:ConstantString" string="Audit to DEV.MCP.AUDIT"/>
+      </nodes>
+      <!-- dataSource is the literal ODBC DSN name, not a property reference: it is how
+           describe_message_flow tells an operator which credential a failing read needs.
+           connectDatasourceBeforeFlowStarts stays false (the node default, written out
+           because the demo depends on it) so a wrong credential fails on the first
+           message instead of at deploy time. -->
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="575,98" dataSource="ACE_SQL_TEST" connectDatasourceBeforeFlowStarts="false" computeExpression="esql://routine/com.demo.customers#getCustomer_Compute.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Read customer and build reply"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_1" sourceNode="InTerminal.Input_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="OutTerminal.Output_1" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer/>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

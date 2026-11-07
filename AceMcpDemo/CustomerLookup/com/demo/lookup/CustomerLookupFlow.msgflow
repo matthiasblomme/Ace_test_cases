@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmMQOutput.msgnode="ComIbmMQOutput.msgnode" xmlns:ComIbmTrace.msgnode="ComIbmTrace.msgnode" xmlns:ComIbmWSInput.msgnode="ComIbmWSInput.msgnode" xmlns:ComIbmWSReply.msgnode="ComIbmWSReply.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility"
+    nsURI="com/demo/lookup/CustomerLookupFlow.msgflow" nsPrefix="com_demo_lookup_CustomerLookupFlow.msgflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" nodeLayoutStyle="RECTANGLE">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <translation xmi:type="utility:TranslatableString" key="CustomerLookupFlow" bundleName="com/demo/lookup/CustomerLookupFlow" pluginId="CustomerLookup"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/CustomerLookup/icons/full/obj16/CustomerLookupFlow.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/CustomerLookup/icons/full/obj30/CustomerLookupFlow.gif"/>
+    <composition>
+      <!-- Plain HTTP, no TLS: this endpoint exists to be driven from a demo script on the
+           same machine. parseQueryString is what puts ?customerId=1001 under
+           InputLocalEnvironment.HTTP.Input.QueryString; without it the parameter is only
+           visible as raw text in the request line.
+           The body domain is BLOB because the request carries no body and nothing in the
+           flow reads one - a BLOB domain cannot fail on an empty or unexpected payload,
+           where a JSON domain can. -->
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="40,60" URLSpecifier="/customerlookup/customers" parseQueryString="true" messageDomainProperty="BLOB">
+        <translation xmi:type="utility:ConstantString" string="Receive customer lookup request"/>
+      </nodes>
+      <!-- The id is screened here, before the queue and before the database, so a missing
+           or non-numeric customerId leaves on out1 with a 400 and never reaches the DSN.
+           computeMode is destinationAndMessage because that 400 is written to
+           OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode; in plain message mode
+           the write is discarded and the caller gets 200 (validated_rules.md rule 16). -->
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="260,60" computeExpression="esql://routine/com.demo.lookup#CustomerLookupFlow_Audit.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Screen id and build audit record"/>
+      </nodes>
+      <!-- The audit write sits BEFORE the database read on purpose: when the ODBC
+           credential is wrong, MQ still succeeds and the audit record lands on the queue,
+           so the broken half of the application is unambiguous. The node carries queueName
+           only - the client connection comes from the DEMO_MQ MQEndpoint policy in the
+           CustomerApiPolicies project, applied server-wide through remoteDefaultQueueManager
+           in overrides/server.conf.yaml (see DEPLOY.md).
+           messageContext is default rather than the Toolkit's passAll: the connecting
+           identity has put authority only, and passAll fails MQOPEN with MQRC 2035
+           (validated_rules.md rule 23). -->
+      <nodes xmi:type="ComIbmMQOutput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="480,60" queueName="DEV.MCP.AUDIT" messageContext="default" policyUrl="{CustomerApiPolicies}:DEMO_MQ">
+        <translation xmi:type="utility:ConstantString" string="Audit to DEV.MCP.AUDIT"/>
+      </nodes>
+      <!-- dataSource is the literal ODBC DSN name, and the node LABEL repeats it.
+           That repetition is deliberate and was measured, not assumed: on 13.0.9.0 the
+           admin MCP tool describe_message_flow returns each node's name, type and wiring
+           but not its properties (a Compute node's metadata comes back as {}), so the
+           dataSource attribute alone is invisible to an agent. Naming the node after the
+           external resource it touches is what makes the DSN discoverable over MCP, and is
+           worth doing in any flow an agent is expected to introspect.
+           connectDatasourceBeforeFlowStarts stays false (the node default, written out
+           because the demo depends on it) so a wrong credential lets the application reach
+           state started and fails on the first message instead of at deploy time. -->
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4" location="700,60" dataSource="ACE_SQL_TEST" connectDatasourceBeforeFlowStarts="false" computeExpression="esql://routine/com.demo.lookup#CustomerLookupFlow_ReadCustomer.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Read customer over ODBC DSN ACE_SQL_TEST"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5" location="940,60">
+        <translation xmi:type="utility:ConstantString" string="Return reply"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_6" location="260,220" computeExpression="esql://routine/com.demo.lookup#CustomerLookupFlow_HandleException.Main" computeMode="destinationAndMessage">
+        <translation xmi:type="utility:ConstantString" string="Build 500 reply from exception"/>
+      </nodes>
+      <!-- localError, never a file path: a C:\temp literal breaks on another host and is
+           invisible to operations (validated_rules.md rule 21). Only the error path traces,
+           and it traces context plus the exception list, never the payload. -->
+      <nodes xmi:type="ComIbmTrace.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_7" location="560,220" destination="localError" pattern="CustomerLookupFlow error ${Environment} ${ExceptionList}">
+        <translation xmi:type="utility:ConstantString" string="Log exception to system log"/>
+      </nodes>
+      <!-- Happy path: receive -> audit -> queue -> database -> reply -->
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <!-- Bad or missing customerId: straight to the reply with a 400, no queue, no DSN -->
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.out1" targetTerminalName="InTerminal.in"/>
+      <!-- Error path: catch AND failure of the input node, plus the database Compute's own
+           failure terminal, all reach the one handler -> trace -> 500 reply -->
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.catch" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_7" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_8" targetNode="FCMComposite_1_6" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.failure" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_9" targetNode="FCMComposite_1_7" sourceNode="FCMComposite_1_6" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_10" targetNode="FCMComposite_1_5" sourceNode="FCMComposite_1_7" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer/>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

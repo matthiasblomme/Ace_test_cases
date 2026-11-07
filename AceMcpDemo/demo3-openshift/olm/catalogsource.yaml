@@ -1,0 +1,13 @@
+apiVersion: operators.coreos.com/v1alpha1   # API group and version that defines the CatalogSource resource
+kind: CatalogSource                         # Registers an operator catalog index with OLM
+metadata:
+  name: ibm-operator-catalog                # Referenced by name from the Subscription's spec.source
+  namespace: openshift-marketplace          # On OpenShift catalog sources live here; on plain Kubernetes it is 'olm'
+spec:
+  displayName: IBM Operator Catalog         # Shown in the OperatorHub / Software Catalog UI
+  publisher: IBM                            # Publisher name shown alongside the catalog
+  sourceType: grpc                          # The image serves a gRPC catalog index
+  image: icr.io/cpopen/ibm-operator-catalog:latest   # Public index image; no entitlement key needed to pull this one
+  updateStrategy:
+    registryPoll:
+      interval: 30m                         # How often OLM re-reads the index image for new operator versions

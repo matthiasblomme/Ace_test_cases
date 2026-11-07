@@ -1,0 +1,110 @@
+BROKER SCHEMA com.demo.customers
+
+CREATE COMPUTE MODULE CustomerApiInputCatchHandler_Compute
+	-- An exception thrown anywhere inside an operation is rolled back to the HTTP Input
+	-- node and arrives on its catch terminal, which the REST API wires to this handler.
+	-- A failed database read is the case this demo cares about.
+	-- The reply carries the exception detail on purpose: a caller that gets an empty
+	-- 500 cannot tell a wrong credential from a broken flow, and this API is driven by
+	-- tools rather than by a human reading a log. That is a demo choice, not a
+	-- production one - see DEPLOY.md.
+	-- LocalEnvironment is copied before the status is written because the HTTP Reply
+	-- node needs the request identifier it carries, and this node propagates its own
+	-- copy (computeMode="destinationAndMessage").
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		DECLARE messageNumber INTEGER;
+		DECLARE messageDetail CHARACTER;
+		CALL getExceptionDetail(InputExceptionList, messageNumber, messageDetail);
+
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+		SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 500;
+
+		CALL CopyMessageHeaders();
+		CREATE LASTCHILD OF OutputRoot DOMAIN('JSON');
+		CREATE FIRSTCHILD OF OutputRoot.JSON NAME 'Data';
+		SET OutputRoot.JSON.Data.status = 'internal server error';
+		SET OutputRoot.JSON.Data.description = COALESCE(messageDetail, 'no exception detail available');
+		SET OutputRoot.JSON.Data.bipCode = messageNumber;
+		SET OutputRoot.JSON.Data.source = 'catch';
+		SET OutputRoot.JSON.Data.trackingId = Environment.Variables.Tracking.Id;
+
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE getExceptionDetail(IN refExceptionList REFERENCE,
+			OUT messageNumber INTEGER, OUT messageDetail CHARACTER)
+	-- Walking the exception tree by LASTCHILD alone reports the wrong cause for a
+	-- database failure. ACE emits one BIP2322 per ODBC diagnostic record, and those
+	-- records are SIBLINGS: for a rejected login the first carries SQL state 28000,
+	-- native error 18456 and 'Login failed for user ...', while the last carries only
+	-- the driver manager's IM006 'SQLSetConnectAttr failed'. LASTCHILD reaches just the
+	-- last one, so the real fault is invisible. Every child that carries a Number is
+	-- therefore scanned at each level, in order, and the tree is still descended by
+	-- LASTCHILD to reach the next level down.
+	BEGIN
+		DECLARE refException REFERENCE TO refExceptionList.*[1];
+		DECLARE refChild REFERENCE TO refExceptionList;
+		DECLARE childCount INTEGER;
+		DECLARE childIndex INTEGER;
+		-- The accumulator is kept delimiter-wrapped (' | a | b | ') so a repeat is
+		-- detected on whole values. A plain substring test would drop the native error
+		-- '0' because those characters already occur inside '28000'.
+		DECLARE detail CHARACTER ' | ';
+
+		WHILE LASTMOVE(refException) DO
+			IF refException.Number IS NOT NULL THEN
+				SET messageNumber = refException.Number;
+				CALL appendRecordInserts(refException, detail);
+			END IF;
+
+			SET childCount = CARDINALITY(refException.*[]);
+			SET childIndex = 1;
+			WHILE childIndex <= childCount DO
+				MOVE refChild TO refException.*[childIndex];
+				IF LASTMOVE(refChild) AND refChild.Number IS NOT NULL THEN
+					SET messageNumber = refChild.Number;
+					CALL appendRecordInserts(refChild, detail);
+				END IF;
+				SET childIndex = childIndex + 1;
+			END WHILE;
+
+			MOVE refException LASTCHILD;
+		END WHILE;
+
+		IF detail = ' | ' THEN
+			SET messageDetail = NULL;
+		ELSE
+			SET messageDetail = SUBSTRING(detail FROM 4 FOR LENGTH(detail) - 6);
+		END IF;
+	END;
+
+	CREATE PROCEDURE appendRecordInserts(IN refRecord REFERENCE, INOUT detail CHARACTER)
+	-- The facts of a BIP message live in its Insert children, not in Text, which is
+	-- only the message template.
+	BEGIN
+		DECLARE insertCount INTEGER;
+		DECLARE insertIndex INTEGER;
+		DECLARE insertText CHARACTER;
+		SET insertCount = CARDINALITY(refRecord.Insert[]);
+		SET insertIndex = 1;
+		WHILE insertIndex <= insertCount DO
+			SET insertText = refRecord.Insert[insertIndex].Text;
+			IF insertText IS NOT NULL AND insertText <> ''
+					AND POSITION(' | ' || insertText || ' | ' IN detail) = 0 THEN
+				SET detail = detail || insertText || ' | ';
+			END IF;
+			SET insertIndex = insertIndex + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+END MODULE;

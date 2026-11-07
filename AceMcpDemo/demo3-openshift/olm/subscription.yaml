@@ -1,0 +1,16 @@
+apiVersion: operators.coreos.com/v1alpha1   # API group and version for Subscription resources
+kind: Subscription                          # Tells OLM to install an operator and track a channel
+metadata:
+  name: ibm-appconnect                      # Subscription name
+  namespace: openshift-operators            # Cluster-wide install. This namespace already carries a global
+                                            # OperatorGroup, so the operator can reconcile a Dashboard in any
+                                            # namespace and no OperatorGroup of our own is needed.
+spec:
+  channel: v13.6                            # Operator 13.6.0 (Long Term Support Cycle-3). Two floors matter here:
+                                            # connector-action MCP servers need operator 12.20.0 or later, and
+                                            # REST-API-operation MCP servers need operator 13.3.0 or later.
+                                            # 'v13-sc3' tracks the latest SC3 operator instead of pinning 13.6.
+  name: ibm-appconnect                      # Operator package name in the catalog index
+  source: ibm-operator-catalog              # Must match the CatalogSource metadata.name
+  sourceNamespace: openshift-marketplace    # Must match the CatalogSource namespace
+  installPlanApproval: Automatic            # Install without a manual Install Plan approval step

@@ -1,0 +1,47 @@
+apiVersion: appconnect.ibm.com/v1beta1        # API group and version for the Dashboard CRD
+kind: Dashboard                               # An App Connect Dashboard instance
+metadata:
+  name: ace-dashboard                         # Instance name; the OpenShift Route name is derived from it
+  namespace: ace-mcp-demo                     # Namespace the instance runs in
+spec:
+  license:
+    accept: true                              # Required: records acceptance of the license terms
+    license: L-RJGW-BUAA2R                    # License id for operators 13.4.0 through 13.6.0. This CHANGED from the
+                                              # L-KPRV-AUG9NC used by operator 12.1x; the old id does not reconcile
+                                              # against a 13.0.8.x or 13.0.9.x operand.
+    use: AppConnectEnterpriseNonProductionFREE  # Development and functional testing only, which is what this demo is
+  version: 13.0.9.0-r1                        # Operand version. Supported by operator 13.6.0, and the same ACE version
+                                              # as the on-prem install behind Demo 1 and Demo 2. Both Dashboard MCP
+                                              # server types are available at this level: connector actions from
+                                              # 13.0.6.1-r1, REST API operations from 13.0.8.0-r1.
+  replicas: 1                                 # Single replica; no HA wanted for a demo
+  api:
+    enabled: true                             # Enables the Dashboard API that the MCP server pages sit on
+  displayMode: IntegrationRuntimes            # Show integration runtimes rather than legacy integration servers
+  switchServer:
+    name: default                             # Default switch server
+  authentication:
+    integrationKeycloak:
+      enabled: false                          # No Keycloak; on a bare OCP cluster the Dashboard uses its own login
+  authorization:
+    integrationKeycloak:
+      enabled: false                          # As above
+  storage:
+    type: persistent-claim                    # Keeps the BAR content server, so a REST API can be deployed here too
+    claimName: ace-dashboard-content          # The PVC from ace-dashboard-pvc.yaml
+  pod:
+    containers:
+      content-server:                         # Serves uploaded BAR files
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            cpu: 50m
+            memory: 50Mi
+      control-ui:                             # The Dashboard UI itself
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            cpu: 50m
+            memory: 125Mi

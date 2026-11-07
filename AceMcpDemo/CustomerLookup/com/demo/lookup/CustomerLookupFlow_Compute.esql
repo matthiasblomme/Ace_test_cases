@@ -1,0 +1,175 @@
+BROKER SCHEMA com.demo.lookup
+
+CREATE COMPUTE MODULE CustomerLookupFlow_Audit
+	-- Screens the requested id and builds the audit record that goes to DEV.MCP.AUDIT.
+	-- It runs BEFORE the database read on purpose: when the ODBC credential is wrong, MQ
+	-- still succeeds and the audit record lands on the queue, so the broken half of the
+	-- application is unambiguous.
+	-- The screen also runs here, ahead of the queue and the DSN, so a missing or
+	-- non-numeric customerId leaves on out1 with a 400 and can never be mistaken for the
+	-- database failure this demo is about.
+	-- The message is built from a header copy plus a fresh body rather than a whole
+	-- message copy, and the inbound HTTP folder is dropped: HTTP in, MQ out means
+	-- anything left in OutputRoot from the request is serialised into the queued message
+	-- (validated_rules.md rule 17). No MQMD is written - the MQOutput node creates it
+	-- (validated_rules.md rule 26).
+	-- The requested id and the tracking id are parked in Environment because the next
+	-- Compute runs after the MQOutput node, and Environment is the one tree that is
+	-- always propagated whatever the compute mode (validated_rules.md rule 16).
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		-- This node propagates its own LocalEnvironment (computeMode
+		-- destinationAndMessage), so the copy is what keeps the HTTP reply identifier the
+		-- Reply node needs - on the 400 branch as well as the happy path.
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+
+		-- The tracking id is minted here, by the first Compute that sees the request, and
+		-- every reply and log line carries it (validated_rules.md rule 24).
+		SET Environment.Variables.Tracking.Id = UUIDASCHAR;
+
+		-- parseQueryString="true" on the input node puts ?customerId=1001 here. A query
+		-- parameter arrives as text and is absent entirely when the caller omits it.
+		DECLARE requestedId CHARACTER
+			TRIM(COALESCE(FIELDVALUE(InputLocalEnvironment.HTTP.Input.QueryString.customerId), ''));
+
+		-- The id is screened character by character rather than cast inside a handler:
+		-- POSITION and SUBSTRING cannot throw, where CAST(... AS INTEGER) can, and a cast
+		-- exception here would surface as a 500 and read exactly like the failed database
+		-- read. The length cap keeps the later cast inside INTEGER range for the same
+		-- reason - an overlong run of digits is a bad request, not a server fault.
+		DECLARE isNumericId BOOLEAN;
+		SET isNumericId = (requestedId <> '' AND LENGTH(requestedId) <= 9);
+		DECLARE characterIndex INTEGER 1;
+		WHILE isNumericId AND characterIndex <= LENGTH(requestedId) DO
+			SET isNumericId = (POSITION(SUBSTRING(requestedId FROM characterIndex FOR 1) IN '0123456789') > 0);
+			SET characterIndex = characterIndex + 1;
+		END WHILE;
+
+		IF NOT isNumericId THEN
+			SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 400;
+			CALL CopyMessageHeaders();
+			CREATE LASTCHILD OF OutputRoot DOMAIN('JSON');
+			CREATE FIRSTCHILD OF OutputRoot.JSON NAME 'Data';
+			SET OutputRoot.JSON.Data.status = 'bad request';
+			SET OutputRoot.JSON.Data.description =
+				'Query parameter customerId is required and must be a number of at most 9 digits, for example ?customerId=1001';
+			SET OutputRoot.JSON.Data.receivedCustomerId = requestedId;
+			SET OutputRoot.JSON.Data.trackingId = Environment.Variables.Tracking.Id;
+			PROPAGATE TO TERMINAL 'out1';
+			RETURN FALSE;
+		END IF;
+
+		SET Environment.Variables.Request.CustomerId = requestedId;
+
+		CALL CopyMessageHeaders();
+		SET OutputRoot.HTTPInputHeader = NULL;
+
+		CREATE LASTCHILD OF OutputRoot DOMAIN('JSON');
+		CREATE FIRSTCHILD OF OutputRoot.JSON NAME 'Data';
+		SET OutputRoot.JSON.Data.trackingId = Environment.Variables.Tracking.Id;
+		SET OutputRoot.JSON.Data.operation = 'customerLookup';
+		SET OutputRoot.JSON.Data.customerId = Environment.Variables.Request.CustomerId;
+		SET OutputRoot.JSON.Data.requestedAtUtc =
+			CAST(CURRENT_GMTTIMESTAMP AS CHARACTER FORMAT 'yyyy-MM-dd HH:mm:ss.SSS');
+
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE CustomerLookupFlow_ReadCustomer
+	-- Reads one row from DEMO_CUSTOMERS and builds the reply.
+	-- The DSN is not named here: it lives in the node's Data source property
+	-- (ACE_SQL_TEST), so the two-part Database.dbo.DEMO_CUSTOMERS path resolves through it
+	-- and the DSN exists in exactly one place for an operator to find.
+	-- The row is selected into Environment rather than straight into OutputRoot so a miss
+	-- cannot leave a half-built customer object in the 404 body.
+	-- computeMode is destinationAndMessage because the reply status is written to
+	-- OutputLocalEnvironment; in plain message mode that write is discarded and every
+	-- answer comes back 200 (validated_rules.md rule 16).
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+
+		-- The key column is INTEGER. The id was screened as digits-only in
+		-- CustomerLookupFlow_Audit, so this cast cannot throw on caller input. The cast
+		-- sits outside the handler block below, which must hold the database statement and
+		-- nothing else.
+		DECLARE customerKey INTEGER CAST(Environment.Variables.Request.CustomerId AS INTEGER);
+
+		-- Database exceptions carry SQLSTATE class 'D' (validated_rules.md rule 20).
+		-- The diagnostics are recorded here, where the failure happens, because the
+		-- exception the handler swallows is the only place the ODBC message exists.
+		SET Environment.Variables.SQL.Failed = FALSE;
+		BEGIN
+			DECLARE CONTINUE HANDLER FOR SQLSTATE LIKE 'D%' BEGIN
+				SET Environment.Variables.SQL.Failed = TRUE;
+				SET Environment.Variables.SQL.Code = SQLCODE;
+				SET Environment.Variables.SQL.State = SQLSTATE;
+				SET Environment.Variables.SQL.NativeError = SQLNATIVEERROR;
+				SET Environment.Variables.SQL.ErrorText = SQLERRORTEXT;
+			END;
+			SET Environment.Variables.Customer[] =
+				(SELECT C.CUSTOMER_ID, C.CUSTOMER_NAME, C.CITY, C.STATUS
+				 FROM Database.dbo.DEMO_CUSTOMERS AS C
+				 WHERE C.CUSTOMER_ID = customerKey);
+		END;
+
+		IF COALESCE(Environment.Variables.SQL.Failed, FALSE) THEN
+			-- The CONTINUE handler kept the diagnostics but swallowed the exception, so
+			-- re-raise it with the SQL text in the inserts. The handler module turns those
+			-- inserts into the 500 body, which is the whole point: a tool caller that sees
+			-- an empty failure cannot tell a wrong credential from a broken flow.
+			-- Environment holds the values because SQLCODE and friends no longer describe
+			-- the failed statement once the block has ended.
+			THROW USER EXCEPTION VALUES('CustomerLookupFlow: read from DEMO_CUSTOMERS failed',
+				Environment.Variables.SQL.Code,
+				Environment.Variables.SQL.State,
+				Environment.Variables.SQL.NativeError,
+				Environment.Variables.SQL.ErrorText);
+		END IF;
+
+		-- The reply is a fresh body on copied headers, never the audit message that has
+		-- just gone to the queue.
+		CALL CopyMessageHeaders();
+		CREATE LASTCHILD OF OutputRoot DOMAIN('JSON');
+		CREATE FIRSTCHILD OF OutputRoot.JSON NAME 'Data';
+
+		IF CARDINALITY(Environment.Variables.Customer[]) = 0 THEN
+			SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 404;
+			SET OutputRoot.JSON.Data.status = 'not found';
+			SET OutputRoot.JSON.Data.description =
+				'No customer matches customerId ' || Environment.Variables.Request.CustomerId;
+			SET OutputRoot.JSON.Data.trackingId = Environment.Variables.Tracking.Id;
+			RETURN TRUE;
+		END IF;
+
+		DECLARE refRow REFERENCE TO Environment.Variables.Customer[1];
+		SET OutputLocalEnvironment.Destination.HTTP.ReplyStatusCode = 200;
+		SET OutputRoot.JSON.Data.customerId = FIELDVALUE(refRow.CUSTOMER_ID);
+		SET OutputRoot.JSON.Data.customerName = FIELDVALUE(refRow.CUSTOMER_NAME);
+		SET OutputRoot.JSON.Data.city = FIELDVALUE(refRow.CITY);
+		SET OutputRoot.JSON.Data.status = FIELDVALUE(refRow.STATUS);
+
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+END MODULE;

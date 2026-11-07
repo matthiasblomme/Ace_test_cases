@@ -1,0 +1,8 @@
+{
+    "CustomerApi_getCustomer": {
+        "description": "Looks up one customer in the demo database by numeric id and returns its name, city and status. Writes an audit record to IBM MQ before reading, so a database credential problem returns HTTP 500 carrying the ACE exception text rather than failing silently. Valid demo ids are 1001 to 1005.",
+        "enabled": true,
+        "title": "Returns one customer by id",
+        "toolType": "RestApi"
+    }
+}

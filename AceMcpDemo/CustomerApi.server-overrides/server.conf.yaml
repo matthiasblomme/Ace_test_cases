@@ -1,0 +1,28 @@
+# Server-level configuration the CustomerApi application needs.
+#
+# This file is NOT part of the application project: everything under CustomerApi/ is
+# packed into the BAR, and server configuration does not belong in a BAR. Copy the keys
+# below into the work directory's overrides file:
+#
+#   <work_dir>/overrides/server.conf.yaml
+#
+# Never edit the generated <work_dir>/server.conf.yaml itself - it is read-only
+# reference material that documents every key with its default. Every change goes in
+# overrides/*.yaml.
+#
+# The ODBC DSN (ACE_SQL_TEST) itself needs no key here: it is a Windows system DSN that
+# the driver manager resolves. Its credential comes from the vault, and the external
+# directory vault is the one the server has to be pointed at. That directory is a
+# machine-local path chosen when the vault is created, so the block stays commented out
+# rather than shipping a path that would fail server start - fill in the directory and
+# uncomment it. Full steps in CustomerApi/DEPLOY.md.
+#
+# Credentials:
+#   ExternalDirectoryVault:
+#     directory: '<vault_directory>'
+
+# The MQOutput node in getCustomer carries only queueName. Its client connection comes
+# from the DEMO_MQ MQEndpoint policy in the CustomerApiPolicies policy project, applied
+# server-wide here. Without this key the node has no queue manager to connect to and
+# the audit put fails on the first request.
+remoteDefaultQueueManager: '{CustomerApiPolicies}:DEMO_MQ'

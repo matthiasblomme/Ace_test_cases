@@ -1,0 +1,124 @@
+{
+  "openapi": "3.0.3",
+  "servers": [
+    {
+      "url": "http://localhost:7820/customerapi"
+    }
+  ],
+  "info": {
+    "title": "CustomerApi",
+    "version": "1.0.0",
+    "description": "Reads one customer from the demo SQL Server table DEMO_CUSTOMERS and audits every request to IBM MQ. Built as the subject of an ACE MCP Admin Server demo: the 500 response deliberately carries the ACE exception text so a tool caller can see why a read failed."
+  },
+  "paths": {
+    "/customers/{customerId}": {
+      "get": {
+        "operationId": "getCustomer",
+        "summary": "Returns one customer by id",
+        "description": "Writes an audit record to IBM MQ, then reads the customer row over ODBC. The audit write happens first and on purpose: when the database credential is wrong, MQ still succeeds and only the read fails.",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "description": "Primary key of the customer row",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "example": 1001
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The customer row",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "customerId": {
+                      "type": "integer",
+                      "format": "int32",
+                      "example": 1001
+                    },
+                    "customerName": {
+                      "type": "string",
+                      "example": "Northwind Trading"
+                    },
+                    "city": {
+                      "type": "string",
+                      "example": "Antwerp"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "ACTIVE"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No customer row has that id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "not found"
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "No customer matches customerId 9999"
+                    },
+                    "trackingId": {
+                      "type": "string",
+                      "example": "6f1c2f3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "The request could not be completed. The description carries the ACE exception text - the BIP message and its inserts - so a caller can read the real cause instead of an empty failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "internal server error"
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Database error: SQL State '28000'; Native Error Code '18456'; Error Text 'Login failed for user'"
+                    },
+                    "bipCode": {
+                      "type": "integer",
+                      "format": "int32",
+                      "example": 2322
+                    },
+                    "source": {
+                      "type": "string",
+                      "example": "catch"
+                    },
+                    "trackingId": {
+                      "type": "string",
+                      "example": "6f1c2f3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-ibm-configuration": {}
+}
