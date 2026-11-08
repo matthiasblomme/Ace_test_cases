@@ -119,7 +119,7 @@ request. Note the port is 7820, not the 7800 default: another integration server
 |---|---|---|
 | No such row | `curl -i http://localhost:7820/customerapi/customers/9999` | `404`, body `{"status":"not found","description":"No customer matches customerId 9999","trackingId":"..."}`. An audit record for 9999 is still on the queue: the audit is of the request, not of the result. |
 | Non-numeric id | `curl -i http://localhost:7820/customerapi/customers/abc` | `500`. The id has to be cast to an integer for the key column, and a non-numeric segment throws. The cast exception text comes back in `description`. |
-| Broken database credential | Replace the `odbc` credential named `ACE_SQL_TEST` with a wrong password, restart the server, then `curl -i http://localhost:7820/customerapi/customers/1001` | The application still reaches state `started` and the deploy is clean. The request answers `500` with the ODBC login failure text in `description` and the BIP number in `bipCode`; the audit record for 1001 is on the queue. |
+| Broken database credential | Replace the `odbc` credential named `ACE_SQL_TEST` with a wrong password, then `curl -i http://localhost:7820/customerapi/customers/1001` **twice** - no restart is needed, but the first request after the change still succeeds from the pooled ODBC connection | The application still reaches state `started` and the deploy is clean. The request answers `500` with the ODBC login failure text in `description` and the BIP number in `bipCode`; the audit record for 1001 is on the queue. |
 
 Result: **PASS**, with one defect found and fixed. The 404 and the broken-credential case
 behave as described: the application reaches `started`, the request answers `500`, and the

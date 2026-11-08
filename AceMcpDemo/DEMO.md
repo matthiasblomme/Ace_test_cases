@@ -73,8 +73,10 @@ docker exec QM1 bash -lc 'printf "DISPLAY QLOCAL(DEV.MCP.AUDIT) CURDEPTH\n" | ru
 
 ### 2. Put the demo in its broken starting state
 
-The server reads credentials at startup, so this is always: set the credential, then
-restart.
+Set the credential while the server is still down - step 3 starts it. If it is already
+running, the write takes effect without a restart (`odbc` is a dynamic credential type),
+but read "Resetting between takes" first: breaking a working credential has a one-request
+lag.
 
 ```bat
 ibmint set credential --external-directory-vault D:\tmp\ace-mcp-demo\vault ^
@@ -217,11 +219,14 @@ ibmint set credential --external-directory-vault D:\tmp\ace-mcp-demo\vault ^
     --username ace_demo --password <the real password>
 ```
 
-Then restart the server. A credential change is read at startup; redeploying the
-application is not enough and will leave you looking foolish on camera.
-
 Answers `BIP15119I: The 'UPDATE' action was successful for credential name
 'ACE_SQL_TEST' of type 'odbc'.`
+
+That is the whole fix. No restart and no redeploy: `odbc` is a dynamic credential type, so
+the running server resolves the new password on its next connection attempt and the very
+next request answers `200` (measured on 13.0.9.0, 2026-11-08). If an agent tells you to
+restart here, it is repeating something it read, not something the runtime requires -
+`ibmint display credential-types` is the check.
 
 ### Step 5. Show it working
 
@@ -395,7 +400,12 @@ node ace-mcp.mjs --url https://localhost:7650/mcp --insecure call list_credentia
 
 ## Gotchas that will bite on camera
 
-- **A credential change needs a server restart.** Not a redeploy. Nothing warns you.
+- **A credential change needs no restart - but breaking one looks like it did not work.**
+  `odbc` is dynamic, so the fix is live on the next request. In the other direction the
+  pooled ODBC connection is handed out exactly once more: after writing the wrong password
+  back, the next request still answers `200` and only the one after it answers `500`.
+  Twenty seconds of idling does not clear it, so this is the connection, not a timed
+  refresh. Burn one request and confirm the `500` before the camera rolls.
 - **7750 is absent until a tool is deployed.** `mcpStartMode: automatic` is doing its job,
   not failing.
 - **`list_application_needs` requires `applicationName`** on a stand-alone server. The IBM
@@ -427,12 +437,19 @@ ibmint set credential --external-directory-vault D:\tmp\ace-mcp-demo\vault ^
     --credential-type odbc --credential-name ACE_SQL_TEST ^
     --username ace_demo --password WrongPassword1
 
-REM 2. restart
-D:\tmp\ace-mcp-demo\start-demo-server.cmd <vaultKey>
+REM 2. burn the pooled connection - this request still answers 200
+curl.exe -s -i "http://localhost:7820/customerlookup/customers?customerId=1001" | findstr /b /c:"HTTP/"
+
+REM 3. this one must answer 500 before you record
+curl.exe -s -i "http://localhost:7820/customerlookup/customers?customerId=1001" | findstr /b /c:"HTTP/"
 ```
 
+No restart is needed between takes. If you prefer one anyway, it is
+`D:\tmp\ace-mcp-demo\start-demo-server.cmd <vaultKey>` after stopping the old process, and
+it resets the MCP sessions of every connected client as well.
+
 ```bash
-# 3. empty the audit queue
+# 4. empty the audit queue
 docker exec QM1 bash -lc 'printf "CLEAR QLOCAL(DEV.MCP.AUDIT)\n" | runmqsc QM1'
 ```
 

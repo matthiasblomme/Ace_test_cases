@@ -175,7 +175,7 @@ does not connect before the flow starts, so the application still reaches state
 - The Compute node's Data source property names the DSN literally (`ACE_SQL_TEST`), so
   the credential to look at is readable straight off the flow.
 
-Fix it by replacing the credential and restarting the server:
+Fix it by replacing the credential:
 
 ```bat
 ibmint set credential --external-directory-vault C:\aceWork\vault ^
@@ -184,8 +184,11 @@ ibmint set credential --external-directory-vault C:\aceWork\vault ^
     --username <sqlUser> --password <sqlPassword>
 ```
 
-A credential change is picked up by the integration server at startup, so restart the
-server after changing it. Redeploying the application alone is not enough.
+`odbc` is a dynamic credential type (`ibmint display credential-types` marks every type
+`(dynamic)` or `(static)`), so the running server resolves the new password on its next
+connection attempt. No restart and no redeploy. Going the other way, from a working
+password to a broken one, the pooled ODBC connection serves one more successful request
+before the failure appears.
 
 ## 9. Exposing this server and this API over MCP
 

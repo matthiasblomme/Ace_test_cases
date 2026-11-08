@@ -159,7 +159,7 @@ native error `18456` and `Login failed for user ...`, while the last carries onl
 driver manager's `IM006 SQLSetConnectAttr failed`. A last-child-only walk reports the
 wrapper and hides the real cause, which is exactly the fact the demo turns on.
 
-Fix the credential and restart the server:
+Fix the credential:
 
 ```bat
 ibmint set credential --external-directory-vault C:\aceWork\vault ^
@@ -168,8 +168,9 @@ ibmint set credential --external-directory-vault C:\aceWork\vault ^
     --username <sqlUser> --password <sqlPassword>
 ```
 
-A credential change is read at integration server startup, so restart the server.
-Redeploying the application alone is not enough. The credential name must equal the DSN
+`odbc` is a dynamic credential type (`ibmint display credential-types`), so the running
+server picks this up on its next connection attempt: no restart, no redeploy. The
+credential name must equal the DSN
 name - that is how ACE matches it to the Compute node's Data source property. No
 credential value belongs in this repository, in the BAR, or in any file under this
 project; the vault key is the only secret handled by hand.
