@@ -2,12 +2,12 @@ BROKER SCHEMA com.demo.lookup
 
 CREATE COMPUTE MODULE CustomerLookupFlow_Audit
 	-- Screens the requested id and builds the audit record that goes to DEV.MCP.AUDIT.
-	-- It runs BEFORE the database read on purpose: when the ODBC credential is wrong, MQ
-	-- still succeeds and the audit record lands on the queue, so the broken half of the
-	-- application is unambiguous.
+	-- It runs BEFORE the database read on purpose: a database failure then arrives with
+	-- the audit record already on the queue, so which half of the application failed is
+	-- unambiguous.
 	-- The screen also runs here, ahead of the queue and the DSN, so a missing or
-	-- non-numeric customerId leaves on out1 with a 400 and can never be mistaken for the
-	-- database failure this demo is about.
+	-- non-numeric customerId leaves on out1 with a 400 and can never be mistaken for a
+	-- database failure.
 	-- The message is built from a header copy plus a fresh body rather than a whole
 	-- message copy, and the inbound HTTP folder is dropped: HTTP in, MQ out means
 	-- anything left in OutputRoot from the request is serialised into the queued message
@@ -128,7 +128,7 @@ CREATE COMPUTE MODULE CustomerLookupFlow_ReadCustomer
 			-- The CONTINUE handler kept the diagnostics but swallowed the exception, so
 			-- re-raise it with the SQL text in the inserts. The handler module turns those
 			-- inserts into the 500 body, which is the whole point: a tool caller that sees
-			-- an empty failure cannot tell a wrong credential from a broken flow.
+			-- an empty failure cannot tell a configuration fault from a broken flow.
 			-- Environment holds the values because SQLCODE and friends no longer describe
 			-- the failed statement once the block has ended.
 			THROW USER EXCEPTION VALUES('CustomerLookupFlow: read from DEMO_CUSTOMERS failed',

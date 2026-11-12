@@ -3,13 +3,13 @@ BROKER SCHEMA com.demo.lookup
 CREATE COMPUTE MODULE CustomerLookupFlow_HandleException
 	-- One handler for every error terminal in the flow: the HTTP Input node's catch
 	-- (an exception thrown downstream and rolled back to the input node - a failed
-	-- database read is the case this demo cares about), the HTTP Input node's failure
+	-- database read is the common case), the HTTP Input node's failure
 	-- (the input node itself could not process the request), and the database Compute's
 	-- own failure terminal.
 	-- The reply carries the exception detail on purpose: a caller that gets an empty 500
-	-- cannot tell a wrong credential from a broken flow, and this endpoint is driven by
-	-- tools rather than by a human reading a log. That is a demo choice, not a production
-	-- one - see DEPLOY.md.
+	-- cannot tell a configuration fault from a broken flow, and this endpoint is driven by
+	-- tools rather than by a human reading a log. That is a deliberate choice for a
+	-- tool-driven endpoint, not a general default - see the deployment notes.
 	-- LocalEnvironment is copied before the status is written because the HTTP Reply node
 	-- needs the request identifier it carries, and this node propagates its own copy
 	-- (computeMode="destinationAndMessage").
@@ -30,7 +30,7 @@ CREATE COMPUTE MODULE CustomerLookupFlow_HandleException
 		SET OutputRoot.JSON.Data.bipCode = messageNumber;
 		-- A Compute cannot tell which terminal fed it, so the arrival path is not claimed
 		-- here. What the flow does know is whether its own database read reported a
-		-- failure, and that is the answer the demo needs.
+		-- failure, and that is what the reply reports.
 		SET OutputRoot.JSON.Data.source = 'exception path';
 		IF COALESCE(Environment.Variables.SQL.Failed, FALSE) THEN
 			SET OutputRoot.JSON.Data.failedOperation = 'read from DEMO_CUSTOMERS';

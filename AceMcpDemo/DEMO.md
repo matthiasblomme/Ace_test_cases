@@ -17,11 +17,26 @@ recorded, and the difference is called out.
 
 ## What the audience is meant to take away
 
-A deployed integration fails on the first message. The agent never reads the flow source,
-never opens the Toolkit, and never gets a shell on the box. It asks the runtime about
-itself over MCP, works out which of two credentials the failing node actually uses, and
-produces the fix. The point is not that an LLM can read an error message. The point is
-that the runtime can now answer questions about itself.
+A deployed integration fails on the first message. The agent has what any developer has:
+the application source, checked out in front of it. What it does not have is anything about
+the running server - no Toolkit, no shell on the box, no log file, no deployment record. It
+asks the runtime about itself over MCP, joins what the runtime answers to what the source
+says, works out which of two credentials the failing node actually uses, and hands back the
+fix. The point is not that an LLM can read an error message. The point is that the runtime
+can now answer questions about itself, so the half a developer cannot see from a checkout
+becomes askable.
+
+### Who does what on camera
+
+| | Does |
+|---|---|
+| You | `curl`, `runmqsc`, `ibmint` - everything that touches the machine |
+| The agent | reads the application source in its working directory, and asks the two MCP servers |
+
+The agent is started with its working directory on the failing application's project folder,
+`AceMcpDemo/CustomerLookup`, which holds the application code and nothing else: no runbook,
+no deployment notes, no commentary about what is broken. Everything it learns about the
+server it learns over MCP.
 
 ---
 
@@ -108,9 +123,31 @@ automatic` only starts the runtime listener once a tool is deployed.
 docker exec QM1 bash -lc 'printf "CLEAR QLOCAL(DEV.MCP.AUDIT)\n" | runmqsc QM1'
 ```
 
+### 5. Confirm the failure before the camera rolls
+
+Breaking a credential has a one-request lag (see the gotchas), so send one request to burn
+the pooled ODBC connection and a second that must come back 500:
+
+```bat
+curl.exe -s -i "http://localhost:7820/customerlookup/customers?customerId=1001" | findstr /b /c:"HTTP/"
+curl.exe -s -i "http://localhost:7820/customerlookup/customers?customerId=1001" | findstr /b /c:"HTTP/"
+```
+
+Then clear the queue once more, because those two requests left records on it.
+
+### 6. Start the agent on the application folder
+
+Working directory `<repo>\AceMcpDemo\CustomerLookup`, both MCP servers configured as under
+"MCP client configuration". Check it can see both halves before you record: ask it to list
+the files it has and the tools on 7650. If you are driving Bob, check the budget as well -
+a run that stops mid-chain is not recoverable on camera.
+
 ---
 
 ## Demo 1 - finding a wrong database credential
+
+Steps 1, 2, 6 and 7 are yours, because they touch the machine. Steps 3 to 5 belong to the
+agent, which has the project folder and the two MCP endpoints and nothing else.
 
 ### Step 1. Show it failing
 
@@ -128,22 +165,49 @@ curl -s "http://localhost:7820/customerlookup/customers?customerId=1001"
 }
 ```
 
-Then show the queue, which proves the message got that far:
+### Step 2. Show the audit record on the queue
 
 ```bash
 docker exec QM1 bash -lc 'printf "DISPLAY QLOCAL(DEV.MCP.AUDIT) CURDEPTH\n" | runmqsc QM1'
 ```
 
-`CURDEPTH(1)`. MQ worked. The database did not.
+`CURDEPTH(1)`. The request got as far as the queue and no further: MQ worked, the database
+did not. That is visible rather than argued, because the audit write sits ahead of the
+database read in the flow.
 
-### Step 2. Hand it to the agent
+### Step 3. Hand it to the agent
 
-Ask the agent something close to:
+Ask it something close to:
 
-> The CustomerLookup application on the ACE server is returning 500 on every request.
-> Use the admin MCP tools to work out what is wrong and give me the commands to fix it.
+> CustomerLookup is returning 500 on every request on the ACE server. This is what the
+> caller gets back: <paste the body from step 1>. You have the application source in this
+> folder and the admin MCP server on 7650. Work out what is wrong and give me the commands
+> to fix it.
 
-What follows is the chain it should walk. Each tool is worth pausing on.
+Nothing in that prompt names the credential, the DSN, or the vault. The body names a user
+and a SQL error; everything else is the agent's to find.
+
+Paste the body rather than describing it. The agent is not running the `curl`, and no admin
+MCP tool on 13.0.9.0 reads the error log, so being handed the caller's response is the only
+way it sees the ODBC diagnostic at all. If you would rather it got there by itself, let it
+call `CustomerApi_getCustomer` on 7750 instead: same broken credential, same diagnostic,
+arriving as tool output. That is demo 2's tool doing demo 1's job, and it is the stronger
+version if you are willing to merge the two takes.
+
+### Step 4. The chain it should walk
+
+Each tool is worth pausing on, and the order matters. Tell it up front to issue the calls
+one at a time: a batch leaves `describe_message_flow` hanging, and that is the one call the
+reveal depends on (see the gotchas).
+
+**The source, before any tool is called.** The flow in front of it names the DSN twice -
+the Compute node's `dataSource="ACE_SQL_TEST"` and the node label `Read customer over ODBC
+DSN ACE_SQL_TEST` - and the ESQL shows the audit write happening before the read, and the
+500 body being assembled out of the ODBC diagnostic records. So the agent starts out knowing
+which external resource the failing half touches and what shape the failure will take. What
+the source cannot tell it: whether the application is deployed, whether it started, whether
+a credential of that name exists, what the MQ side is bound to, or which runtime it is
+talking to. That is the half MCP answers.
 
 **`info`** - which runtime am I even talking to.
 
@@ -156,8 +220,10 @@ What follows is the chain it should walk. Each tool is worth pausing on.
 
 `CustomerLookup` is `"state": "started"`. It deployed fine. That rules out a broken BAR
 and points at something the flow reaches only when a message arrives. For an application
-this tool also lists the message flows and even the ESQL files, so it hands you the flow
-name for the next step: `com.demo.lookup.CustomerLookupFlow`.
+this tool also lists the message flows and the ESQL files, and that list matches the files
+in the working directory - the first confirmation that the source being read is the code
+that is deployed. It also hands over the qualified flow name for the next call:
+`com.demo.lookup.CustomerLookupFlow`.
 
 **`describe_message_flow`** - what does the flow actually touch?
 
@@ -172,7 +238,9 @@ Log exception to system log
 ```
 
 Two external systems, named. The audit node names its queue; the failing node names its
-DSN.
+DSN. Node for node this is the flow in the working directory, so the diagnosis now rests on
+a deployed artefact rather than on a source file that might be ahead of the server. That
+join is the one a developer with only a checkout cannot make.
 
 **`list_application_needs`** - what does the application declare?
 
@@ -202,7 +270,7 @@ types but never values, so nothing here says which one is wrong or even which on
 used. Only `describe_message_flow` said the failing node reads over `ACE_SQL_TEST`.
 `LEGACY_SQL_TEST` is a decoy and should be ignored.
 
-### Step 3. The conclusion the agent should reach
+### Step 5. The conclusion the agent should reach
 
 The application is started, so this is not a deployment fault. MQ succeeded, so the
 network and the queue manager are fine. The failing node reads over DSN `ACE_SQL_TEST`, a
@@ -210,7 +278,11 @@ credential of that exact name exists in the vault, and the database rejected the
 user `ace_demo` with SQL state 28000 and native error 18456. The credential exists and
 names the right user, so its **password** is wrong.
 
-### Step 4. The fix
+### Step 6. The fix, which you run
+
+The agent should hand this over with both secrets left as placeholders. It has no business
+reading either one, and nothing it called returned a credential value - `list_credentials`
+gives names and types only.
 
 ```bat
 ibmint set credential --external-directory-vault D:\tmp\ace-mcp-demo\vault ^
@@ -219,7 +291,8 @@ ibmint set credential --external-directory-vault D:\tmp\ace-mcp-demo\vault ^
     --username ace_demo --password <the real password>
 ```
 
-Answers `BIP15119I: The 'UPDATE' action was successful for credential name
+Fill both in from `D:\tmp\ace-mcp-demo\demo-credentials.txt`, off camera. It answers
+`BIP15119I: The 'UPDATE' action was successful for credential name
 'ACE_SQL_TEST' of type 'odbc'.`
 
 That is the whole fix. No restart and no redeploy: `odbc` is a dynamic credential type, so
@@ -228,7 +301,7 @@ next request answers `200` (measured on 13.0.9.0, 2026-11-08). If an agent tells
 restart here, it is repeating something it read, not something the runtime requires -
 `ibmint display credential-types` is the check.
 
-### Step 5. Show it working
+### Step 7. Show it working
 
 ```bash
 curl -s "http://localhost:7820/customerlookup/customers?customerId=1001"
@@ -277,7 +350,7 @@ scriptable route, which is the CI/CD angle worth making on camera.
 
 ### Running it
 
-Listing the tools on 7750 returns:
+Have the agent list the tools on 7750:
 
 ```
 CustomerApi_getCustomer  (path*)  Looks up one customer in the demo database ...
@@ -304,10 +377,12 @@ Invalid input: expected object, received undefined`.
 
 ### Tying the two demos together
 
-With the broken credential in place, calling the MCP tool returns a 500 whose body carries
-the whole ODBC diagnostic, including `Login failed for user 'ace_demo'`. So the agent can
-trigger the failure through one MCP server and diagnose it through the other, without
-touching the machine. That is the strongest single moment in the recording.
+With the broken credential in place, the agent calling the tool on 7750 gets back a 500
+whose body carries the whole ODBC diagnostic, `Login failed for user 'ace_demo'` included.
+It can therefore trigger the failure through one MCP server and diagnose it through the
+other without touching the machine, and that is the strongest single moment available here.
+It needs its own take: in the order above the credential is already fixed by the time demo 2
+runs.
 
 ---
 
@@ -406,6 +481,15 @@ node ace-mcp.mjs --url https://localhost:7650/mcp --insecure call list_credentia
   back, the next request still answers `200` and only the one after it answers `500`.
   Twenty seconds of idling does not clear it, so this is the connection, not a timed
   refresh. Burn one request and confirm the `500` before the camera rolls.
+- **One admin MCP call at a time.** Measured twice on 2026-11-08: `describe_message_flow`
+  issued alongside other calls never returned, where the same call on its own answered
+  normally, and a concurrent `list_integrations` in the same batch answered with server
+  metadata instead of an inventory. That is the reveal tool, so an agent that parallelises
+  stalls at the worst possible moment. Put "one at a time" in the prompt.
+- **Keep the agent's working directory to the application code.** Given a deployment
+  runbook or a demo script within reach it reads those instead of asking the runtime, and
+  the recording loses its point. `AceMcpDemo/CustomerLookup` is code only; the deployment
+  notes sit one level up as `CustomerLookup-DEPLOY.md` for exactly that reason.
 - **7750 is absent until a tool is deployed.** `mcpStartMode: automatic` is doing its job,
   not failing.
 - **`list_application_needs` requires `applicationName`** on a stand-alone server. The IBM

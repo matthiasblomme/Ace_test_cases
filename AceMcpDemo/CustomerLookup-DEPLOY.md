@@ -138,8 +138,8 @@ Two node properties carry the demo:
   reference. It is how an operator - or a tool reading the flow - knows which credential a
   failing read needs. It sits on a node of the top-level flow, never in a subflow.
 - `connectDatasourceBeforeFlowStarts="false"` is the node's own default, written out
-  because the demo depends on it. The node connects on the first message, so a wrong
-  credential still deploys and still reaches state `started`.
+  explicitly. The node connects on the first message, so a wrong credential still deploys
+  and still reaches state `started`.
 
 ## 5. When the database read fails
 
@@ -176,7 +176,7 @@ credential value belongs in this repository, in the BAR, or in any file under th
 project; the vault key is the only secret handled by hand.
 
 For vault creation itself - a vault must exist before a credential can go into it, or
-`ibmint set credential` fails with `BIP10003E` - follow `../CustomerApi/DEPLOY.md`
+`ibmint set credential` fails with `BIP10003E` - follow `CustomerApi/DEPLOY.md`
 section 3. This application reuses that same vault and that same credential.
 
 ## 6. The MCP side

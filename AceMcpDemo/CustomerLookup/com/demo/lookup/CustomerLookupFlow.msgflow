@@ -7,8 +7,8 @@
     <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/CustomerLookup/icons/full/obj16/CustomerLookupFlow.gif"/>
     <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/CustomerLookup/icons/full/obj30/CustomerLookupFlow.gif"/>
     <composition>
-      <!-- Plain HTTP, no TLS: this endpoint exists to be driven from a demo script on the
-           same machine. parseQueryString is what puts ?customerId=1001 under
+      <!-- Plain HTTP, no TLS: this endpoint is driven from the same machine.
+           parseQueryString is what puts ?customerId=1001 under
            InputLocalEnvironment.HTTP.Input.QueryString; without it the parameter is only
            visible as raw text in the request line.
            The body domain is BLOB because the request carries no body and nothing in the
@@ -25,12 +25,12 @@
       <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="260,60" computeExpression="esql://routine/com.demo.lookup#CustomerLookupFlow_Audit.Main" computeMode="destinationAndMessage">
         <translation xmi:type="utility:ConstantString" string="Screen id and build audit record"/>
       </nodes>
-      <!-- The audit write sits BEFORE the database read on purpose: when the ODBC
-           credential is wrong, MQ still succeeds and the audit record lands on the queue,
-           so the broken half of the application is unambiguous. The node carries queueName
+      <!-- The audit write sits BEFORE the database read on purpose: a database failure
+           then arrives with the audit record already on the queue, so which half of the
+           application failed is unambiguous. The node carries queueName
            only - the client connection comes from the DEMO_MQ MQEndpoint policy in the
            CustomerApiPolicies project, applied server-wide through remoteDefaultQueueManager
-           in overrides/server.conf.yaml (see DEPLOY.md).
+           in overrides/server.conf.yaml (see the deployment notes for this application).
            messageContext is default rather than the Toolkit's passAll: the connecting
            identity has put authority only, and passAll fails MQOPEN with MQRC 2035
            (validated_rules.md rule 23). -->
@@ -45,7 +45,7 @@
            external resource it touches is what makes the DSN discoverable over MCP, and is
            worth doing in any flow an agent is expected to introspect.
            connectDatasourceBeforeFlowStarts stays false (the node default, written out
-           because the demo depends on it) so a wrong credential lets the application reach
+           explicitly) so a datasource that cannot be reached lets the application reach
            state started and fails on the first message instead of at deploy time. -->
       <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_4" location="700,60" dataSource="ACE_SQL_TEST" connectDatasourceBeforeFlowStarts="false" computeExpression="esql://routine/com.demo.lookup#CustomerLookupFlow_ReadCustomer.Main" computeMode="destinationAndMessage">
         <translation xmi:type="utility:ConstantString" string="Read customer over ODBC DSN ACE_SQL_TEST"/>
