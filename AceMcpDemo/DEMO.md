@@ -6,8 +6,8 @@ Two demos on one stand-alone integration server running IBM App Connect Enterpri
 - **Demo 1** - a wrong database credential, found with the MCP Admin Server's tools.
 - **Demo 2** - a deployed REST API operation exposed as an MCP tool and called by an agent.
 
-A third MCP flavour exists (connector actions as MCP tools) but it cannot run here; see
-"Demo 3" at the end.
+A third MCP flavour exists (connector actions as MCP tools) but it is not part of this
+setup; see "Demo 3" at the end.
 
 Everything below was executed on this machine before it was written down. Where a tool
 behaves differently from the IBM documentation, the observed behaviour is what is
@@ -419,12 +419,36 @@ runs.
 
 ## Demo 3 - connector actions as MCP tools
 
-Not in this setup, and the reason is a documented platform restriction rather than a
-missing switch. Exposing **connector actions** (Salesforce, Slack, and so on) as MCP tools
-is driven from the App Connect Dashboard, needs App Connect Operator 12.20.0 or later with
-Dashboard 13.0.6.1-r1 or later, and every MCP server it creates is a whole new integration
-runtime in its own pod, licensed like any other. None of it exists on a stand-alone
-integration server.
+**Connector actions** (Salesforce, Slack, and so on) can be exposed as MCP tools in two
+places: on a stand-alone integration server or node since 13.0.8, and through the App
+Connect Dashboard in containers. Neither is in this setup.
+
+### On a stand-alone server or node (13.0.8 and later)
+
+This is the runtime MCP server from Demo 2: same port 7750, same `mcptools.json`. The
+**Configure MCP server** wizard in the integration server's web UI gets a **Select
+connector actions** page, which the manual describes as parity with the Dashboard feature
+below. That page only appears when both of these hold:
+
+- the integration node or independent integration server has a local vault configured.
+  External directory vaults are not supported for MCP connector tools.
+- the ACE installation includes the Discovery Connector Nodes.
+
+This setup fails the first one: its credentials sit in an external directory vault
+(`ExternalDirectoryVault` in `overrides/server.conf.yaml`). Trying it means a server with
+its own integration server vault, plus a SaaS connector account that can be authenticated
+on camera. Not tried on this machine.
+
+The sources are the 13.0.9 manual pages "Exposing Connector APIs as MCP tools in the web
+UI" and "Troubleshooting MCP connector API tools". Read both: the procedure on the first
+page only walks through picking operations of deployed APIs, and the Select connector
+actions page and its vault requirement are named on the second.
+
+### In containers, through the App Connect Dashboard
+
+The Dashboard route needs App Connect Operator 12.20.0 or later with Dashboard 13.0.6.1-r1
+or later, and every MCP server it creates is a whole new integration runtime in its own
+pod, licensed like any other.
 
 The restriction that decides it is the hosting platform. The IBM documentation is explicit:
 MCP servers are hosted in integration runtimes and are supported only in environments
@@ -434,17 +458,17 @@ Service (13.0.6.2-r1 or later). Plain Kubernetes is not on that list, and the sa
 restriction covers the Dashboard's other MCP server type, the one that exposes REST API
 operations as MCP tools (Operator 13.3.0 or later with Dashboard 13.0.8.0-r1 or later).
 
-That is not a theoretical limit. On a local minikube cluster the wizard runs, the
-integration runtime comes up, the connector OAuth handshake with the SaaS side succeeds,
-and then the Dashboard cannot register the account: it calls the integration runtime's
-connector service on port 3001, which is configured with `SERVER_MTLS_CA_PATH` pointing at
-the `adminssl` CA and expects a client certificate the Dashboard does not present, so the
-TLS handshake fails before any HTTP response. The operator wires that up automatically on
-OpenShift and on IBM Cloud Kubernetes Service, where it has Routes or IKS ingress to hang
-it on. On plain Kubernetes it does not. The failure surfaces as `#authorizeConnection -
-Failed to complete connection for <connector>`.
+That is not a theoretical limit. On a local minikube cluster at 13.0.6.2-r1 the wizard
+runs, the integration runtime comes up, the connector OAuth handshake with the SaaS side
+succeeds, and then the Dashboard cannot register the account: it calls the integration
+runtime's connector service on port 3001, which is configured with `SERVER_MTLS_CA_PATH`
+pointing at the `adminssl` CA and expects a client certificate the Dashboard does not
+present, so the TLS handshake fails before any HTTP response. The operator wires that up
+automatically on OpenShift and on IBM Cloud Kubernetes Service, where it has Routes or IKS
+ingress to hang it on. On plain Kubernetes it does not. The failure surfaces as
+`#authorizeConnection - Failed to complete connection for <connector>`.
 
-So a live Demo 3 needs one of:
+So a live Dashboard Demo 3 needs one of:
 
 - **An OpenShift cluster.** A TechZone reservation is the cheap route, and
   `demo3-openshift/` in this folder holds the whole path: what to reserve, the catalog
@@ -459,13 +483,10 @@ So a live Demo 3 needs one of:
 Either way it also needs a SaaS connector account that can be authenticated on camera,
 because the wizard does not finish without one.
 
-For reference, the local minikube cluster currently runs its Dashboard and integration
-runtime at 13.0.5.0-r1, below the 13.0.6.1-r1 floor, so the MCP servers page would not
-appear there even before the platform restriction bites.
-
-One thing to avoid blurring: the IBM documentation page titled "Exposing Connector APIs as
-MCP tools in the web UI" is **not** this feature. That page is on-prem, uses port 7750, and
-describes MCP.Runtime over deployed REST APIs, which is Demo 2.
+For reference, that minikube run was on a cluster upgraded to 13.0.6.2-r1. The default
+`minikube` profile on this machine runs its Dashboard and integration runtime at
+13.0.5.0-r1, below the 13.0.6.1-r1 floor, so the MCP servers page would not appear there
+even before the platform restriction bites.
 
 ---
 
