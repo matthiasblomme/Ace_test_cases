@@ -80,7 +80,13 @@ visible rather than argued.
 docker start ace-sql QM1
 ```
 
-`ace-sql` takes 30 to 60 seconds to accept connections. Check it:
+`ace-sql` must be **up**. The whole demo turns on the database *rejecting a login* - SQL
+state 28000, native error 18456, `Login failed for user 'ace_demo'`. A stopped container
+gives a connection failure instead: different exception, different diagnosis, and the
+credential never comes into it. It takes 30 to 60 seconds before it accepts connections.
+
+`QM1` must be up as well, because the audit record landing on the queue is the "MQ worked"
+half of the opening. Check the queue manager with:
 
 ```bash
 docker exec QM1 bash -lc 'printf "DISPLAY QLOCAL(DEV.MCP.AUDIT) CURDEPTH\n" | runmqsc QM1'
@@ -117,10 +123,14 @@ BIP3132I: ... port '7750' for 'MCP Runtime Streamable https' connections.
 If 7750 is missing, `overrides\CustomerApi\mcptools.json` is absent. `mcpStartMode:
 automatic` only starts the runtime listener once a tool is deployed.
 
+The web UI comes up on `https://localhost:7620`, the same port as the admin REST API, with
+a self-signed certificate. Click through the browser warning and leave the tab open before
+you record - that click is not something you want on camera.
+
 ### 4. Drain the audit queue so the depth is a clean zero on camera
 
 ```bash
-docker exec QM1 bash -lc 'printf "CLEAR QLOCAL(DEV.MCP.AUDIT)\n" | runmqsc QM1'
+docker exec QM1 bash -lc '/opt/mqm/samp/bin/amqsget DEV.MCP.AUDIT QM1 >/dev/null'
 ```
 
 ### 5. Confirm the failure before the camera rolls
@@ -133,7 +143,9 @@ curl.exe -s -i "http://localhost:7820/customerlookup/customers?customerId=1001" 
 curl.exe -s -i "http://localhost:7820/customerlookup/customers?customerId=1001" | findstr /b /c:"HTTP/"
 ```
 
-Then clear the queue once more, because those two requests left records on it.
+Then drain the queue once more with the step 4 command, because those two requests left
+records on it. Drain, not `CLEAR QLOCAL`: once the flow has put a message, the MQOutput node
+holds the queue open and `CLEAR` fails with `AMQ8148E: IBM MQ object in use`.
 
 ### 6. Start the agent on the application folder
 
@@ -146,8 +158,20 @@ a run that stops mid-chain is not recoverable on camera.
 
 ## Demo 1 - finding a wrong database credential
 
-Steps 1, 2, 6 and 7 are yours, because they touch the machine. Steps 3 to 5 belong to the
-agent, which has the project folder and the two MCP endpoints and nothing else.
+Steps 0, 1, 2, 6 and 7 are yours, because they touch the machine. Steps 3 to 5 belong to
+the agent, which has the project folder and the two MCP endpoints and nothing else.
+
+### Step 0. Show the server, and that the application is started
+
+Open the web UI at `https://localhost:7620`. Both applications are there, `CustomerLookup`
+and `CustomerApi`, and both are `started`. Nothing is red, nothing is stopped, there is no
+deployment error to point at.
+
+That is the trap, set in the open: everything the console can show you says the integration
+is healthy, and it fails on every single message. It pays off twice, because when
+`list_integrations` reports `state: started` in step 4 the audience has already seen it with
+their own eyes - the agent ruling out a deployment fault then lands as confirmation rather
+than as a claim.
 
 ### Step 1. Show it failing
 
@@ -187,12 +211,19 @@ Ask it something close to:
 Nothing in that prompt names the credential, the DSN, or the vault. The body names a user
 and a SQL error; everything else is the agent's to find.
 
-Paste the body rather than describing it. The agent is not running the `curl`, and no admin
-MCP tool on 13.0.9.0 reads the error log, so being handed the caller's response is the only
-way it sees the ODBC diagnostic at all. If you would rather it got there by itself, let it
-call `CustomerApi_getCustomer` on 7750 instead: same broken credential, same diagnostic,
-arriving as tool output. That is demo 2's tool doing demo 1's job, and it is the stronger
-version if you are willing to merge the two takes.
+The body has to reach the agent somehow: it is not running the `curl`, and no admin MCP tool
+on 13.0.9.0 reads the error log. Three routes, best first.
+
+- **Run the `curl` in the agent's own terminal.** Both this app and the Bob IDE have a
+  terminal panel, and an agent that can read its own panel sees the response without being
+  told anything - the pasted body then drops out of the prompt entirely. Confirmed for
+  Claude in this app, which has a tool for reading its Terminal panel. Not confirmed for
+  Bob: check it off camera before you lean on it.
+- **Paste the body into the prompt.** Always works, and it is what a colleague handing over
+  a ticket would do anyway.
+- **Let the agent call `CustomerApi_getCustomer` on 7750.** Same broken credential, same
+  diagnostic, arriving as tool output. That is demo 2's tool doing demo 1's job - the
+  strongest version, and it merges the two takes.
 
 ### Step 4. The chain it should walk
 
@@ -533,8 +564,8 @@ No restart is needed between takes. If you prefer one anyway, it is
 it resets the MCP sessions of every connected client as well.
 
 ```bash
-# 4. empty the audit queue
-docker exec QM1 bash -lc 'printf "CLEAR QLOCAL(DEV.MCP.AUDIT)\n" | runmqsc QM1'
+# 4. drain the audit queue (CLEAR QLOCAL fails while the flow holds it open)
+docker exec QM1 bash -lc '/opt/mqm/samp/bin/amqsget DEV.MCP.AUDIT QM1 >/dev/null'
 ```
 
 Stopping the server: it is a normal process, so stop it by its work directory rather than
