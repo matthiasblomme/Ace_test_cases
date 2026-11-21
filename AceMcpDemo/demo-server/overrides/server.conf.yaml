@@ -1,0 +1,46 @@
+---
+# ACE MCP demo - integration server overrides
+# Overrides only; the base server.conf.yaml is never edited.
+#
+# The complete overrides file of the demo server ACEMCPDEMO. Copy it to
+# <work_dir>/overrides/server.conf.yaml, next to admin-mcp-tools.json from this folder and
+# CustomerApi/mcptools.json from ../../CustomerApi.server-overrides/. It is a superset of
+# ../../CustomerApi.server-overrides/server.conf.yaml, which carries only what the
+# CustomerApi application itself needs.
+
+RestAdminListener:
+  port: 7620
+
+ResourceManagers:
+  HTTPConnector:
+    ListenerPort: 7820
+  HTTPSConnector:
+    ListenerPort: 7860
+
+# Credentials come from an external directory vault outside any git repo.
+# The vault holds odbc::ACE_SQL_TEST (the credential the flow uses) and
+# odbc::LEGACY_SQL_TEST (an unused decoy).
+# The directory is machine-local, so the block stays commented out rather than shipping a
+# path that would fail server start: create the vault (../../CustomerApi/DEPLOY.md, step 3),
+# fill in its directory and uncomment.
+# Credentials:
+#   ExternalDirectoryVault:
+#     directory: '<vault_directory>'
+
+# The MQOutput node in getCustomer carries only queueName; its client connection
+# comes from the DEMO_MQ MQEndpoint policy, applied server-wide here. Without this
+# key the audit put fails for the wrong reason.
+remoteDefaultQueueManager: '{CustomerApiPolicies}:DEMO_MQ'
+
+MCP:
+  # Admin MCP: the integration server's own admin operations as read-only tools.
+  # Which tools are exposed is controlled by overrides/admin-mcp-tools.json.
+  Admin:
+    enabled: true
+    port: 7650
+    readOnly: true
+  # Runtime MCP: deployed REST API operations as tools.
+  # automatic means the listener starts once a tool is deployed.
+  Runtime:
+    mcpStartMode: 'automatic'
+    port: 7750

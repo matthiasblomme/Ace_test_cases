@@ -55,6 +55,10 @@ server it learns over MCP.
 Ports: **7620** admin REST (https), **7820** HTTP, **7860** HTTPS, **7650** MCP.Admin,
 **7750** MCP.Runtime.
 
+The server's overrides (both MCP servers, the ports, the six admin tools) and the two
+scripts this guide calls (`start-demo-server.cmd`, `demo-env.cmd`) are in
+[`demo-server/`](demo-server/README.md), with the machine paths taken out.
+
 The vault key and the correct database password are in
 `D:\tmp\ace-mcp-demo\demo-credentials.txt`, deliberately outside every git repository.
 Nothing in this repository contains a working credential. The only password committed
